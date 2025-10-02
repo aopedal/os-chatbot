@@ -1,0 +1,25 @@
+# Base image with Python + CUDA if needed
+FROM pytorch/pytorch:2.8.0-cuda12.6-cudnn9-runtime
+
+# Create app folder
+WORKDIR /app
+
+# Set compiler environment variables (for Triton)
+ENV CC=/usr/bin/gcc
+ENV CXX=/usr/bin/g++
+
+# Expose vLLM API
+EXPOSE 8000
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    git wget curl \
+    build-essential \
+    cmake
+
+RUN pip install --upgrade pip
+RUN pip install vllm
+RUN pip install --upgrade huggingface_hub
+
+# Download LLM weights
+RUN hf download openai/gpt-oss-20b --local-dir /app/models/gpt-oss-20b
