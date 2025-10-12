@@ -1,0 +1,8 @@
+langchain
+langchain-community
+sentence-transformers
+qdrant-client
+tiktoken
+python-magic
+faiss-cpu
+unstructured

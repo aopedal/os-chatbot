@@ -1,0 +1,1006 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>12 Forelesning 9/4-24(2 timer). Mutex, Semaforer, Deadlock</TITLE>
+<META NAME="description" CONTENT="12 Forelesning 9/4-24(2 timer). Mutex, Semaforer, Deadlock">
+<META NAME="keywords" CONTENT="os">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY  bgcolor="#ffffff">
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html1098"
+  HREF="node13.html#SECTION000131000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html1099"
+  HREF="node13.html#SECTION000132000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+<LI><A ID="tex2html1100"
+  HREF="node13.html#SECTION000133000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN> Mulige måter å takle kritiske avsnitt</A>
+<UL>
+<LI><A ID="tex2html1101"
+  HREF="node13.html#SECTION000133100000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> Linux-eksempel</A>
+<LI><A ID="tex2html1102"
+  HREF="node13.html#SECTION000133200000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Windows-eksempel</A>
+</UL>
+<BR>
+<LI><A ID="tex2html1103"
+  HREF="node13.html#SECTION000134000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">4</SPAN> Softwareløsning for P1/P2 med MUTEX</A>
+<UL>
+<LI><A ID="tex2html1104"
+  HREF="node13.html#SECTION000134100000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Software-mutex, forsøk 1 </A>
+</UL>
+<BR>
+<LI><A ID="tex2html1105"
+  HREF="node13.html#SECTION000135000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">5</SPAN> Hardware-støttet mutex</A>
+<LI><A ID="tex2html1106"
+  HREF="node13.html#SECTION000136000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">6</SPAN> X86-instruksjonen lock</A>
+<LI><A ID="tex2html1107"
+  HREF="node13.html#SECTION000137000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">7</SPAN> Semaforer</A>
+<UL>
+<LI><A ID="tex2html1108"
+  HREF="node13.html#SECTION000137100000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">1</SPAN> Implementasjon av semafor i OS</A>
+</UL>
+<BR>
+<LI><A ID="tex2html1109"
+  HREF="node13.html#SECTION000138000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">8</SPAN> Bruk av semafor i kritisk avsnitt</A>
+<LI><A ID="tex2html1110"
+  HREF="node13.html#SECTION000139000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">9</SPAN> Bruk av semafor til å synkronisere to prosesser</A>
+<LI><A ID="tex2html1111"
+  HREF="node13.html#SECTION0001310000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">10</SPAN> Tanenbaums bruk av semaforer</A>
+<LI><A ID="tex2html1112"
+  HREF="node13.html#SECTION0001311000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">11</SPAN> Låse-mekanismer brukt i Linux-kjernen</A>
+<LI><A ID="tex2html1113"
+  HREF="node13.html#SECTION0001312000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">12</SPAN> Monitorer og Java synkronisering</A>
+<LI><A ID="tex2html1114"
+  HREF="node13.html#SECTION0001313000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">13</SPAN> Message passing</A>
+<LI><A ID="tex2html1115"
+  HREF="node13.html#SECTION0001314000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">14</SPAN> Dining Philosophers Problem</A>
+<LI><A ID="tex2html1116"
+  HREF="node13.html#SECTION0001315000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">15</SPAN> Deadlock</A>
+<LI><A ID="tex2html1117"
+  HREF="node13.html#SECTION0001316000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">16</SPAN> Kriterier for at deadlock kan oppstå</A>
+<LI><A ID="tex2html1118"
+  HREF="node13.html#SECTION0001317000000000000000"><SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">17</SPAN> Tråder i Python</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION000130000000000000000">
+<SPAN CLASS="arabic">12</SPAN> Forelesning 9/4-24(2 timer).  Mutex, Semaforer, Deadlock</A>
+</H1>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Avsnitt fra Tanenbaum: 2.2 og 2.3
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<A ID="tex2html294"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/13.pdf">Slides brukt i forelesningen</A>
+<P>
+
+<H2><A ID="SECTION000131000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+
+<P>
+<A ID="tex2html295"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12time1.mp4">Uredigert opptak av hele første time av forelesningen ( 00:46:03)</A>
+<P>
+<A ID="tex2html296"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12time2.mp4">Uredigert opptak av hele andre time av forelesningen ( 00:46:37)</A>
+<P>
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html297"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del1.mp4">os12del1.mp4</A>
+(02:08) Intro om planene fremover og om PowerShell
+
+<BR><A ID="tex2html298"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del2.mp4">os12del2.mp4</A>
+(03:20) Om ukens oppgaver og dagens temaer
+
+<BR><A ID="tex2html299"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del3.mp4">os12del3.mp4</A>
+(01:59) Spørsmål: Er uke 14 obligatorisk? Nei, oppgver merket (oblig) fra nå er de viktigste å få med seg.
+
+<BR><A ID="tex2html300"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del4.mp4">os12del4.mp4</A>
+(01:20) Innledning om dagens temaer
+
+<BR><A ID="tex2html301"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del5.mp4">os12del5.mp4</A>
+(08:07) Slides: Kritisk avsnitt, disableInterupts, Mutex
+
+<BR><A ID="tex2html302"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del6.mp4">os12del6.mp4</A>
+(03:22) Slides: Linux og Windows eksempel
+
+<BR><A ID="tex2html303"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del7.mp4">os12del7.mp4</A>
+(10:32) Slides: Softwareløsning av MUTEX, GetMutex(lock), forsøk 1
+
+<BR><A ID="tex2html304"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del8.mp4">os12del8.mp4</A>
+(03:24) Slides: Hardware-støttet mutex og X86-instruksjonen lock
+
+<BR><A ID="tex2html305"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del9.mp4">os12del9.mp4</A>
+(00:23) Spørsmål: Virker testAndSet også for flere CPU-er? -Ja
+
+<BR><A ID="tex2html306"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del10.mp4">os12del10.mp4</A>
+(06:45) Demo: lock og pthreads, oppsummering av demo fra forrige uke, Men hva med flere linjer og samme CPU?
+
+<BR><A ID="tex2html307"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del11.mp4">os12del11.mp4</A>
+(09:36) Demo: lock og pthreads (hvorfor lengre tid på en CPU?) Samme CPU og tre linjer for å øke svar
+
+<BR><A ID="tex2html308"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del12.mp4">os12del12.mp4</A>
+(06:37) Tegning og forklaring av 2 CPU-er og låsing av minnebus med lock
+
+<BR><A ID="tex2html309"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del13.mp4">os12del13.mp4</A>
+(05:50) Tegning og forklaring av en CPU og taskset slik at begge tråder kjører på samme CPU
+
+<BR><A ID="tex2html310"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del14.mp4">os12del14.mp4</A>
+(01:14) Demo: Oppsummering av lock og pthreads med en og tre instruksjoner
+
+<BR><A ID="tex2html311"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12del15.mp4">os12del15.mp4</A>
+(05:39) Slides: semaforer og mutex, implementasjon av semafor i OS
+
+<BR>
+NB! Slides: Moitorer og Java synkronisering er ikke klippet ut og er vist fra 38:00 i andre time:
+
+<P>
+<A ID="tex2html312"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os12time2.mp4">Uredigert opptak av hele andre time av forelesningen ( 00:46:37)</A>
+<P>
+<A ID="tex2html313"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os13del3.mp4">os13del3.mp4</A>
+(07:16) Slides: Deadlock
+
+<BR><A ID="tex2html314"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os13del4.mp4">os13del4.mp4</A>
+(08:34) Slides: Dining Philosophers Problem og mulige løsninger på deadlock
+
+<BR>
+<P>
+
+<H2><A ID="SECTION000132000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+</H2>
+
+<UL>
+<LI>Synkronisering
+</LI>
+<LI>Serialisering
+</LI>
+<LI>Race condition Java
+</LI>
+<LI>Race condition C og pthreads
+</LI>
+<LI>Kritisk avsnitt
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION000133000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN> Mulige måter å takle kritiske avsnitt</A>
+</H2>
+<table width="90%"><tr><td align="right" valign="top">A</td><td valign="top">&nbsp;Skru av scheduler før kritisk avsnitt. P1 kode:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+disableInterupts();
+saldo = saldo - mill;
+enableInterupts();
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>OK for en OS-kjerne, men for farlig for brukerprosesser; de kan ta over styringen.</td></tr>
+<tr><td align="right" valign="top">B</td><td valign="top">&nbsp;Bruke en form for lås som gjør at bare en prosess av gangen har tilgang til felles data.
+        
+<UL>
+<LI>MUTual EXclusion = MUTEX = gjensidig utelukkelse
+</LI>
+<LI>mest brukt
+</LI>
+<LI>mange implementasjoner
+        
+</LI>
+</UL></td></tr></table>
+
+<P>
+
+<H3><A ID="SECTION000133100000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> Linux-eksempel</A>
+</H3>
+File-lock for Linux-mail: hvis filen
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+/var/mail/haugerud.lock
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>eksisterer, kan inbox ikke leses/skrives til. <EM>Sendmail og andre mailprogram 
+lager denne filen før de skriver/leser mail og fjerner den når de er ferdige.</EM>
+
+<P>
+
+<H3><A ID="SECTION000133200000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Windows-eksempel</A>
+</H3>
+Win 32 API'et har to funksjonskall
+
+<UL>
+<LI>EnterCriticalSection
+</LI>
+<LI>LeaveCriticalSection
+</LI>
+</UL>
+som applikasjoner kan kalle før og etter et kritisk avsnitt.
+
+<P>
+
+<H2><A ID="SECTION000134000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">4</SPAN> Softwareløsning for P1/P2 med MUTEX</A>
+</H2> 
+Trenger to funksjoner <code>GetMutex(lock)</code> og <code>ReleaseMutex(lock)</code> 
+som gjør at en prosess av gangen kan sette en lock. Da kan problemet løses med:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+GetMutex(lock);      // henter nøkkel
+KritiskAvsnitt();    // saldo -= mill;
+ReleaseMutex(lock);  // gir fra seg nøkkel
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H3><A ID="SECTION000134100000000000000"></A><A ID="P1MUTEX"></A>
+<BR>
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Software-mutex, forsøk 1 
+</H3> 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+static boolean lock = false; // felles variabel
+
+GetMutex(lock)
+   {
+   while(lock){} // venter til lock blir false
+   lock = true;
+   }
+ReleaseMutex(lock)
+   {
+   lock = false;
+   }
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>Dette burde sikre at to prosesser ikke er i kritisk avsnitt samtidig?
+Men hva om det skjer en Context Switch rett etter <code>while(lock){}</code> når P1 kjører?
+
+<P>
+Da rekker ikke P1 å sette lock til 
+true og P2 kunne gå inn i kritisk avsnitt, switches ut og P1 kan gå inn i kritisk avsnitt 
+samtidig! Altså er ikke denne metoden korrekt. Dette er vanskelig å løse 
+med en algoritme, som forsøkene i ukens oppgaver viser. 
+Men Peterson-algoritmen gir en elegant løsning.
+
+<P>
+
+<H2><A ID="SECTION000135000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">5</SPAN> Hardware-støttet mutex</A>
+</H2>
+I praksis brukes som oftest hardwarestøttede løsninger, for alle softwareløsninger 
+innebærer mange instruksjoner i tillegg til busy-waiting, som koster CPU-tid. 
+Et unntak er synkronisering av fler-CPU maskiner, SMP, symmetric multiprocessing og flerkjerneprosessorer. .
+Kan lages med en egen instruksjon <B>testAndSet</B> også kalt TSL(Test and Set Lock). Tester og setter en verdi i samme 
+maskininstruksjon. Låser minne-bussen slik at ikke andre CPUer kan endre eller lese verdien. GetMutex() kan da implementeres med:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+GetMutex(lock)
+   {
+    while(testAndSet(lock)) {}
+   }
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>og en context switch kan ikke ødelegge siden testen og endringen av lock skjer i 
+samme instruksjon. 
+
+<P>
+
+<H2><A ID="SECTION000136000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">6</SPAN> X86-instruksjonen lock</A>
+</H2>
+En annen X86 maskininstruksjon er <code>lock</code> som vi så på i forrige uke og som hindret race condition når kritisk avsnitt kun består av en enkelt instruksjon . Den vil for neste instruksjon som utføres låse
+minnebussen slik at instruksjoner på andre CPUer ikke samtidig kan hente eller lagre noe i RAM. Dette sikrer at instruksjonen etter lock som utføres på en variabel i minne får avsluttet hele
+sin operasjon uten at RAM endres. Dermed avverges problemet ved at det kritiske avsnittet fullføres før noen andre tråder slipper til.
+
+<P>
+
+<H2><A ID="SECTION000137000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">7</SPAN> Semaforer</A>
+</H2>
+En semafor er en integer S som signaliserer om en ressurs er tilgjengelig. To 
+operasjoner kan gjøres på en semafor:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Signal(S): S = S + 1;                 # Kalles ofte Up(), V()
+Wait(S): while(S &lt;= 0) {}; S = S - 1; # Kalles ofte Down(), P()
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>Signal og wait må være uninterruptible og implementeres med hardwarestøtte eller i kjernen for 
+å være atomiske(umulige å avbryte).
+<DL>
+<DT><STRONG>Binær semafor</STRONG></DT>
+<DD>S = 0 eller 1 (som lock) (initialiseres til 1)
+</DD>
+<DT><STRONG>Teller semafor</STRONG></DT>
+<DD>S vilkårlig heltall (initialiseres til antall ressurser)
+</DD>
+</DL>
+En semafor kan brukes slik til å takle et kritisk avsnitt(må da initialiseres til 1):
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Wait(S);
+KritiskAvsnitt();
+Signal(S);
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>En semafor som er initialisert til S=1 og som ikke kan bli større enn 1, omtales ofte som en mutex.
+
+<H3><A ID="SECTION000137100000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">7</SPAN>.<SPAN CLASS="arabic">1</SPAN> Implementasjon av semafor i OS</A>
+</H3>
+Hvis en semafor implementeres i OS kan prosesser som venter legges i en egen kø, slik 
+at de ikke bruker CPU mens de venter. Skjematisk sett kan implementasjonen gjøres slik:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Signal(S){
+   S = S + 1;
+   if(S &lt;= 0){
+      wakeup(prosess);
+      # Sett igang neste prosess fra venteliste
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN><SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Wait(S){
+   S = S - 1;
+   if(S &lt; 0){
+      block(prosess);
+      # Legg prosess i venteliste
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>En mp4 demo kan sees på <A ID="tex2html315"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/demoer/mutex.mp4">denne web-siden</A>
+som
+viser hvordan en implementasjon semaforer kan brukes av operativsystemet. 
+
+<P>
+En flash-demo det samme kan sees på <A ID="tex2html316"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/demoer/swf/sema.swf">denne web-siden</A>.
+
+<P>
+
+<H2><A ID="SECTION000138000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">8</SPAN> Bruk av semafor i kritisk avsnitt</A>
+</H2>
+Anta at semaforen S brukes til å beskytte en felles ressurs (variabel eller lignende) 
+i et kritisk avsnitt. Prosess A og B må da kall Wait() før og Signal() etter 
+kritisk avsnitt.
+
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="CENTER">PA</TH>
+<TH CLASS="CENTER">PB-kode</TH>
+</TR>
+<TR><TD CLASS="CENTER">A1</TD>
+<TD CLASS="CENTER">B1</TD>
+</TR>
+<TR><TD CLASS="CENTER">A2</TD>
+<TD CLASS="CENTER">Wait(S)</TD>
+</TR>
+<TR><TD CLASS="CENTER">A3</TD>
+<TD CLASS="CENTER">K1</TD>
+</TR>
+<TR><TD CLASS="CENTER">Wait(S)</TD>
+<TD CLASS="CENTER">K2</TD>
+</TR>
+<TR><TD CLASS="CENTER">K1</TD>
+<TD CLASS="CENTER">K3</TD>
+</TR>
+<TR><TD CLASS="CENTER">K2</TD>
+<TD CLASS="CENTER">Signal(S)</TD>
+</TR>
+<TR><TD CLASS="CENTER">K3</TD>
+<TD CLASS="CENTER">B2</TD>
+</TR>
+<TR><TD CLASS="CENTER">Signal(S)</TD>
+<TD CLASS="CENTER">B3</TD>
+</TR>
+<TR><TD CLASS="CENTER">A4</TD>
+<TD CLASS="CENTER">B4</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+Slik beskyttes da det kritiske avsnittet 
+(pilene angir Context Switch)
+
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">A</TH>
+<TH CLASS="LEFT">B</TH>
+<TH CLASS="CENTER">S</TH>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B1</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">Wait(S)</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">K1</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A1</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $\Longleftarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img87.png"
+ ALT="$\Longleftarrow$"></SPAN></TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A2</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A3</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">Wait(S)</TD>
+<TD CLASS="LEFT">OS legger A i kø</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT"><!-- MATH
+ $\Longrightarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img86.png"
+ ALT="$\Longrightarrow$"></SPAN></TD>
+<TD CLASS="LEFT">K2</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">K3</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">Signal(S)</TD>
+<TD CLASS="CENTER">0 (A ut av kø)</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B2</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B3</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B4</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">K1</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $\Longleftarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img87.png"
+ ALT="$\Longleftarrow$"></SPAN></TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">K2</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">K3</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">Signal(S)</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT">A4</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<P>
+
+<H2><A ID="SECTION000139000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">9</SPAN> Bruk av semafor til å synkronisere to prosesser</A>
+</H2>
+En semafor kan brukes til å synkronisere to prosesser. Anta prosess B (PB) må vente til 
+prosess A (PA) er ferdig med noe i sin kode (kodelinje A3 i eksempelet), 
+før den kan gå videre (med kodelinje B2 i eksempelet). Med en semafor 
+S initialisert til 0, kan de da synkroniseres som følger:
+
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="CENTER">PA</TH>
+<TH CLASS="CENTER">PB-kode</TH>
+</TR>
+<TR><TD CLASS="CENTER">A1</TD>
+<TD CLASS="CENTER">B1</TD>
+</TR>
+<TR><TD CLASS="CENTER">A2</TD>
+<TD CLASS="CENTER">Wait(S)</TD>
+</TR>
+<TR><TD CLASS="CENTER">A3</TD>
+<TD CLASS="CENTER">B2</TD>
+</TR>
+<TR><TD CLASS="CENTER">Signal(S)</TD>
+<TD CLASS="CENTER">B3</TD>
+</TR>
+<TR><TD CLASS="CENTER">A4</TD>
+<TD CLASS="CENTER">B4</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+PB kan ikke gjøre B2 før PA har satt S til 1. Pilene angir Context Switch. 
+To mulige forløp. B når først fram:
+
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">A</TH>
+<TH CLASS="LEFT">B</TH>
+<TH CLASS="CENTER">S</TH>
+</TR>
+<TR><TD CLASS="LEFT">A1</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A2</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT"><!-- MATH
+ $\Longrightarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img86.png"
+ ALT="$\Longrightarrow$"></SPAN></TD>
+<TD CLASS="LEFT">B1</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">Wait(S)</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT">A3</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $\Longleftarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img87.png"
+ ALT="$\Longleftarrow$"></SPAN></TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT">Signal(S)</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A4</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT"><!-- MATH
+ $\Longrightarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img86.png"
+ ALT="$\Longrightarrow$"></SPAN></TD>
+<TD CLASS="LEFT">B2</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B3</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+A når først fram:
+
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">A</TH>
+<TH CLASS="LEFT">B</TH>
+<TH CLASS="CENTER">S</TH>
+</TR>
+<TR><TD CLASS="LEFT">A1</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A2</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">A3</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">Signal(S)</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT">A4</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT"><!-- MATH
+ $\Longrightarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img86.png"
+ ALT="$\Longrightarrow$"></SPAN></TD>
+<TD CLASS="LEFT">B1</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">Wait(S)</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B2</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">B3</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<P>
+
+<H2><A ID="SECTION0001310000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">10</SPAN> Tanenbaums bruk av semaforer</A>
+</H2>
+Semaforene som er omtalt i læreboka er de samme som omtalt her men Tanenbaum bruker betegnelsene up og down istedet for signal og wait. I tillegg blir semaforen ikke mindre enn null, den beholder verdien null om en prosess kaller wait, men prosessen blir satt i kø. Men når en annen prosess gjør signal vil prosessen som lå i kø vekkes og de to kallene nulle ut verdien på semaforen. I praksis blir effekten den samme. Men vår bruk av semaforen viser tydligere hvor mange som ligger i kø.
+
+<P>
+
+<H2><A ID="SECTION0001311000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">11</SPAN> Låse-mekanismer brukt i Linux-kjernen</A>
+</H2>
+Linux-kjernen kan selv skru av og på interrupts for å sikre at korte kode-biter ikke blir avbrutt. Flere CPUer 
+kan samtidig kjøre kjerne-kode, derfor er låser mye i bruk for å unngå at datastrukturer aksesseres samtidig.
+<DL>
+<DT><STRONG>Atomiske operasjoner</STRONG></DT>
+<DD>Operasjonen kan ikke interruptes, eksempel: <code>atomic_inc_and_test()</code> 
+</DD>
+<DT><STRONG>Spinlocks</STRONG></DT>
+<DD>Mest brukt. For korte avsnitt. Bruker busy waiting. 
+</DD>
+<DT><STRONG>Semaforer</STRONG></DT>
+<DD>Kjernen sover til semaforen blir ledig igjen om den er opptatt. 
+</DD>
+<DT><STRONG>Reader/Writer locks</STRONG></DT>
+<DD>Samtidige prosesser kan lese, men bare en CPU av gangen kan skrive 
+</DD>
+</DL>
+
+<P>
+
+<H2><A ID="SECTION0001312000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">12</SPAN> Monitorer og Java synkronisering</A>
+</H2>
+Det viser seg at i praksis er det vanskelig å skrive korrekte programmer med semaforer. Programmeren er helt overlatt til seg selv og ett signal for mye vil ødelegge hele systemet. Derfor ble konseptet monitor laget. Dette er en del av et programmeringsspråk og kan sørge for at 
+hele metoder eller deler av kode synkroniseres. Kun en monitor-metode kan kjøre av gangen og dermed sikres synkronisering på et høyere nivå.  
+
+<P>
+Dette er implementert i Java som har et eget statement <code>synchronized</code> for å synkronisere bruken av 
+felles variabler. Alle java-objekter har en egen monitor-lås, tilsvarende variabelen lock vi har brukt i tidligere eksempler.
+
+<P>
+Når man bruker statementet <code>synchronized()</code> må man derfor knytte det opp mot ett objekt og dermed bruke 
+dette objektets lås. En integer verdi som variabelen <code>saldo</code> er ikke et objekt, i motsetning til for eksempel et array, og derfor lager vi et objekt som vi kaller <code>lock</code> for så å knytte <code>synchronized()</code> opp mot dette objektet:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+    public static int saldo;                  // Felles variable, gir race condition
+    public static Object lock = new Object(); // Argumentet til synchronized må være et objekt
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dermed kan man gjøre <code>synchronized(lock)</code> rundt en kodeblokk
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+                synchronized(lock)
+                   {
+                      saldo++;
+                   }
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>hvor man synkronisere mot lock-objektets lås.
+
+<P>
+I praksis betyr det at om en tråd kjører instruksjoner inne i denne kodeblokken, vil andre tråder settes på vent 
+om de prøver å kjøre det samme kodeavsnittet. Dette avsnittet  
+er da et kritisk avsnitt. Det tilsvarer helt å kalle wait før og signal 
+etter et kritisk avsnitt. Gjør man det med eksempelet fra forrige forelesning, 
+tar beregningene lenger tid, men saldo blir 0 til slutt.
+
+<P>
+Ser man på java bytekoden, kan man se at koden som oppdaterer saldo da blir beskyttet i en monitor:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ javap -private -c SaldoThread
+ 
+      17: getstatic     #17                 // Field lock:Ljava/lang/Object;
+      20: dup
+      21: astore_2
+      22: monitorenter
+      23: getstatic     #18                 // Field saldo:I
+      26: iconst_1
+      27: iadd
+      28: putstatic     #18                 // Field saldo:I
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man kan også definere hele metoder som synchronized. I Figure 2-35 i læreboka defineres i et eksempel metoden
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+public synchronized void insert(int val)
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette forsikrer programmereren om at kun en tråd av gangen kan kjøre denne metoden.
+
+<P>
+En løsning på vårt problem kunne være å gjøre følgende:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  private static synchronized void upSaldo()
+     {
+	saldo++;
+     }
+
+   private static synchronized void downSaldo()
+     {
+	saldo--;
+     }
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>og bruke disse metodene istedet for å endre variabelen direkte. Da ville også koden bli threadsafe og alltid gi saldo lik null til slutt.
+
+<P>
+
+<H2><A ID="SECTION0001313000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">13</SPAN> Message passing</A>
+</H2>
+En annen metode for å sikre serialisering som også virker i distribuerte systemer er message passing. 
+Konkurrerende tråder eller prosesser synkroniseres da ved å sende signaler til hverandre. En ulempe ved 
+dette er at det generelt ikke er like effektivt som semaforer og monitorer. 
+
+<P>
+
+<H2><A ID="SECTION0001314000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">14</SPAN> Dining Philosophers Problem</A>
+</H2>
+Dette er et klassisk synkroniseringsproblem og som ofte har blitt brukt for å demonstrere synkroniseringsteknikker som semaforer og monitorer. Fem filosofer sitter rundt et bord og har fem gafler på deling. Når filosofene ikke tenker spiser de, men de trenger to gafler for å kunne spise. Hvordan kan man skrive fem filosof-prosesser som kjører samtidig og samtidig unngå en situasjon hvor alle griper en gaffel og blir sittende og vente? Dette er en såkalt deadlock-tilstand, vranglås, og det må unngås når man har samtidige tråder.
+
+<P>
+Filosoftilstander:
+
+<OL>
+<LI>tenker (uten gafler)
+</LI>
+<LI>Spiser spaghetti med 2 gafler
+</LI>
+</OL>
+Tar opp en gaffel av gangen.
+<DL>
+<DT><STRONG>Problem</STRONG></DT>
+<DD>Programmer en filosofprosess slik at 5 prosesser kan spise og tenke 
+i tidsrom av varierende lengde og dele ressursene (gaflene) 
+<SPAN  CLASS="textbf">uten</SPAN> at deadlock (vranglås) kan oppstå. 
+</DD>
+</DL>
+
+<P>
+
+<DIV class="CENTER"><A ID="1911"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Fra Tanenbaum: Lunch time in the Philosophy Department.</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="454" HEIGHT="429" STYLE=""
+ SRC="img88.png"
+ ALT="\includegraphics[width=10cm]{fig/02-44.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H2><A ID="SECTION0001315000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">15</SPAN> Deadlock</A>
+</H2>
+To eller fler prosesser venter på hverandre, ingen kommer videre.
+Eks. 1: P1 venter på P2, P2 venter på P3 og P3 venter på P1 (sirkulær venting)
+
+<P>
+Eks. 2: Deadlock med to semaforer S1 og S2, initialisert til 1:
+
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="CENTER">PA</TH>
+<TH CLASS="CENTER">PB-kode</TH>
+</TR>
+<TR><TD CLASS="CENTER">Wait(S1)</TD>
+<TD CLASS="CENTER">&nbsp;</TD>
+</TR>
+<TR><TD CLASS="CENTER">&nbsp;</TD>
+<TD CLASS="CENTER">Wait(S2)</TD>
+</TR>
+<TR><TD CLASS="CENTER">Wait(S2)</TD>
+<TD CLASS="CENTER">&nbsp;</TD>
+</TR>
+<TR><TD CLASS="CENTER">&nbsp;</TD>
+<TD CLASS="CENTER">Wait(S1)</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">Signal(S1)</TD>
+<TD CLASS="CENTER">Signal(S2)</TD>
+</TR>
+<TR><TD CLASS="CENTER">Signal(S2)</TD>
+<TD CLASS="CENTER">Signal(S1)</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<P>
+
+<H2><A ID="SECTION0001316000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">16</SPAN> Kriterier for at deadlock kan oppstå</A>
+</H2>
+
+<P>
+
+<OL>
+<LI>Mutex: ressurser som ikke kan deles
+</LI>
+<LI>En prosess kan beholde sine ressurser mens den venter på andre.
+</LI>
+<LI>En prosess kan ikke tvinges til å gi opp sin ressurs 
+(felles minne, disk, etc.)
+</LI>
+</OL>
+Med 1, 2 og 3 oppfylt, kan deadlock oppstå ved sirkulær venting! Mulige løsninger:
+
+<OL>
+<LI>Forhindre. Internt i OS-kjernen må deadlock forhindres. Umulig å 
+forhindre bruker-deadlock.
+</LI>
+<LI>Løse opp deadlock. Generelt vanskelig.
+</LI>
+<LI>Ignorere problemet (mest vanlig metode for et OS).
+</LI>
+</OL>
+
+<P>
+
+<H2><A ID="SECTION0001317000000000000000">
+<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">17</SPAN> Tråder i Python</A>
+</H2>
+Global Interpreter Lock (GIL) er en mekanisme som brukes av CPython, den mest populære implementeringen av Python, 
+ for å sikre at kun én tråd utfører bytekodeinstruksjoner om gangen. Dette låser hovedinterpreterløkken, 
+ slik at tråder ikke kan utføre Python-bytecode parallelt, selv på en flertrådet prosessor.
+
+<P>
+import multiprocessing, gir en løsning som lar deg opprette prosesser, som hver har sin egen Python-interpreter og
+minneplass.  Dette omgår GIL og lar deg utnytte flere CPU-kjerner.
+
+<P>
+Noen biblioteker som NumPy og Pandas er implementert i C og frigjør GIL under tunge beregninger. 
+ Dette kan tillate parallell utførelse av beregninger uten å være begrenset av GIL.
+
+<P>
+Hvis man kjører følgende kode på en server med flere CPUer, vil kun en av trådene kjøre av gangen: 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+import threading
+
+class SaldoThread(threading.Thread):
+    MAX = 200000000
+    count = 0
+    saldo = 0  # Felles variabel, gir race condition?
+
+    def __init__(self):
+        super().__init__()
+        SaldoThread.count += 1
+        self.id = SaldoThread.count
+
+    def run(self):
+        print(f"Tråd nr. {self.id} starter")
+        self.update_saldo()
+
+    def update_saldo(self):
+        if self.id == 1:
+            for _ in range(SaldoThread.MAX):
+                SaldoThread.saldo += 1
+        else:
+            for _ in range(SaldoThread.MAX):
+                SaldoThread.saldo -= 1
+        print(f"Tråd nr. {self.id} ferdig. Saldo: {SaldoThread.saldo}")
+
+
+class NosynchThread:
+    @staticmethod
+    def main():
+        print("Starter to tråder!")
+
+        s1 = SaldoThread()
+        s2 = SaldoThread()
+        s1.start()
+        s2.start()
+
+        s1.join()
+        s2.join()
+
+        print(f"Endelig total saldo: {SaldoThread.saldo}")
+
+
+if __name__ == "__main__":
+    NosynchThread.main()
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2025-05-07
+</ADDRESS>
+</BODY>
+</HTML>

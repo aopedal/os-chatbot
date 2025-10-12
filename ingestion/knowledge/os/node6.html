@@ -1,0 +1,637 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>5 Forelesning 12/2-24(2 timer). C, maskinkode og pipelining</TITLE>
+<META NAME="description" CONTENT="5 Forelesning 12/2-24(2 timer). C, maskinkode og pipelining">
+<META NAME="keywords" CONTENT="os">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY  bgcolor="#ffffff">
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html972"
+  HREF="node6.html#SECTION00061000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">1</SPAN> Maskinkode optimalisert for å kjøre hurtigst mulig</A>
+<LI><A ID="tex2html973"
+  HREF="node6.html#SECTION00062000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">2</SPAN> En linje høynivåkode kan gi flere linjer maskininstruksjoner</A>
+<LI><A ID="tex2html974"
+  HREF="node6.html#SECTION00063000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">3</SPAN> If-test</A>
+<LI><A ID="tex2html975"
+  HREF="node6.html#SECTION00064000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN> Forenklinger ved CPU Simuleringen</A>
+<UL>
+<LI><A ID="tex2html976"
+  HREF="node6.html#SECTION00064100000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> CPU-løkke (hardware-nivå)</A>
+</UL>
+<BR>
+<LI><A ID="tex2html977"
+  HREF="node6.html#SECTION00065000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">5</SPAN> Pipelining</A>
+<LI><A ID="tex2html978"
+  HREF="node6.html#SECTION00066000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">6</SPAN> Pipelining</A>
+<LI><A ID="tex2html979"
+  HREF="node6.html#SECTION00067000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">7</SPAN> Intel mikroarkitekturer</A>
+<LI><A ID="tex2html980"
+  HREF="node6.html#SECTION00068000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">8</SPAN> Superscalar arkitektur</A>
+<LI><A ID="tex2html981"
+  HREF="node6.html#SECTION00069000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">9</SPAN> Superscalar arkitektur</A>
+<LI><A ID="tex2html982"
+  HREF="node6.html#SECTION000610000000000000000"><SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">10</SPAN> Intel Core 2</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00060000000000000000">
+<SPAN CLASS="arabic">5</SPAN> Forelesning 12/2-24(2 timer).  C, maskinkode og pipelining</A>
+</H1>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Avsnitt fra Tanenbaum: 1.3.2 - 1.3.7
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<A ID="tex2html133"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/os5.pdf">Slides brukt i forelesningen</A>
+<P>
+Opptak av forelesningen:
+
+<P>
+<A ID="tex2html134"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5time1.mp4">os5time1.mp4</A>
+(48:26) Uredigert opptak av første time av forelesningen. 
+<BR><A ID="tex2html135"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5time2.mp4">os5time2.mp4</A>
+(48:09) Uredigert opptak av andre time av forelesningen. 
+<BR>
+<P>
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html136"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del1.mp4">os5del1.mp4</A>
+(03:33) Intro om oblig-innlevering, godkjentkrav for grupper med kun en student, VMer
+
+<BR><A ID="tex2html137"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del2.mp4">os5del2.mp4</A>
+(01:25) dagens tema, innledning
+
+<BR><A ID="tex2html138"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del3.mp4">os5del3.mp4</A>
+(14:46) Demo: Optimalisering av maskinkode ved kompilering med gcc -O, fibo()
+
+<BR><A ID="tex2html139"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del4.mp4">os5del4.mp4</A>
+(03:30) Demo: Optimalisering av SumFunksjon.c med gcc -O
+
+<BR><A ID="tex2html140"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del5.mp4">os5del5.mp4</A>
+(09:35) Demo: En linje høynivåkode kan bli til flere linjer maskinkode
+
+<BR><A ID="tex2html141"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del6.mp4">os5del6.mp4</A>
+(05:00) Demo: Assemblykode for enlinje()-funksjonen (NB! Må nå kompileres med <code>gcc -no-pie</code>)
+
+<BR><A ID="tex2html142"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del7.mp4">os5del7.mp4</A>
+(02:09) Demo: Hva skjer om man prøver å addere to RAM-variabler med en instruksjon?
+
+<BR><A ID="tex2html143"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del8.mp4">os5del8.mp4</A>
+(02:32) Beskjed fra Ine: vi gir kommentarer til obligene, les dem!
+
+<BR><A ID="tex2html144"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del9.mp4">os5del9.mp4</A>
+(01:08) Spørsmål: Hva betyr .quad?
+
+<BR><A ID="tex2html145"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del10.mp4">os5del10.mp4</A>
+(09:01) Tegning og forklaring om CPU, registere og RAM
+
+<BR><A ID="tex2html146"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del11.mp4">os5del11.mp4</A>
+(18:17) Demo: En if-test i Assembly skrevet fra scratch  (NB! Må nå kompileres med <code>gcc -no-pie</code>)
+
+<BR><A ID="tex2html147"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del12.mp4">os5del12.mp4</A>
+(01:07) Demo: Hvorfor er main() av typen int? Eksempel med returverdi fra C-program.
+
+<BR><A ID="tex2html148"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del13.mp4">os5del13.mp4</A>
+(01:22) Slides: Forenklinger ved CPU-simuleringen
+
+<BR><A ID="tex2html149"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del14.mp4">os5del14.mp4</A>
+(01:41) Slides: CPU-løkke (hardware-nivå)
+
+<BR><A ID="tex2html150"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del15.mp4">os5del15.mp4</A>
+(05:15) Slides: Pipelining
+
+<BR><A ID="tex2html151"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os5del16.mp4">os5del16.mp4</A>
+(06:53) Slides: Superscalar arkitektur
+
+<BR>
+<P>
+
+<H2><A ID="SECTION00061000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">1</SPAN> Maskinkode optimalisert for å kjøre hurtigst mulig</A>
+</H2>
+For gcc-kompilatoren er default virkemåte at den skal kompilere hurtigst mulig, det vil si at selve kompileringen skal gå så fort som mulig. Det er vanlgivis ønskelig 
+når man utvikler et program, slik at man minimaliserer ventetiden før man kan prøvekjøre siste versjon. Når man derimot har et helt ferdig versjon, er det mest naturlig 
+å be kompilatoren å lage kode som kjører raskest mulig og er mest mulig effektiv. Generelt vil man med opsjonen -O be gcc om å lage så hurtig kode som mulig; altså 
+lage et program som utfører beregningen den skal gjøre som raskt som mulig.
+
+<P>
+Følgende er en C-funksjon som regner ut tall nummer 'last' i Fibinacci-rekken:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+int fibo(int last)
+{
+   int i;
+   int a=1,b=1,c;
+   /* Har allerede de første to */
+   for(i=3;i &lt;= last;i++)
+       {
+	  c = a;      /* b skal etterpå få denne */
+	  a = a + b;  /* Neste tall */
+	  b = c;      /* b fortsatt nest siste tall */
+       }
+   return(a);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Hvis man kompilerer denne koden med <code>gcc -S fibo.c</code> for å se hva slags maskinkode kompilatoren vil lage, får man følgende:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+	movl	%edi, -20(%rbp)
+	movl	$1, -12(%rbp)
+	movl	$1, -8(%rbp)
+	movl	$3, -16(%rbp)
+	jmp	.L2
+.L3:
+	movl	-12(%rbp), %eax
+	movl	%eax, -4(%rbp)
+	movl	-8(%rbp), %eax
+	addl	%eax, -12(%rbp)
+	movl	-4(%rbp), %eax
+	movl	%eax, -8(%rbp)
+	addl	$1, -16(%rbp)
+.L2:
+	movl	-16(%rbp), %eax
+	cmpl	-20(%rbp), %eax
+	jle	.L3
+	movl	-12(%rbp), %eax
+	popq	%rbp
+	ret
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Her kan man se at adderingsoperasjonene utføres direkte på variablene som ligger i RAM, de flyttes ikke først inn i registerne for så å utføre regneoperasjonene 
+internt inne i CPU-en. Det finnes forøvrig ingen X86-instruksjon som direkte legger sammen to tall som ligger i RAM og så lagrer resultatet i RAM etterpå, derfor må 
+minst ett av tallene i en addisjon ligge i RAM. Men hvis man istedet kompilerer denne koden med opsjonen -O:  <code>gcc -O -S fibo.c</code> får man følgende resultat:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+	movl	$1, %esi
+	movl	$1, %ecx
+	movl	$3, %edx
+	jmp	.L3
+.L5:
+	movl	%eax, %ecx
+.L3:
+	leal	(%rcx,%rsi), %eax
+	addl	$1, %edx
+	movl	%ecx, %esi
+	cmpl	%edx, %edi
+	jge	.L5
+	rep ret
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Her ser vi at alle beregningene skjer i registerne og dette gir kode som raskere leverer sluttresultatet.
+
+<P>
+Hvis man gjør dette med vår funksjon, sumFunksjon.c, får man en meget kort Assembly-kode som resultat:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc -O -S sumFunksjon.c
+$ cat sumFunksjon.s
+	.file	"sumFunksjon.c"
+	.text
+	.globl	sum
+	.type	sum, @function
+sum:
+.LFB0:
+	.cfi_startproc
+	movl	$6, %eax
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	sum, .-sum
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.5) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
+$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Hvorfor er koden så kort og hva er den meget effektive beregningen kompilatoren har funnet frem til?
+
+<P>
+
+<H2><A ID="SECTION00062000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">2</SPAN> En linje høynivåkode kan gi flere linjer maskininstruksjoner</A>
+</H2>
+Vi tar utgangspunkt i følgende C-program <code>main.c</code> som kaller en ekstern funksjon <code>enlinje()</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+#include &lt;stdio.h&gt;
+
+extern int enlinje();
+
+int main (void) {
+
+int svar;
+printf("Kaller enlinje()...\n");
+svar = enlinje();
+printf("Svar = %d\n", svar);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Denne funksjonen, her lagret i filen <code>enlinje.c</code>, legger sammen to variabler som er lagret i RAM og 
+som heter svar og memvar og returnerer svaret:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+int enlinje()
+{
+   int svar = 32;
+   int memvar = 10;
+   
+   svar = svar + memvar;
+   
+   return(svar);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Vi skal nå se at en enkelt C-instruksjon som linjen
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+svar = svar + memvar;
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+ikke nødvendigvis fører til en enkelt linje med maskinkode. I dette tilfellet er det 
+faktisk ikke mulig å gjøre denne operasjonen med en linje maskinkode, 
+fordi det ikke finnes noen x86-instruksjon som kan utføre denne operasjonen.
+
+<P>
+Om man prøver å legge sammen to variabler som ligger i internminnet(RAM), slik som dette
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+add memvar, svar     # svar = svar + memvar
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>får man følgende feilmelding
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Error: too many memory references for `add'
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>fordi det x86-instruksjonen add ikke kan operere på to referanser i minnet samtidig. Det ville tatt for
+lang tid og en slik instruksjon finnes derfor ikke. Man må først hente inn en av variablene fra minnet
+og det må også koden en kompilator lager gjøre.
+
+<P>
+Følgende assembly-fil, en.s, inneholder assemblykode som gjøre det samme som enlinje.c:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+.globl enlinje 
+# C-signatur:int enlinje ()
+
+enlinje:        # Standard start av funksjon
+
+mov memvar, %rbx # Man trenger to linjer kode for å
+add %rbx, svar   # gjøre en høynivålinje svar = svar + memvar
+mov svar, %rax   # Returnerer svar
+
+ret  # Verdien i rax returneres
+
+# Følgende avsnitt av koden viser hvordan man definerer
+# variabler som lagres i minnet.
+# Andre linje tilsvarer linjen
+# int svar=32;
+# i et C-program
+# Dette avsnittet kunne også stått øverst i filen
+
+.data
+svar:   .quad 32   # deklarerer variabelen svar i RAM
+memvar: .quad 10   # 8 byte = 64 bit variable
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+C-koden main.c i starten av avsnittet kan brukes for å kalle assembly-funksjonen over med 
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+gcc -no-pie main.c en.s
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Hvis man kompilerer enlinje med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+gcc -S enlinje.c
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Får man følgende kode:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+	.file	"enlinje.c"
+	.text
+	.globl	enlinje
+	.type	enlinje, @function
+enlinje:
+.LFB0:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	$32, -8(%rbp)
+	movl	$10, -4(%rbp)
+	movl	-4(%rbp), %eax
+	addl	%eax, -8(%rbp)
+	movl	-8(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	enlinje, .-enlinje
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.11) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>Hvordan utføres addisjonen her?
+
+<P>
+NB! Fra og med 2022 har default konfigurasjon av kompilatoren gcc endret seg, slik at man nå må legge på opsjonen -no-pie for å kompilerere assembly-kode som deklarere variabler i et data-segment. Derfor må man kompilere med
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+gcc -no-pie main.c en.s
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>og også bruke <code>gcc -no-pie</code> når man loader sammen en slik kompilert assembly-fil med en 
+kompilert C-fil. Hvis ikke får du en feilmelding om relocation R_X86_64_32S against '.data' can not be used.
+
+<P>
+
+<H2><A ID="SECTION00063000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">3</SPAN> If-test</A>
+</H2>
+Følgende kode viser hvordan en if-test kan lages i assembly. Tilsvarende som for while- og for-løkker,
+må man ha en test som hopper til et annet sted i koden avhengig av resultatet av testen.
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+.globl iftest 
+# C-signatur:int iftest ()
+
+iftest:        # Standard start av funskjon
+
+# Returnerer 1 hvis svar &gt; 42, ellers 0
+# if(svar &gt; 42){
+#    return(1):
+# }
+# else{
+#    return(0);
+#}
+
+mov $42, %rbx
+
+cmp  %rbx, svar # compare
+jg  greater     # Jump Greater, hvis svar &gt; 42
+
+mov $0, %rax    # 42 eller mindre hvis her
+jmp return
+
+greater:
+mov $1, %rax
+
+return:
+ret  # Verdien i rax returneres
+
+.data
+svar:  .quad 40   # deklarerer variabelen svar i RAM
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00064000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN> Forenklinger ved CPU Simuleringen</A>
+</H2>
+Iforhold til vår forenklede simulering er de fleste CPUer som Intel og AMD mer komplekse: 
+
+<UL>
+<LI>Instruksjoner bruker mer tid enn en CPU-sykel på å utføres
+</LI>
+<LI>Hver instruksjon hentes inn fra RAM før den utføres (ikke ROM)
+</LI>
+<LI>En x86-instruksjon deles inn i flere små deler (mikro-operasjoner), uops
+</LI>
+</UL>
+
+<P>
+
+<H3><A ID="SECTION00064100000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> CPU-løkke (hardware-nivå)</A>
+</H3>
+En datamaskin med en CPU gjennomfører en evigvarende løkke som utfører en maskininstruksjonen
+av gangen helt til maskinen skrus av. 
+<A ID="tex2html152"
+  HREF="https://nexus.cs.oslomet.no/~haugerud/os/demoer/iecycle.swf">En demo av en CPU-løkke (uten interrupts) kan sees her, men krever flash.</A>.
+
+<P>
+Pseudo-kode for den evige hardware-løkken som CPU-en kjører:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+while(not HALT)
+{
+   IR = mem[PC];   # IR = Instruction Register
+   PC++;           # PC = Program counter
+   execute(IR);
+   if(InterruptRequest)
+   {
+      savePC();
+      loadPC(IRQ); # IRQ = Interrupt Request
+                   # Hopper til Interrupt-rutine
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00065000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">5</SPAN> Pipelining</A>
+</H2>
+En instruksjon kan deles inn i flere deler, stages, 14 er vanlig i Intel-CPUer. 
+
+<P>
+Eksempel med 4 stages:
+
+<UL>
+<LI>Fetch (hent instruksjonen fra RAM)
+</LI>
+<LI>Decode (hvilke knapper skal trykkes på i ALU og Datapath)
+</LI>
+<LI>Execute (utfør instruksjonen)
+</LI>
+<LI>Write (skriv resultater til RAM)
+</LI>
+</UL>
+Tid spares ved at neste instruksjon starter før den første er ferdig. 
+
+<P>
+
+<H2><A ID="SECTION00066000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">6</SPAN> Pipelining</A>
+</H2>
+<IMG
+  WIDTH="504" HEIGHT="376" STYLE=""
+ SRC="./pipelining.png"
+ ALT="Image pipelining"> 
+
+<H2><A ID="SECTION00067000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">7</SPAN> Intel mikroarkitekturer</A>
+</H2>
+  En mikroarkitektur er hvordan et instruksjonsett er implementert i en CPU. 
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">År</TH>
+<TH CLASS="LEFT">arkitektur (CPU)</TH>
+<TH CLASS="LEFT">pipeline stages</TH>
+<TH CLASS="LEFT">Max MHz</TH>
+<TH CLASS="LEFT">nm</TH>
+</TR>
+<TR><TD CLASS="LEFT">1978</TD>
+<TD CLASS="LEFT">8086</TD>
+<TD CLASS="LEFT">2</TD>
+<TD CLASS="LEFT">5</TD>
+<TD CLASS="LEFT">3000</TD>
+</TR>
+<TR><TD CLASS="LEFT">1985</TD>
+<TD CLASS="LEFT">486</TD>
+<TD CLASS="LEFT">5</TD>
+<TD CLASS="LEFT">33</TD>
+<TD CLASS="LEFT">1000</TD>
+</TR>
+<TR><TD CLASS="LEFT">1995</TD>
+<TD CLASS="LEFT">P6 (Pentium Pro)</TD>
+<TD CLASS="LEFT">14</TD>
+<TD CLASS="LEFT">450</TD>
+<TD CLASS="LEFT">250</TD>
+</TR>
+<TR><TD CLASS="LEFT">2000</TD>
+<TD CLASS="LEFT">NetBurst (Pentium 4)</TD>
+<TD CLASS="LEFT">20</TD>
+<TD CLASS="LEFT">2000</TD>
+<TD CLASS="LEFT">180</TD>
+</TR>
+<TR><TD CLASS="LEFT">2004</TD>
+<TD CLASS="LEFT">NetBurst (Pentium 4)</TD>
+<TD CLASS="LEFT">31</TD>
+<TD CLASS="LEFT">3800</TD>
+<TD CLASS="LEFT">90</TD>
+</TR>
+<TR><TD CLASS="LEFT">2011</TD>
+<TD CLASS="LEFT">Sandy Bridge (core i7)</TD>
+<TD CLASS="LEFT">14</TD>
+<TD CLASS="LEFT">4000</TD>
+<TD CLASS="LEFT">32</TD>
+</TR>
+<TR><TD CLASS="LEFT">2015</TD>
+<TD CLASS="LEFT">Skylake (core i7)</TD>
+<TD CLASS="LEFT">14</TD>
+<TD CLASS="LEFT">4200</TD>
+<TD CLASS="LEFT">14</TD>
+</TR>
+<TR><TD CLASS="LEFT">2019</TD>
+<TD CLASS="LEFT">Cascade Lake (core i9)</TD>
+<TD CLASS="LEFT">14</TD>
+<TD CLASS="LEFT">4400</TD>
+<TD CLASS="LEFT">14</TD>
+</TR>
+</TABLE> 
+
+<P>
+
+<H2><A ID="SECTION00068000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">8</SPAN> Superscalar arkitektur</A>
+</H2>
+<IMG
+  WIDTH="504" HEIGHT="726" STYLE=""
+ SRC="./intelPipe1.png"
+ ALT="Image intelPipe1"> 
+
+<H2><A ID="SECTION00069000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">9</SPAN> Superscalar arkitektur</A>
+</H2>
+
+<UL>
+<LI>En skalær prosessor utfører instruksjoner en for en (som simuleringen)
+</LI>
+<LI>En superskalær prosessor har flere parallelle enheter som utfører mikro-operasjoner
+</LI>
+<LI>For eksempel 2 ALU-er, 1 FPU, load, store
+</LI>
+<LI>Utfører operasjoner samtidig
+</LI>
+<LI>Operasjoner kan utføres out-of-order (i en annen rekkefølge enn det sekvensielle programmet tilsier)
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION000610000000000000000">
+<SPAN CLASS="arabic">5</SPAN>.<SPAN CLASS="arabic">10</SPAN> Intel Core 2</A>
+</H2>
+
+<P>
+<IMG
+  WIDTH="707" HEIGHT="818" STYLE=""
+ SRC="./intelPipe.png"
+ ALT="Image intelPipe"> 
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2025-05-07
+</ADDRESS>
+</BODY>
+</HTML>

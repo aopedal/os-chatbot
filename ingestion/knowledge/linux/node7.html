@@ -1,0 +1,920 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>6 Forelesning 26/2-24(2 timer). Linux-VMer, Screen, ssh-keys, cron</TITLE>
+<META NAME="description" CONTENT="6 Forelesning 26/2-24(2 timer). Linux-VMer, Screen, ssh-keys, cron">
+<META NAME="keywords" CONTENT="linux">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY >
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html583"
+  HREF="node7.html#SECTION00071000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">1</SPAN> Sist</A>
+<LI><A ID="tex2html584"
+  HREF="node7.html#SECTION00072000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">2</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html585"
+  HREF="node7.html#SECTION00073000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">3</SPAN> root og sudo</A>
+<LI><A ID="tex2html586"
+  HREF="node7.html#SECTION00074000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">4</SPAN> Brukere</A>
+<LI><A ID="tex2html587"
+  HREF="node7.html#SECTION00075000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">5</SPAN> Grupper</A>
+<LI><A ID="tex2html588"
+  HREF="node7.html#SECTION00076000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">6</SPAN> Rettighetsprinsipper i Linux/UNIX miljøer</A>
+<LI><A ID="tex2html589"
+  HREF="node7.html#SECTION00077000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">7</SPAN> ssh-copy-id</A>
+<LI><A ID="tex2html590"
+  HREF="node7.html#SECTION00078000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">8</SPAN> Root aksess til server med sudo-rettigheter</A>
+<LI><A ID="tex2html591"
+  HREF="node7.html#SECTION00079000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">9</SPAN> Bakgrunnsjobber og screen</A>
+<UL>
+<LI><A ID="tex2html592"
+  HREF="node7.html#SECTION00079100000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">1</SPAN> Å dele en screen med samme bruker</A>
+<LI><A ID="tex2html593"
+  HREF="node7.html#SECTION00079200000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">2</SPAN> Bakgrunnsjobber og screen</A>
+</UL>
+<BR>
+<LI><A ID="tex2html594"
+  HREF="node7.html#SECTION000710000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">10</SPAN> scp</A>
+<LI><A ID="tex2html595"
+  HREF="node7.html#SECTION000711000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">11</SPAN> Backup med rsync og cron-tab</A>
+<LI><A ID="tex2html596"
+  HREF="node7.html#SECTION000712000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">12</SPAN> wget</A>
+<LI><A ID="tex2html597"
+  HREF="node7.html#SECTION000713000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">13</SPAN> gzip,bzip2, tar og zip</A>
+<LI><A ID="tex2html598"
+  HREF="node7.html#SECTION000714000000000000000"><SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">14</SPAN> awk (ward)</A>
+<LI><A ID="tex2html599"
+  HREF="node7.html#SECTION000715000000000000000">Spørsmål</A>
+<UL>
+<LI><A ID="tex2html600"
+  HREF="node7.html#SECTION000715001000000000000">Hvordan fjerne et alias?</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00070000000000000000">
+<SPAN CLASS="arabic">6</SPAN> Forelesning 26/2-24(2 timer).   Linux-VMer, Screen, ssh-keys, cron</A>
+</H1>
+
+<H2><A ID="SECTION00071000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">1</SPAN> Sist</A>
+</H2>
+
+<P>
+
+<UL>
+<LI>sort, head, tail, cut
+</LI>
+<LI>read while
+</LI>
+<LI>Array
+</LI>
+<LI>Assosiative array
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00072000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">2</SPAN> Forelesningsvideoer</A>
+</H2>
+Denne forelesningen ble ikke holdt live, men opptak av forelesningene er samlet her. 
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html76"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del1.mp4">linux6del1.mp4</A>
+(05:01) Demo: Root og sudo på Linux-VM
+
+<BR><A ID="tex2html77"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del2.mp4">linux6del2.mp4</A>
+(06:36) Slides: Linux-brukere og å lage en ny bruker på Linux-VM
+
+<BR><A ID="tex2html78"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del3.mp4">linux6del3.mp4</A>
+(05:32) Demo: Grupper og å lage en ny gruppe på Linux-VM
+
+<BR><A ID="tex2html79"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del4.mp4">linux6del4.mp4</A>
+(03:34) Rettighetsprinsipper på Linux
+
+<BR><A ID="tex2html80"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del5.mp4">linux6del5.mp4</A>
+(07:48) Demo: ssh-copy-id, passordløs innlogging
+
+<BR><A ID="tex2html81"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del6.mp4">linux6del6.mp4</A>
+(08:02) Demo: Direkte root aksess til Linux-VM for konto med sudo-rettigheter
+
+<BR><A ID="tex2html82"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del7.mp4">linux6del7.mp4</A>
+(07:47) Demo: Bakgrunnsjobber og screen
+
+<BR><A ID="tex2html83"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del8.mp4">linux6del8.mp4</A>
+(03:08) Demo: Å dele en screen med en eller flere andre
+
+<BR><A ID="tex2html84"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del9.mp4">linux6del9.mp4</A>
+(04:22) Demo: Starte en prosess på en annen host med ssh
+
+<BR><A ID="tex2html85"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del10.mp4">linux6del10.mp4</A>
+(04:06) Demo: scp, secure copy mellom ssh-hosts
+
+<BR><A ID="tex2html86"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del11.mp4">linux6del11.mp4</A>
+(04:35) Demo: backup med rsync
+
+<BR><A ID="tex2html87"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del12.mp4">linux6del12.mp4</A>
+(05:17) Demo: Kjøre script regelmessig med crontab 
+
+<BR><A ID="tex2html88"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del13.mp4">linux6del13.mp4</A>
+(02:19) Demo: wget: Laste ned websider
+
+<BR><A ID="tex2html89"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux6del14.mp4">linux6del14.mp4</A>
+(04:59) Demo: Komprimering med gzip og tar
+
+<BR>
+<P>
+
+<H2><A ID="SECTION00073000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">3</SPAN> root og sudo</A>
+</H2>
+På den virtuelle Linux-serveren, som egentlig er en ekstra isolert Docker container, dere har blitt tildelt i os-gruppene har dere rettigheter til å gjøre 
+alt dere måtte ønske, som å installere programmer og lage nye brukere. Husk at Linux-VMene har offentlig IP og dermed kan bli utsatt for hacker-angrep fra hele verden.
+
+<P>
+Root er administratorbrukeren på Linux, som har alle rettigheter på systemet. For å bli root kan man logge inn direkte med root-passordet. 
+Alternativt kan man logge inn med en vanlig bruker-konto og så bli root ved hjelp av kommonadoen <code>sudo su</code> hvis man er tildelt rettigheter for å gjøre dette. 
+
+<P>
+På Linux-VM vil du som den vanlige group-brukeren for eksempel ikke få lov til å se på shadowfilen:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ whoami
+group50
+$ cat /etc/shadow
+cat: /etc/shadow: Permission denied
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Men fordi group-brukeren er en såkalt sudo-user som har root-rettigheter om han ønsker det, kan han likevel se shadow-filen med kommandoen
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+sudo cat /etc/shadow
+[sudo] password for group50:
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+etter å ha skrevet inn sitt vanlige passord. Det er også mulig for en sudo-user å få opp et root-shell ved å gjøre 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+sudo su
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man bør være forsiktig med å jobbe fra et root-shell, siden man da lettere glemmer at man har de allmektige 
+root-rettighetene som potensielt kan føre til store feilgrep.
+
+<P>
+Om man jobber i et miljø med virtuelle maskiner og kontainere, noe som blir mer og mer vanlig, er ikke det å unngå å være logget på som root like viktig som før. 
+Om man gjør et stort feilgrep, kan man raskt bygge en ny VM eller bare starte en ny kontainer. Ihvertfall så lenge man har backup av alle data som man hadde 
+på serveren. Og det er viktig: ta alltid backup av script og lignende filer som dere har på Linux-VM.
+
+<P>
+
+<H2><A ID="SECTION00074000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">4</SPAN> Brukere</A>
+</H2>
+
+<P>
+En bruker på et UNIX/Linux system består av følgende:
+
+<P>
+
+<UL>
+<LI>En linje i filen <SPAN  CLASS="texttt">/etc/passwd</SPAN> som inneholder bl.a
+
+<UL>
+<LI>Bruker id - UID. Må være unik.
+</LI>
+<LI>Brukernavn
+</LI>
+<LI>Hjemmekatalog
+</LI>
+</UL>
+</LI>
+<LI>En linje i filen <SPAN  CLASS="texttt">/etc/shadow</SPAN> som inneholder en hash av
+passordet
+</LI>
+<LI>En hjemmekatalog (vanligvis i /home)
+</LI>
+<LI>Eventuelle gruppemedlemskap i filen
+</LI>
+<LI>/etc/group
+</LI>
+</UL>
+
+<P>
+Man kan lage nye bruker med kommandoen <SPAN  CLASS="texttt">adduser</SPAN> eller
+<SPAN  CLASS="texttt">useradd</SPAN>. Sistnevnte er kun anbefalt dersom man skal legge til
+en bruker via et script eller lignende. Kommandoen <SPAN  CLASS="texttt">adduser</SPAN>
+fungerer mer interaktivt og passer best for å legge til en og en
+bruker. Den kan brukes slik
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group60@os60:~$ sudo adduser s123456
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>for å legge til brukeren <code>s123456</code>. 
+
+<P>
+For å legge denne brukeren til sudo-gruppen slik at den blir en sudo-bruker, kan gjøres med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group60@os60:~$ sudo addgroup s123456 sudo
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Et UNIX/Linux system har vanligvis en del brukere i tillegg til de
+"menneskelige" brukerne. Den mest kjente av dem er root, som har UID
+0. De øvrige brukerne representerer tjenester som ikke bør
+kjøre som brukeren root av risikohensyn. Eksempler på  slike
+brukere er nobody, sshd og sys. Dersom man installerer flere tjenester
+på et system, f.eks en webserver, vil man sansynligvis få
+opprettet de tilsvarende brukerne automatisk.
+
+<P>
+
+<H2><A ID="SECTION00075000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">5</SPAN> Grupper</A>
+</H2>
+
+<UL>
+<LI>gruppe av brukere
+</LI>
+<LI>Definert i /etc/group
+</LI>
+<LI>må defineres av root
+</LI>
+</UL>
+<TABLE><TR><TD><PRE >
+
+ $ groups haugerud                   # lister gruppene haugerud er med i
+ $ chgrp studgruppe fil.txt      # fil.txt tilhører nå studgruppe
+ $ chmod 770 fil.txt             # alle rettigheter til alle i studgruppe
+ $ sudo adduser s123456 studgruppe # Gjør s123456 til medlem av studgruppe
+</PRE></TD></TR></TABLE>
+
+<P>
+Man kan lage en ny gruppe med <code>addgroup</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+mroot@os50:~$ sudo addgroup newgroup
+[sudo] password for mroot: 
+Adding group `newgroup' (GID 1003) ...
+Done.
+mroot@os50:~$ grep newgroup /etc/group
+newgroup:x:1003:
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00076000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">6</SPAN> Rettighetsprinsipper i Linux/UNIX miljøer</A>
+</H2>
+
+<P>
+Følgende regler gjelder mellom brukere:
+
+<UL>
+<LI>Alle prosesser/programmer som startes av en bruker vil være
+eid av den brukeren og filrettigheter vil være i forhold til
+eierskapet. Unntaket er kommandoen <SPAN  CLASS="texttt">su</SPAN> som forandrer bruker og
+tjenester som forandrer status på seg selv, f.eks sshd (startes som
+root, men blir til sshd kort tid etter).
+</LI>
+<LI>Brukere kan kun sende signaler til sine egne prosesser (f.eks med
+kommandoen kill). Unntak er root.
+</LI>
+<LI>Brukere kan kun forandre på rettighetene til filer som de
+eier selv. Unntak er root.
+</LI>
+<LI>Brukere kan ikke "gi" filer til andre brukere ved å
+forandre hvem som er eier av filen med kommandoen <SPAN  CLASS="texttt">chown</SPAN>. Root kan.
+</LI>
+<LI>Brukere KAN forandre hvilken gruppe som eier en fil med
+kommandoen <SPAN  CLASS="texttt">chgrp</SPAN>, men KUN til grupper som den selv er medlem
+av. Root kan uansett.
+</LI>
+<LI>Brukere kan ikke lage nye brukere. Bare root kan det.
+</LI>
+</UL>
+
+<P>
+Det finnes to måter å bli root på. Den ene er å bruke
+kommandoen <SPAN  CLASS="texttt">su</SPAN>, som ber deg om root sitt EGET passord. Denne
+metoden er mest kjent. I de nyeste versjonene av Linux er det blitt
+mer vanlig å bruke sudo, som gir rettigheter til vanlige brukere
+dersom de kan autentisere seg. Man må vanligvis være medlem av
+en spesiell gruppe for å få lov til å kjøre kommandoen
+<SPAN  CLASS="texttt">sudo su</SPAN>, som ber brukeren om sitt eget passord istedefor root
+sitt passord.
+
+<P>
+Det er også mulig å logge seg rett på systemet som root
+dersom man har root passordet. Det er derimot ikke anbefalt av følgende
+årsaker:
+
+<UL>
+<LI>Alt den brukeren gjør vil bli gjort med root-rettigheter. 
+</LI>
+<LI>Ved å bruke su eller sudo su kan vi se i logfilene HVEM som
+ble root. Denne typen informasjon kan være veldig viktig når man
+vil finne ut hva som har skjedd (og hvem som skal få skylden).
+</LI>
+<LI>Root skal kun brukes når man har behov for det, og ikke
+behandles som en normal bruker/person.
+</LI>
+</UL>
+
+<P>
+
+<P>
+
+<P>
+
+<H2><A ID="SECTION00077000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">7</SPAN> ssh-copy-id</A>
+</H2>
+Det kan være nyttig å kunne logge inn med ssh på andre servere uten å måtte skrive passord hver
+gang. Sikkerhetsmessig kan dette også være en fordel, da man kan velge å kun tillate innlogging
+ved hjelp av ssh-nøkler og dermed unngå alle brute-force ssh-angrep. Først må man lage ssh-keys:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group1@os1:~$ ssh-keygen 
+Generating public/private rsa key pair.
+Enter file in which to save the key (/home/group1/.ssh/id_rsa): 
+Enter passphrase (empty for no passphrase): 
+Enter same passphrase again: 
+Your identification has been saved in /home/group1/.ssh/id_rsa.
+Your public key has been saved in /home/group1/.ssh/id_rsa.pub.
+group1@os1:~$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Deretter kan man med ssh-copy-id (som kopierer over id_rsa.pub) sørge for at
+man senere kan logge inn uten passord:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group1@os1:~$ ssh-copy-id group49@os49.vlab.cs.oslomet.no
+group49@os49.vlab.cs.oslomet.no's password: 
+
+group1@os1:~$ ssh group49@os49.vlab.cs.oslomet.no
+Linux os49 2.6.32-5-xen-amd64 #1 SMP Fri Feb 5 17:48:36 UTC 2016 x86_64
+group49@os49:~$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man kan deretter også utføre kommandoer direkte på andre servere:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group1@os1:~$ ssh group49@os49.vlab.cs.oslomet.no whoami;hostname
+group49
+os1
+group1@os1:~$ ssh group49@os49.vlab.cs.oslomet.no "whoami;hostname"
+group49
+os49
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00078000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">8</SPAN> Root aksess til server med sudo-rettigheter</A>
+</H2>
+Hvis man har en bruker på en server som har sudo-rettigheter, har man vanligvis ikke mulighet til å logge seg inn med ssh direkte til root-brukeren på serveren. Det er mulig å sette det opp, men det er sikrere og vanlig å skru av muligheten for å logge inn som root med passord. Man kan derfor heller ikke overføre ssh-nøkler med ssh-copy, men det er likevel mulig å sette opp ssh-key innlogging for root. Det som behøves er at nøkkelen også legges i root sin <code>.ssh</code>-mappe. Det er viktig å forsikre seg om at root faktisk har en mappe <code>/root/.ssh</code> og en enkel måte å sørge for at den blir opprettet (om den ikke har blitt opprettet tidligere) med riktige rettigheter er å kjøre <code>ssh-keygen</code> som root:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+# ssh-keygen
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og taste return på alle spørsmål. 
+
+<P>
+Hvis du allerede har satt opp innlogging til din vanlige bruker på serveren, i dette eksempelet til group60@os60, kan du nå overføre nøkkelen derfra slik som dette: 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group60@os60:~$ sudo cp .ssh/authorized_keys /root/.ssh
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Hvis mappen <code>/root/.ssh</code> ikke eksisterer fra før blir den laget som en fil og da vil innlogging ikke virke. 
+Dermed skal du kunne logge inn også som root fra den serveren, f.eks. studssh, som du satte opp ssh-key innlogging fra til group60 i utgangspunktet. Når man overfører sin offentlige nøkkel til en annen server på denne måten, er det en enveis-innlogging. Det vil ikke være mulig å gå tilbake til serveren man kom fra med denne nøkkelen. Men man må passe godt på sin private nøkkel (<code>id_rsa</code>) for om andre får tilgang til den, kan de logge seg inn til de serverene som du har overført den offentlige nøkkelen til (<code>id_rsa.pub</code>). Når du logger deg på en server med ssh-key, er det din private nøkkel (<code>id_rsa</code>) som brukes til å autentisere deg (bevise at det er deg). 
+
+<P>
+
+<H2><A ID="SECTION00079000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">9</SPAN> Bakgrunnsjobber og screen</A>
+</H2>
+Hvis man ønsker å sette igang en jobb i et terminalvindu og la det stå og jobbe selvom man selv logger ut,
+kan man bruke screen. Da kan man senere logge seg inn på nytt til samme host og så koble seg opp til
+terminalvinduet som ligger i bakgrunnen. Man installerer screen og starter en ny screen-session med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ sudo apt update -y 
+$ sudo apt install screen
+$ screen
+Screen version 4.03.01 (GNU) 28-Jun-15
+
+$ uname
+Linux
+$ ./loop.sh
+loop nr 1
+loop nr 2
+loop nr 3
+loop nr 4
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og dermed får man et terminalvindu som ser ut som et helt vanlig terminalvindu. Her kan man kjøre
+kommandoer og for eksempel sette igang en jobb som loop-jobben over. Når man så kobler seg fra dette
+screen-vinduet med CTRL-a CTRL-d, kommer man tilbake til shellet hvor man kjørte kommandoen screen.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ screen
+[detached from 9833.pts-0.os1]
+$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Så kan man logge ut og inn igjen(eventuelt fra et helt annent sted) og liste alle screen-sessions med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ screen -ls
+There are screens on:
+	9833.pts-0.os1	(14. feb. 2017 kl. 18.15 +0100)	(Detached)
+	2216.compile	(13. feb. 2017 kl. 09.01 +0100)	(Detached)
+	923.pts-1.os1	(13. feb. 2017 kl. 08.57 +0100)	(Detached)
+3 Sockets in /var/run/screen/S-group1.
+
+$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Så kan man koble seg til den screen man ønsker seg med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ screen -r pts-0.os1
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og man vil se at jobben har fortsatt å kjøre i terminalvinduet når man var logget ut.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group1@os1:~$ ./loop.sh
+loop nr 1
+loop nr 2
+loop nr 3
+loop nr 4
+loop nr 5
+loop nr 6
+loop nr 7
+loop nr 8
+loop nr 9
+loop nr 10
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Om man ønsker å se om man er inne i en screen og vise hvilken det er, kan man oppnå det med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ echo $STY
+9833.pts-0.os1
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+For å gi navn til en screen kan man starte den med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ screen -S compile
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og den listes med navn som vist over i eksempelet med <code>screen -ls</code>. Om man fra screen-vinduet
+taster CTRL-d (uten CTRL-a foran) vil screen-prosessen drepes. På samme måte som om man drepte den med kill.
+For å scrolle opp og ned må man bruke kommandoen <code>CTRL-a ESC</code> og så opp og ned piltaster. <code>ESC</code> igjen
+for å avslutte scrolling.
+
+<P>
+Om man leser manual-siden for screen, finner man kommandoer man trenger i litt mer spesielle tilfeller, men
+dette er alt man behøver for enkel bruk. 
+
+<P>
+
+<H3><A ID="SECTION00079100000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">1</SPAN> Å dele en screen med samme bruker</A>
+</H3>
+Hvis to personer er logget inn på samme Linux-server med samme bruker, kan de enkelt dele en felles screen der begge kan utføre kommandoer og dermed jobbe sammen. Først må en av dem lage en ny screen med opsjonene <code>-d -m</code> som
+gjør at man lager en screen men ikke kobler seg til den:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+screen -d -m -S felles
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Deretter kan begge koble seg til med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+screen -x felles
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og de vil begge kunne utføre kommandoer og se hva den andre gjør.
+
+<P>
+
+<H3><A ID="SECTION00079200000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">2</SPAN> Bakgrunnsjobber og screen</A>
+</H3>
+
+<P>
+Screen er også et fint verktøy å bruke for å sette igang batch-jobber som potensielt
+kan bruke lang tid på å bli ferdig og som kan finne på å skrive til både stderr og stdout. Det siste kan være
+problematisk om man har koblet seg opp med ssh for å starte jobbene, uten å sørge for å redirigere
+stderr og stdout. Default skriver de da tilbake til terminalen ssh-tilkoblingen kom fra og da kan hele
+jobben crashe om disse tilkoblingene ikke lenger finnes fordi du har logget ut. Forøvrig er følgende
+en sikker metode å sette igang en bakgrunnsjobb på en annen maskin med ssh:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+ssh haugerud@studssh.cs.oslomet.no '/home/haugerud/back.sh &lt;/dev/null &gt;/home/haugerud/backup.log 2&gt;&amp;1 &amp;'
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Legg merke til at både stdin, stdout og stderr er tatt hånd om, slik at alle koblinger til ssh-kanalen er
+brutt. I tillegg er jobben (back.sh) avsluttet med &amp;, slik at den legges i bakgrunnen. I tillegg brukes
+full path for å sikre at det ikke er noen avhengighet av PATH. Dermed vil denne fortsette å kjøre i
+bakgrunnen etter at man logger seg ut fra shellet som startet jobben med ssh. Alternativt kunne man
+startet jobben fra en screen-session, som ville stått og tatt i mot eventuell output. Men da kunne man
+potensielt fått problemer om serveren som kjører screen hadde gått ned.
+
+<P>
+
+<H2><A ID="SECTION000710000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">10</SPAN> scp</A>
+</H2>
+<code>scp</code> (secure copy) kopierer filer mellom maskiner og sender alt kryptert:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+mroot@os50:~$ scp haugerud@rex.cs.oslomet.no:~/www/regn .
+haugerud@rex.cs.oslomet.no's password: 
+regn                                                       100%  194   123.7KB/s   00:00    
+mroot@os50:~$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Meget nyttig og mye brukt for sikker filoverføring. Hvis man er på studssh og vil overføre en fil r.sh 
+derfra, kan man gjøre det med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+haugerud@studssh:~$ scp r.sh mroot@os50.vlab.cs.oslomet.no:
+mroot@os50.vlab.cs.oslomet.no's password: 
+r.sh                                                        100%   39     0.0KB/s   00:00    
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Med opsjonen -r kan man overføre mapper(inkludert undermapper):
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+haugerud@studssh:~$ ls -l nymappe/
+total 16
+-rwxr-xr-x 1 haugerud drift 34 jan.   8 10:17 mitt.sh
+-rwxr-xr-x 1 haugerud drift 39 jan.   8 10:10 r.sh
+-rw-r--r-- 1 haugerud drift 24 jan.   8 10:09 tomfil
+haugerud@studssh:~$ scp -r nymappe mroot@os50.vlab.cs.oslomet.no:
+mroot@os50.vlab.cs.oslomet.no's password: 
+tomfil                                                     100%   24     0.0KB/s   00:00    
+r.sh                                                       100%   39     0.0KB/s   00:00    
+mitt.sh                                                    100%   34     0.0KB/s   00:00    
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000711000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">11</SPAN> Backup med rsync og cron-tab</A>
+</H2>
+Når man har satt opp passord-løs innlogging med ssh-keys som vist over, er det enkelt å sette opp
+systematisk backup. Anta man ønsker å ta backup av /home/group1 på en os-VM. Det kan man nå gjøre med 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+scp -r /home/group1/ haugerud@studssh.cs.oslomet.no:/home/haugerud/kopiavos1
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og hele mappen og alle undermapper blir kopiert over. Men når man gjør det på nytt en gang til, vil alle
+filer kopieres over enda en gang. Linux-kommandoen <code>rsync</code> gjør det samme, men den kopierer bare over
+filer som har endret seg fra gang til gang:(Gjør først <code>$ sudo apt install rsync</code>)
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rsync -a /home/group1/ haugerud@studssh.cs.oslomet.no:/home/haugerud/rsynckopiavos1
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Når man lager en ny fil eller gjør en endring, er det bare dette som kopieres over neste gang. Den enkleste måten
+å få dette til å bli en daglig rutine(eventuelt hver time) er å bruke <code>cron</code>. På Linux-VM må cron først insatlleres med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group100@os100:~$ sudo apt install cron
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Om man kjører
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+crontab -e
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+får man opp en fil som man kan bruke til å kjøre jobber til visse tider på døgnet. Følgende linje i
+crontab
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+# Edit this file to introduce tasks to be run by cron.
+#
+# m h  dom mon dow   command
+
+30 1 * * * /home/group1/bin/rsyncStudssh.sh
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+fører til at scriptet kjører hver natt kl 01.30. Hvis man bytter ut tallet 1 med *, vil scriptet
+<code>rsyncStudssh.sh</code> kjøres 30 minutter etter hver hele time. Forkortelsene i linjen over forklarer
+syntaksen i crontab:
+<table width="90%"><tr><td align="right" valign="top">m</td><td valign="top">&nbsp;minute</td></tr>
+<tr><td align="right" valign="top">h</td><td valign="top">&nbsp;hour</td></tr>
+<tr><td align="right" valign="top">dom</td><td valign="top">&nbsp;day of month</td></tr>
+<tr><td align="right" valign="top">mon</td><td valign="top">&nbsp;month</td></tr>
+<tr><td align="right" valign="top">dow</td><td valign="top">&nbsp;day of week
+</td></tr></table>
+
+<P>
+På siden <A ID="tex2html90"
+  HREF="https://crontab.guru">crontab.guru</A>
+er det enkelt å teste ut hva forskjellige crontab-koder gir.
+
+<P>
+Om man har root aksess kan man også legge script i mappene definert i <code>/etc/crontab</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+group1@os1:~$ cat /etc/crontab 
+# /etc/crontab: system-wide crontab
+# Unlike any other crontab you don't have to run the `crontab'
+# command to install the new version when you edit this file
+# and files in /etc/cron.d. These files also have username fields,
+# that none of the other crontabs do.
+
+SHELL=/bin/sh
+PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
+
+# m h dom mon dow user	command
+17 *	* * *	root    cd / &amp;&amp; run-parts --report /etc/cron.hourly
+25 6	* * *	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.daily )
+47 6	* * 7	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.weekly )
+52 6	1 * *	root	test -x /usr/sbin/anacron || ( cd / &amp;&amp; run-parts --report /etc/cron.monthly )
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Script som for eksempel legges i <code>/etc/cron.hourly</code> vil kjøres 17 minutter over hver hele time.
+
+<P>
+
+<H2><A ID="SECTION000712000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">12</SPAN> wget</A>
+</H2>
+
+<P>
+<code>wget</code> henter web (og ftp) sider fra kommandolinjen.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+mroot@os50:~$ wget https://www.cs.oslomet.no/~haugerud/regn
+--2018-02-25 22:29:42--  https://www.cs.oslomet.no/~haugerud/regn
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+På denne måten kan store nedlastninger kjøres i bakgrunnen. Opsjonen <code>-O -</code> sender output til STDOUT, slik at det kan brukes i en pipe. 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+ wget -r https://www.gnu.org -o log.txt
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Opsjonen <code>-r</code> henter hele web-stedet rekursivt (default dybde er 5). Med opsjonen 
+<code>--mirror</code> og kjørt regelmessig,  kan man opprettholde en mirror-site.
+
+<P>
+
+<H2><A ID="SECTION000713000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">13</SPAN> gzip,bzip2, tar og zip</A>
+</H2>
+<code>gzip</code> komprimerer en fil mens <code>gunzip</code> dekomprimerer den.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ ll
+-rw-r--r--    1 haugerud drift      130680 Oct  5 20:11 passwd
+$ gzip passwd
+$ ll
+-rw-r--r--    1 haugerud drift       39093 Oct  5 20:11 passwd.gz
+$ gunzip passwd.gz
+$ ll
+-rw-r--r--    1 haugerud drift      130680 Oct  5 20:11 passwd
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+De nyere <code>bzip2</code> og <code>bunzip2</code> gjør det samme, er ikke like 
+raskt, men komprimerer bedre.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ bzip2 passwd
+$ ll
+-rw-r--r--    1 haugerud drift       29246 Oct  5 20:11 passwd.bz2
+$ bunzip2 passwd.bz2
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Kommandoen <code>tar</code> pakker en hel mappestruktur til en enkelt fil. 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ tar cf dir.tar dir  # Pakker alt ned i dir.tar, c = create
+$ tar xf dir.tar      # Pakker alt opp, lager dir, x = extract
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man kan kjøre <code>gzip</code> på en tar fil, men det er enklere å gjøre alt på 
+en gang:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ tar cfz dir.tgz dir  # Pakker alt ned i dir.tar, c = create, z = gzip
+$ tar xfz dir.tgz      # Pakker alt opp, lager dir, x = extract, z = gzip
+$ tar cfz ob1.tgz snort.bash info.bash # Pakker de to filene i ob1.tgz
+$ tar cfj dir.tbz dir  # j = bzip2
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man kan gjøre det samme med kommandoen <code>zip</code> som kan kjøre på mange 
+plattformer og er kompatibel med windows sin <code>PKZIP</code>. 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ zip -r dir.zip dir  # -r = rekursivt i mappen dir
+$ unzip dir.zip
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM><code>tar cfz</code> komprimerer noe mer:</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+-rw-------    1 haugerud drift      728780 Sep 27 00:58 forelesning.tgz
+-rw-------    1 haugerud drift     1086314 Sep 27 01:00 forelesning.zip
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000714000000000000000">
+<SPAN CLASS="arabic">6</SPAN>.<SPAN CLASS="arabic">14</SPAN> awk (ward)</A>
+</H2>
+
+<P>
+Syntaks: awk 'awk program' fil
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ ps u
+haugerud 23419  0.0  0.1  2032 1268 pts/1    S    09:07   0:00 -bash
+
+$  ps aux | awk '/haugerud/ {print $2}'
+23419
+4396
+4397
+$  ps aux | awk '/haugerud/ {print $2,$11}'
+23419 -bash
+4403 ps
+4404 awk
+$  ps aux | awk '{if ($1 == user) {print $2}}' user=`whoami`
+23419
+4416
+4417
+$ awk -F: '{ if ($1 == "haugerud") {print $NF}}' /etc/passwd
+/bin/bash
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000715000000000000000">
+Spørsmål</A>
+</H2>
+
+<H5><A ID="SECTION000715001000000000000">
+Hvordan fjerne et alias?</A>
+</H5>
+Svar: med unalias: <code>unalias move</code>
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2025-03-27
+</ADDRESS>
+</BODY>
+</HTML>
