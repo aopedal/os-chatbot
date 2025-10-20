@@ -15,9 +15,7 @@ COLLECTION_NAME = "os-pensum"
 QDRANT_HOST = "localhost"
 QDRANT_PORT = 6333
 
-SKIP_HEADINGS = ["Forelesningsvideoer"]
-
-def extract_html_sections(path, skip_heading_substrings=SKIP_HEADINGS, save_postprocessed=True):
+def extract_html_sections(path, save_postprocessed=True):
     """
     Parse HTML, skip sections under headings containing any of skip_heading_substrings,
     return list of strings, optionally save postprocessed HTML/text.
@@ -29,10 +27,6 @@ def extract_html_sections(path, skip_heading_substrings=SKIP_HEADINGS, save_post
 
     headers = soup.find_all(["h1", "h2", "h3", "h4", "h5", "h6"])
     for i, header in enumerate(headers):
-        heading_text = header.get_text(strip=True)
-        if any(skip in heading_text for skip in skip_heading_substrings):
-            continue
-
         content = []
         for sib in header.find_next_siblings():
             if sib.name and sib.name.startswith("h"):

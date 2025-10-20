@@ -1,14 +1,14 @@
 import requests
 import os
 
-def download_series(base_url: str, start: int = 1, output_dir: str = "downloads"):
+def download_series(base_url: str, prefix: str, start: int = 1, output_dir: str = "downloads"):
     """Download sequentially numbered HTML files until one is not found."""
     os.makedirs(output_dir, exist_ok=True)
     i = start
 
     while True:
         url = f"{base_url}{i}.html"
-        filename = os.path.join(output_dir, f"node{i}.html")
+        filename = os.path.join(output_dir, f"{prefix}_node{i}.html")
 
         print(f"Trying {url} …")
 
@@ -31,8 +31,21 @@ def download_series(base_url: str, start: int = 1, output_dir: str = "downloads"
 
 
 if __name__ == "__main__":
+    # Single folder for all downloads
+    output_dir = "knowledge"
+
     # Series 1: Operating Systems lectures
-    download_series("https://os.cs.oslomet.no/os/Forelesning/os/node", start=2, output_dir="knowledge/os")
+    download_series(
+        base_url="https://os.cs.oslomet.no/os/Forelesning/os/node",
+        prefix="os",
+        start=2,
+        output_dir=output_dir
+    )
 
     # Series 2: Linux lectures
-    download_series("https://os.cs.oslomet.no/os/Forelesning/linux/node", start=2, output_dir="knowledge/linux")
+    download_series(
+        base_url="https://os.cs.oslomet.no/os/Forelesning/linux/node",
+        prefix="linux",
+        start=2,
+        output_dir=output_dir
+    )
