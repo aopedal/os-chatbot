@@ -1,0 +1,5 @@
+vllm
+huggingface_hub
+triton
+flashinfer-python
+flashinfer-cubin
