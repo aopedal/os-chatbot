@@ -12,6 +12,7 @@ services:
       --port 8000
       --model /app/models/gpt-oss-20b
       --max_model_len 65536
+      --gpu-memory-utilization 0.75
     deploy:
       resources:
         reservations:
