@@ -3,3 +3,5 @@
 **/__pycache__/
 node_modules/
 ingestion/knowledge_postprocessed/
+inference/models/
+vectordb/
