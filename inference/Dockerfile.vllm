@@ -23,3 +23,6 @@ RUN pip install --upgrade huggingface_hub
 
 # Download LLM weights
 RUN hf download openai/gpt-oss-20b --local-dir /app/models/gpt-oss-20b
+
+# Optional: Install FlashInfer for optimized inference
+RUN pip install flashinfer-python flashinfer-cubin
