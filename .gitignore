@@ -1,4 +1,5 @@
 .venv/
 .navatar/
 **/__pycache__/
+node_modules/
 ingestion/knowledge_postprocessed/
