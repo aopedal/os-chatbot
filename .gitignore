@@ -2,6 +2,7 @@
 .navatar/
 **/__pycache__/
 node_modules/
-ingestion/knowledge_postprocessed/
+knowledge_processed/
 inference/models/
 vectordb/
+processed_chunks.jsonl

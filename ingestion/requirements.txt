@@ -8,3 +8,4 @@ tiktoken
 python-magic
 faiss-cpu
 unstructured
+weaviate-client
