@@ -42,7 +42,7 @@ for msg in st.session_state.messages:
     if msg["role"] == "user":
         st.chat_message("user").write(msg["content"])
     else:
-        st.chat_message("assistant").write(msg["content"])
+        st.chat_message("assistant").markdown(msg["content"], unsafe_allow_html=True)
 
 # User input
 if prompt := st.chat_input("Skriv en melding …"):
