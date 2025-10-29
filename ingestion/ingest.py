@@ -1,16 +1,20 @@
-import os
+# Just so local inclusion will work. Find a nicer way later...
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import json
 import uuid
 import torch
-from pathlib import Path
 from typing import List, Dict, Any
+from utils.naming import to_qdrant_name, to_weaviate_class
+import utils.config as config
 
 # Utilities
 from sentence_transformers import SentenceTransformer
 
 # Vector Databases
 from qdrant_client import QdrantClient
-from qdrant_client.http.models import Distance, VectorParams, models
+from qdrant_client.http.models import models
 import weaviate
 from weaviate.classes.config import (
     Configure,
@@ -19,23 +23,7 @@ from weaviate.classes.config import (
     VectorDistances,
 )
 from weaviate import WeaviateClient
-from weaviate.connect import ConnectionParams
 from weaviate.classes.data import DataObject
-
-# --- CONFIGURATION ---
-CHUNK_INPUT_FILE = "processed_chunks.jsonl" # File created by preprocess.py
-QDRANT_HOST = "localhost"
-QDRANT_PORT = 6333
-WEAVIATE_URL = "http://localhost:6444" 
-
-# The 5 models for the A/B test
-EMBEDDING_MODELS = {
-    "norbert3-base": "ltg/norbert3-base",
-    "nb-sbert-base": "NbAiLab/nb-sbert-base",
-    "multilingual-e5-large": "intfloat/multilingual-e5-large",
-    "bge-m3": "BAAI/bge-m3",
-    "gte-multilingual-base": "Alibaba-NLP/gte-multilingual-base",
-}
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -88,8 +76,12 @@ def upsert_to_qdrant(qdrant_client: QdrantClient, collection_name: str, chunk_da
     qdrant_points = []
     for data in chunk_data:
         # Use the stored metadata and vector
-        payload = data["metadata"].copy()
-        payload["text"] = data["chunk_text"] # Keep the text in the payload for retrieval
+        payload = {
+            "text": data["chunk_text"],
+            "source": data.get("source"),
+            "chunk_index": data.get("chunk_index"),
+            "anchor": data.get("anchor")  # new
+        }
         
         stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["id"])) 
         
@@ -98,15 +90,15 @@ def upsert_to_qdrant(qdrant_client: QdrantClient, collection_name: str, chunk_da
             "vector": data["vector"],
             "payload": payload
         })
-    
+
     batch_size = 128
     for i in range(0, len(qdrant_points), batch_size):
-        qdrant_client.upsert(collection_name=collection_name, 
-                             points=qdrant_points[i:i+batch_size], 
-                             wait=True)
+        qdrant_client.upsert(
+            collection_name=collection_name, 
+            points=qdrant_points[i:i+batch_size], 
+            wait=True
+            )
     print(f"  -> Successfully indexed {len(chunk_data)} chunks to Qdrant/{collection_name}")
-
-# --- WEAVIATE FUNCTIONS ---
 
 # --- WEAVIATE FUNCTIONS ---
 
@@ -131,31 +123,31 @@ def setup_weaviate_class(weaviate_client: WeaviateClient, class_name: str, vecto
         # Define the properties
         properties=[
             Property(name="source", data_type=DataType.TEXT),
-            Property(name="filename", data_type=DataType.TEXT),
             Property(name="chunk_index", data_type=DataType.INT),
             Property(name="text", data_type=DataType.TEXT),
+            Property(name="anchor", data_type=DataType.TEXT)
         ],
     )
     
 def upsert_to_weaviate(weaviate_client: WeaviateClient, class_name: str, chunk_data: List[Dict[str, Any]]):
     """Upserts data to Weaviate using v4 client's insert_many."""
     
-    # 1. Get the collection client (v4 concept)
+    # 1. Get the collection client
     collection = weaviate_client.collections.get(class_name)
 
     data_objects = []
     for data in chunk_data:
         # Weaviate properties object from chunk payload
         properties = {
-            "source": data["metadata"].get("source"),
-            "filename": data["metadata"].get("filename"),
-            "chunk_index": data["metadata"].get("chunk_index"),
+            "source": data.get("source"),
+            "chunk_index": data.get("chunk_index"),
             "text": data["chunk_text"],
+            "anchor": data.get("anchor")
         }
         
         stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["id"]))
         
-        # 2. Create the V4 DataObject for batch insertion
+        # 2. Create the DataObject for batch insertion
         data_object = DataObject(
             properties=properties,
             uuid=stable_uuid,
@@ -163,13 +155,13 @@ def upsert_to_weaviate(weaviate_client: WeaviateClient, class_name: str, chunk_d
         )
         data_objects.append(data_object)
     
-    # 3. Insert the list of DataObjects. V4 client handles efficient batching internally.
+    # 3. Insert the list of DataObjects.
     result = collection.data.insert_many(data_objects)
     
     # Optional: Check the result for errors
     if result.errors:
         print(f"  -> WARNING: {len(result.errors)} errors encountered during Weaviate batch import.")
-        # If you need to see the errors: print(result.errors)
+        print(result.errors)
         
     print(f"  -> Successfully indexed {len(chunk_data)} chunks to Weaviate/{class_name}")
 
@@ -179,54 +171,56 @@ def upsert_to_weaviate(weaviate_client: WeaviateClient, class_name: str, chunk_d
 if __name__ == "__main__":
     
     # 1. Load Pre-processed Chunks
-    print("--- 1. LOADING PRE-PROCESSED CHUNKS ---")
-    chunks = load_chunks(CHUNK_INPUT_FILE)
+    print("--- LOADING PRE-PROCESSED CHUNKS ---")
+    chunks = load_chunks(config.CHUNK_INPUT_FILE)
     
     if not chunks:
+        print("No chunks loaded, exiting")
         exit(1) # Stop if no chunks are loaded
     
+    print("--- CONNECTING TO VECTOR DATABASES ---")
     # 2. Setup Clients
-    print("\n--- 2. CONNECTING TO VECTOR DATABASES ---")
-    qdrant_client = QdrantClient(host=QDRANT_HOST, port=QDRANT_PORT)
-    
-    WEAVIATE_HOST_ONLY = WEAVIATE_URL.split('//')[-1].split(':')[0] # 'localhost'
-    WEAVIATE_PORT_ONLY = int(WEAVIATE_URL.split(':')[-1])           # 6444
-    WEAVIATE_GRPC_PORT = 50051 # Default gRPC port - check your docker-compose if connection fails!
+    QDRANT_TIMEOUT_SECONDS = 600
+    qdrant_client = QdrantClient(
+        host=config.QDRANT_HOST, 
+        port=config.QDRANT_PORT,
+        timeout=QDRANT_TIMEOUT_SECONDS
+    )
 
     try:
         # Connect using the explicit connect_to_custom helper for non-default ports
         weaviate_client = weaviate.connect_to_custom(
-            http_host=WEAVIATE_HOST_ONLY,
-            http_port=WEAVIATE_PORT_ONLY,
-            http_secure=False,      # Use True for HTTPS
-            grpc_host=WEAVIATE_HOST_ONLY,
-            grpc_port=WEAVIATE_GRPC_PORT,
-            grpc_secure=False,      # Use True for secure gRPC
+            http_host=config.WEAVIATE_HOST,
+            http_port=config.WEAVIATE_PORT,
+            http_secure=False,
+            grpc_host=config.WEAVIATE_HOST,
+            grpc_port=config.WEAVIATE_PORT_GRPC,
+            grpc_secure=False,
         )
     except Exception as e:
-        # Note: The old v3 fallback is removed as it caused a second TypeError.
-        raise ConnectionError(f"Weaviate client failed to connect to {WEAVIATE_URL} (and gRPC port {WEAVIATE_GRPC_PORT}). Error: {e}")
+        raise ConnectionError(f"Weaviate client failed to connect. Error: {e}")
 
-    # Optional: Check connection status (Good practice)
-    # The connect_to_custom method already connects, so we check readiness.
+    # Check connection status (readiness)
     if not weaviate_client.is_ready():
-        raise ConnectionError(f"Weaviate client failed the readiness check at {WEAVIATE_URL}. Check your Docker containers.")
+        raise ConnectionError(f"Weaviate client failed the readiness check. Check your Docker containers.")
 
     print("Successfully connected to Qdrant (6333) and Weaviate (6444).")
     
     # 3. Loop through Models, Embed, and Ingest
-    print("\n--- 3. STARTING EMBEDDING AND INDEXING LOOP ---")
+    print("\n--- STARTING EMBEDDING AND INDEXING LOOP ---")
     
-    for nickname, model_name in EMBEDDING_MODELS.items():
+    for model in config.EMBEDDING_MODELS:
         try:
-            print(f"\n[MODEL: {nickname}] Starting ingestion with model: {model_name}")
+            model_name = model['name']
+            model_id = model['id']
+            print(f"\n[MODEL: {model_name}] Starting ingestion for {model_id}")
             
             # 3a. Initialize Embedder and Define Collection Names
-            Q_COLLECTION_NAME = f"qdrant_{nickname.replace('-', '_')}"
-            W_CLASS_NAME = f"OsPensum_{nickname.replace('-', '')}"
+            Q_COLLECTION_NAME = to_qdrant_name(model_name)
+            W_CLASS_NAME = to_weaviate_class(model_name)
             
             embedder = SentenceTransformer(
-                model_name,
+                model_id,
                 device=DEVICE,
                 trust_remote_code=True
             )
@@ -249,3 +243,9 @@ if __name__ == "__main__":
             continue
 
     print("\n--- ALL INGESTION JOBS COMPLETE ---")
+
+    try:
+        if 'weaviate_client' in locals() and weaviate_client:
+            weaviate_client.close()
+    except Exception as e:
+        print(f"Warning: Failed to gracefully close Weaviate client: {e}")

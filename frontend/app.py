@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import re
 
 st.set_page_config(page_title="HårekBot", page_icon="💬", layout="centered")
 st.title("💬 Spør HårekBot")
@@ -17,18 +18,18 @@ config = get_config()
 st.sidebar.header("⚙️ Configuration")
 inference_model = st.sidebar.selectbox(
     "Inference Model",
-    options=[m["id"] for m in config["inference_models"]],
-    format_func=lambda x: next(m["name"] for m in config["inference_models"] if m["id"] == x),
+    options=[m["id"] for m in config["inference_model"]],
+    format_func=lambda x: next(m["name"] for m in config["inference_model"] if m["id"] == x),
 )
 embedding_model = st.sidebar.selectbox(
     "Embedding Model",
-    options=[m["id"] for m in config["embedding_models"]],
-    format_func=lambda x: next(m["name"] for m in config["embedding_models"] if m["id"] == x),
+    options=[m["id"] for m in config["embedding_model"]],
+    format_func=lambda x: next(m["name"] for m in config["embedding_model"] if m["id"] == x),
 )
 vector_db = st.sidebar.selectbox(
     "Vector Database",
-    options=[m["id"] for m in config["vector_dbs"]],
-    format_func=lambda x: next(m["name"] for m in config["vector_dbs"] if m["id"] == x),
+    options=[m["id"] for m in config["vector_db"]],
+    format_func=lambda x: next(m["name"] for m in config["vector_db"] if m["id"] == x),
 )
 
 # --- Chat Interface ---
@@ -51,7 +52,6 @@ if prompt := st.chat_input("Skriv en melding …"):
 
     # Initialize variables with default string values
     answer = "❌ Ingen respons fra serveren."
-    unique_sources = []
     
     try:
         res = requests.post(
@@ -71,31 +71,26 @@ if prompt := st.chat_input("Skriv en melding …"):
         answer = data.get("answer") 
         if answer is None:
             answer = "❌ Serveren returnerte et uventet tomt svar."
-
-        # Extract sources
-        sources = data.get("sources", [])
-        unique_sources = list(set(sources)) 
             
     except Exception as e:
         answer = f"❌ Feil ved kommunikasjon med backend: {e}"
-        unique_sources = [] # Clear sources on communication error
 
-    # Prepare the message content for display and history
-    display_content = answer # display_content is now guaranteed to be a string
+    # Extract sources from server response
+    sources = data.get("sources", [])
 
-    if unique_sources:
-        # Create clickable links... (rest of your source logic)
-        source_links = [
-            f"- <a href='http://localhost:8080/docs/{src}' target='_blank'>{src}</a>"
-            for src in unique_sources
-        ]
-        
-        # Add the sources to the display content
-        sources_md = "\n\n**Kilder:**\n" + "\n".join(source_links)
-        display_content += sources_md # This is now safe as display_content is a string
+    # Replace occurrences of source text in the answer with clickable links
+    display_content = answer
+    for src in sources:
+        # Match ID in square brackets, e.g. [node6_17_515]
+        pattern = re.escape(f"[{src['id']}]")
+        link = f"<a href='{src['url']}' target='_blank'>[{src['id']}]</a>"
+        display_content = re.sub(pattern, link, display_content)
 
-    # Store the full content in the session state... (rest of the code)
-    st.session_state.messages.append({"role": "assistant", "content": display_content, "raw_answer": answer, "sources": unique_sources})
-
-    # Display the full content
+    # Store and display
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": display_content,
+        "raw_answer": answer,
+        "sources": sources
+    })
     st.chat_message("assistant").markdown(display_content, unsafe_allow_html=True)

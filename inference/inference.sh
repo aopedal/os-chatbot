@@ -13,5 +13,6 @@ python3 -m vllm.entrypoints.openai.api_server \
       --host 0.0.0.0 \
       --port 8000 \
       --model models/gpt-oss-20b \
+      --served-model-name gpt-oss-20b \
       --max_model_len 131072 \
       --gpu-memory-utilization 0.75
