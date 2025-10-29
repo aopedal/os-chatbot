@@ -25,4 +25,5 @@ RUN pip install --upgrade huggingface_hub
 RUN hf download openai/gpt-oss-20b --local-dir /app/models/gpt-oss-20b
 
 # Optional: Install FlashInfer for optimized inference
-RUN pip install flashinfer-python flashinfer-cubin
+# TODO: Doesn't work out of the box, need nvcc
+# RUN pip install flashinfer-python flashinfer-cubin
