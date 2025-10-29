@@ -1,8 +1,7 @@
 .venv/
 .navatar/
-**/__pycache__/
+__pycache__/
 node_modules/
 knowledge_processed/
 inference/models/
-vectordb/
 processed_chunks.jsonl

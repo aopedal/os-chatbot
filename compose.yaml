@@ -1,0 +1,4 @@
+name: os-chatbot
+include:
+  - ./inference/compose.yaml
+  - ./vectordb/compose.yaml
