@@ -43,7 +43,7 @@ def load_chunks(file_path: str) -> List[Dict[str, Any]]:
 
 def get_embeddings(chunks: List[Dict[str, Any]], embedder: SentenceTransformer) -> List[Dict[str, Any]]:
     """Generates embeddings for all chunks."""
-    texts = [chunk["chunk_text"] for chunk in chunks]
+    texts = [chunk["text"] for chunk in chunks]
     print(f"  -> Generating {len(texts)} embeddings on {DEVICE}...")
     
     # Encode all texts in one batch for efficiency
@@ -77,13 +77,13 @@ def upsert_to_qdrant(qdrant_client: QdrantClient, collection_name: str, chunk_da
     for data in chunk_data:
         # Use the stored metadata and vector
         payload = {
-            "text": data["chunk_text"],
+            "identifier": data.get("identifier"),
+            "text": data.get("text"),
             "source": data.get("source"),
-            "chunk_index": data.get("chunk_index"),
-            "anchor": data.get("anchor")  # new
+            "anchor": data.get("anchor")
         }
         
-        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["id"])) 
+        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["identifier"])) 
         
         qdrant_points.append({
             "id": stable_uuid,
@@ -122,9 +122,9 @@ def setup_weaviate_class(weaviate_client: WeaviateClient, class_name: str, vecto
         
         # Define the properties
         properties=[
-            Property(name="source", data_type=DataType.TEXT),
-            Property(name="chunk_index", data_type=DataType.INT),
+            Property(name="identifier", data_type=DataType.TEXT),
             Property(name="text", data_type=DataType.TEXT),
+            Property(name="source", data_type=DataType.TEXT),
             Property(name="anchor", data_type=DataType.TEXT)
         ],
     )
@@ -139,13 +139,13 @@ def upsert_to_weaviate(weaviate_client: WeaviateClient, class_name: str, chunk_d
     for data in chunk_data:
         # Weaviate properties object from chunk payload
         properties = {
+            "identifier": data.get("identifier"),
+            "text": data.get("text"),
             "source": data.get("source"),
-            "chunk_index": data.get("chunk_index"),
-            "text": data["chunk_text"],
             "anchor": data.get("anchor")
         }
         
-        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["id"]))
+        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["identifier"]))
         
         # 2. Create the DataObject for batch insertion
         data_object = DataObject(
@@ -210,8 +210,8 @@ if __name__ == "__main__":
     print("\n--- STARTING EMBEDDING AND INDEXING LOOP ---")
     
     for model in config.EMBEDDING_MODELS:
+        model_name = model.get('name', 'UNKNOWN_MODEL')
         try:
-            model_name = model['name']
             model_id = model['id']
             print(f"\n[MODEL: {model_name}] Starting ingestion for {model_id}")
             
@@ -225,6 +225,8 @@ if __name__ == "__main__":
                 trust_remote_code=True
             )
             vector_size = embedder.get_sentence_embedding_dimension()
+            if vector_size is None:
+                raise ValueError(f"Could not determine vector size for model {model_name}")
             
             # 3b. Generate Embeddings for all chunks
             # Pass a copy to avoid contaminating the original 'chunks' list with vectors

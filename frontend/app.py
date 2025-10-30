@@ -82,8 +82,8 @@ if prompt := st.chat_input("Skriv en melding …"):
     display_content = answer
     for src in sources:
         # Match ID in square brackets, e.g. [node6_17_515]
-        pattern = re.escape(f"[{src['id']}]")
-        link = f"<a href='{src['url']}' target='_blank'>[{src['id']}]</a>"
+        pattern = re.escape(f"[{src['identifier']}]")
+        link = f"<a href='{src['url']}' target='_blank'>[{src['identifier']}]</a>"
         display_content = re.sub(pattern, link, display_content)
 
     # Store and display

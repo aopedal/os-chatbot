@@ -2,7 +2,7 @@
 import sys, os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from fastapi import FastAPI, Response
+from fastapi import FastAPI, Response, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -19,7 +19,6 @@ import uuid
 from functools import lru_cache
 from utils.naming import to_qdrant_name, to_weaviate_class
 from contextlib import asynccontextmanager
-from http.client import HTTPException
 import utils.config as config
 
 # ------------------- CONFIG -------------------
@@ -82,7 +81,7 @@ async def serve_docs(file_path: str):
     # Serve local file if it exists
     if os.path.exists(local_path) and os.path.isfile(local_path):
         return FileResponse(local_path)
-    
+    """
     # File not found locally, fetch from remote
     remote_url = f"{REMOTE_BASE_URL}/{file_path}"
     async with httpx.AsyncClient() as client:
@@ -96,6 +95,9 @@ async def serve_docs(file_path: str):
             return Response(content=r.content, media_type=r.headers.get("content-type"))
         else:
             return Response(status_code=404, content="File not found")
+            """
+    return Response(status_code=404, content="File not found")
+    
 
 origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
 app.add_middleware(
@@ -211,16 +213,17 @@ async def chat(req: ChatRequest):
             response = collection.query.near_vector(
                 near_vector=qvec,
                 limit=20,
-                return_properties=["text", "source", "filename"],
+                return_properties=["identifier", "text", "source", "anchor"],
                 return_metadata=MetadataQuery(distance=True, score=True)
             )
             
             for obj in response.objects:
                 payload = {
+                    "identifier": obj.properties.get("identifier"),
                     "text": obj.properties.get("text"),
                     "content": obj.properties.get("text"), # Map 'text' to 'content' for compatibility
                     "source": obj.properties.get("source"),
-                    "filename": obj.properties.get("filename")
+                    "anchor": obj.properties.get("anchor")
                 }
                 # Create a simple object wrapper to maintain compatibility with the rerank_hits function
                 # This works because the rerank_hits function only expects a .payload attribute
@@ -233,17 +236,21 @@ async def chat(req: ChatRequest):
     # 2. Context De-duplication
     unique_contexts = {}
     for h in hits:
-        payload = h.payload
-        txt = (payload.get("text") or payload.get("content") or "").strip()
+        payload = getattr(h, "payload", {}) or {}
+        # Prefer 'text' then 'content' to be compatible with different vector DBs
+        text_value = payload.get("text") or payload.get("content") or ""
+        txt = text_value.strip()
         if txt and txt not in unique_contexts:
+            logger.info(h)
             unique_contexts[txt] = h
     
     unique_candidates = list(unique_contexts.values())
 
     logger.info(f"Retrieved {len(hits)} total documents. {len(unique_candidates)} are unique candidates.")
 
+
     # 3. Reranking (Keep the top 5 documents after reranking)
-    final_hits = rerank_hits(req.message, unique_candidates, top_k=5)
+    final_hits = unique_candidates #rerank_hits(req.message, unique_candidates, top_k=5)
     
     logger.info(f"Reranked and selected {len(final_hits)} final documents.")
 
@@ -252,7 +259,7 @@ async def chat(req: ChatRequest):
     sources = []
     for h in final_hits:
         payload = h.payload or {}
-        chunk_id = payload.get("id") or str(uuid.uuid4())
+        chunk_id = payload.get("identifier") or str(uuid.uuid4())
         source_file = payload.get("source") or "N/A"
         anchor = payload.get("anchor")
 
@@ -263,13 +270,13 @@ async def chat(req: ChatRequest):
         
         # Store mapping: id -> URL (text is optional)
         sources.append({
-            "id": chunk_id,
+            "identifier": chunk_id,
             "url": url,
             "text": payload.get("text", "")
         })
 
     # Build prompt: instruct LLM to reference sources by their IDs
-    source_ids = ", ".join([s["id"] for s in sources])
+    source_ids = ", ".join([s["identifier"] for s in sources])
     user_prompt = (
         f"KONTEKST:\n{source_ids}\n\n"
         f"BRUKERENS SPØRSMÅL:\n{req.message}\n\n"

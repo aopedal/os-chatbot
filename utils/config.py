@@ -29,6 +29,6 @@ SYSTEM_PROMPT = (
     "Sammen med brukerens spørsmål får du systemkontekst i form av pensummateriale fra faget DATA2500 Operativsystemer. "
     "Du skal i størst mulig grad bruke systemkonteksten til å svare på brukerens spørsmål. "
     "Bruk rikelig med kildereferanser, slik at det tydelig hvilken kilde som er brukt i hvilken del av svaret. "
-    "Kildereferanser skal oppgis med ID-en i klammer. Eksempel: [node6_17_515]. Frontenden gjør dette om til linker. "
+    "Kildereferanser skal oppgis med identifier i klammer. Eksempel: [node6_17_515]. Frontenden gjør dette om til linker. "
     "Hvis du tilføyer informasjon som ikke er nevnt i kildene, skal du tydelig oppgi ChatGPT som referanse. "
 )
