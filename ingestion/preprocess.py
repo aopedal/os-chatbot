@@ -13,49 +13,193 @@ POSTPROCESSED_DIR = Path("./knowledge_processed")
 CHUNK_OUTPUT_FILE = "processed_chunks.jsonl"  # File to store all chunks
 
 # Chunking
-TEXT_SPLITTER = RecursiveCharacterTextSplitter(chunk_size=800, chunk_overlap=150)
+TEXT_SPLITTER = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=900)
 
 # --- HELPER FUNCTIONS ---
 
-def generate_text_fragment_anchor(chunk_text: str, max_chars: int = 60) -> str:
+def generate_text_fragment_anchor(text: str, max_chars: int = 60) -> str:
     """
     Generates a #:~:text= style anchor for a chunk.
     Takes the first max_chars of the chunk as the highlight text.
     """
-    snippet = chunk_text.strip().replace("\n", " ")
+    snippet = text.strip().replace("\n", " ")
     if len(snippet) > max_chars:
-        snippet = snippet[:max_chars] + "…"  # ellipsis if truncated
+        snippet = snippet[:max_chars]
     encoded = quote(snippet, safe="")
     return f"#:~:text={encoded}"
 
 
-def extract_content(path: Path, save_path: Path) -> str:
-    """
-    Extracts text content from a single file (HTML or TXT) and saves postprocessed text.
-    Returns the cleaned text content as a string.
-    """
+from bs4 import BeautifulSoup, Tag, Comment
+from bs4.element import NavigableString
+from pathlib import Path
+
+from bs4 import BeautifulSoup, Tag, Comment
+from bs4.element import NavigableString
+from pathlib import Path
+
+def extract_content_traversal(path: Path, save_path: Path) -> str | None:
+
     print(f"Loading {path}...")
     save_path.parent.mkdir(parents=True, exist_ok=True)
-    text_content = ""
+    
+    if path.suffix.lower() != ".html":
+        if path.suffix.lower() == ".txt":
+            with open(path, "r", encoding="utf-8") as f:
+                text_content = f.read().strip()
+            return text_content
+        return None 
 
-    if path.suffix.lower() == ".html":
-        with open(path, "r", encoding="utf-8") as f:
-            soup = BeautifulSoup(f, "html.parser")
-        # Flatten the page text
-        text_content = soup.get_text(" ", strip=True)
+    with open(path, "r", encoding="utf-8") as f:
+        soup = BeautifulSoup(f, "html.parser")
+    
+    # --- 1. PRE-CLEANUP ---
+    for selector in ['a#CHILD_LINKS', 'ul.ChildLinks', 'hr', 'address']:
+        tag = soup.select_one(selector)
+        if tag: tag.decompose()
 
-    elif path.suffix.lower() == ".txt":
-        with open(path, "r", encoding="utf-8") as f:
-            text_content = f.read().strip()
-    else:
-        return None  # skip unsupported file types
+    for img in soup.find_all('img'):
+        img.decompose()
+        
+    for comment in soup.find_all(string=lambda text: isinstance(text, Comment)):
+        comment.extract()
+        
+    output_lines = []
+    
+    RECURSION_SKIP = ['h1', 'h2', 'h3', 'li', 'table', 'pre', 'a']
+    BREAK_AFTER = ['h1', 'h2', 'h3', 'p', 'li'] 
+    BREAK_BEFORE = ['h1', 'h2', 'h3', 'p', 'ul', 'ol', 'pre', 'table']
 
-    # Save postprocessed text as .txt
+    def get_tag_text(element):
+        """Recursively extracts text, ensuring new lines and preventing duplication."""
+        
+        # 1. Handle NavigableString (Text Node) - REVISED LOGIC
+        if isinstance(element, NavigableString):
+            stripped_text = str(element).strip()
+            if stripped_text:
+                # If the last line is not a hard block break ('\n'), aggressively concatenate.
+                if output_lines and output_lines[-1] and not output_lines[-1].endswith('\n'):
+                    # Ensure space separation if needed
+                    if not output_lines[-1].endswith(' '):
+                        output_lines[-1] += ' '
+                    output_lines[-1] += stripped_text
+                else:
+                    # If the last item was a newline or the list is empty, append as a new item.
+                    output_lines.append(stripped_text)
+            return 
+        
+        # 2. Handle Tag (Element)
+        
+        # --- REVISED <em> HANDLING ---
+        elif element.name == 'em':
+            italic_text = f"*{element.get_text(strip=False).strip()}*"
+            
+            # Concatenate aggressively onto the last line item, treating it as inline text.
+            if output_lines and output_lines[-1] and not output_lines[-1].endswith('\n'):
+                 if not output_lines[-1].endswith(' '):
+                    output_lines[-1] += ' '
+                 output_lines[-1] += italic_text
+            else:
+                 output_lines.append(italic_text)
+            
+            return # Skip children since we used get_text()
+
+        # --- BLOCK ELEMENT START ---
+        if element.name in BREAK_BEFORE:
+            output_lines.append('\n\n')
+
+        # Handle Headings
+        if element.name in ['h1', 'h2', 'h3']:
+            text = element.text.strip()
+            if element.name == 'h1' and "Forelesning slides ." in text:
+                 text = text.split("Forelesning slides .")[0].strip()
+            output_lines.append(text)
+            
+        # Handle Lists
+        elif element.name == 'li':
+            output_lines.append(f'* {element.text.strip()}')
+
+        # Handle Links
+        elif element.name == 'a':
+            link_text = element.text.strip()
+            if link_text:
+                output_lines.append(link_text)
+
+        # Handle Code Blocks (PRE)
+        elif element.name == 'pre':
+            output_lines.append('---CODE START---')
+            output_lines.append(element.get_text(strip=False).strip())
+            output_lines.append('---CODE END---')
+
+        elif element.name == 'table':
+            
+            pre_tags = element.find_all('pre')
+            td_tags = element.find_all('td')
+            th_tags = element.find_all('th')
+            
+            is_code_table = (
+                len(pre_tags) == 1 and 
+                len(td_tags) <= 1 and 
+                len(th_tags) == 0
+            )
+
+            # Extract Caption and DECOMPOSE it
+            caption = element.find('caption', class_='BOTTOM')
+            caption_text = None
+            if caption:
+                caption_text = caption.text.strip().replace("Figure: Figure:", "Figure:").replace("Figure: Figure", "Figure:")
+                caption.decompose() 
+
+            if is_code_table:
+                # TREAT AS CODE BLOCK ONLY
+                output_lines.append('---CODE START---')
+                output_lines.append(pre_tags[0].get_text(strip=False).strip())
+                output_lines.append('---CODE END---')
+                if caption_text:
+                    output_lines.append(caption_text)
+            else:
+                # TREAT AS STANDARD TABLE
+                output_lines.append('\n---TABLE START---')
+                
+                headers = [th.text.strip() for th in element.find_all('th')]
+                if headers: 
+                    output_lines.append(" | ".join(headers) + " |")
+                
+                for tr in element.find_all('tr'):
+                    row_data = [td.text.strip() for td in tr.find_all('td')]
+                    output_lines.append(" | ".join([d for d in row_data if d]) + " |")
+                
+                if caption_text:
+                    output_lines.append(caption_text)
+                    
+                output_lines.append('---TABLE END---')
+
+        # 3. RECURSION
+        if element.name not in RECURSION_SKIP and element.name != 'em':
+            for child in element.children: 
+                if isinstance(child, (Tag, NavigableString)):
+                    get_tag_text(child)
+
+        # 4. BREAK AFTER
+        if element.name in BREAK_AFTER and output_lines and output_lines[-1].strip() not in ('\n', ''):
+            output_lines.append('\n')
+
+    # Start recursion from the body tag
+    if soup.body:
+        for child in soup.body.children:
+             if isinstance(child, (Tag, NavigableString)):
+                 get_tag_text(child)
+    
+    # --- 3. FINAL CLEANUP ---
+    text_content = "\n".join([line.strip() for line in output_lines if line.strip() or line.startswith(('*', '-'))])
+    text_content = text_content.replace('\n\n\n', '\n\n').strip()
+    
+    # Save the processed text
     if text_content:
-        with open(save_path.with_suffix(".txt"), "w", encoding="utf-8") as f:
+        save_path = save_path.with_suffix(".txt")
+        with open(save_path, "w", encoding="utf-8") as f:
             f.write(text_content)
-        print(f"  -> Saved postprocessed text to {save_path.with_suffix('.txt')}")
-
+        print(f"  -> Saved postprocessed text to {save_path}")
+        
     return text_content
 
 
@@ -72,7 +216,7 @@ def load_and_split_documents(data_dir: Path, postprocessed_dir: Path) -> List[Di
             relative_path = path.relative_to(data_dir)
             save_path = postprocessed_dir / relative_path
 
-            content = extract_content(path, save_path)
+            content = extract_content_traversal(path, save_path)
             if not content:
                 continue
 
@@ -82,12 +226,10 @@ def load_and_split_documents(data_dir: Path, postprocessed_dir: Path) -> List[Di
                 anchor = generate_text_fragment_anchor(chunk) if path.suffix.lower() == ".html" else None
 
                 all_chunks.append({
-                    "id": chunk_id,
-                    "chunk_text": chunk,
+                    "identifier": chunk_id,
+                    "text": chunk,
                     "anchor": anchor,
                     "source": str(relative_path),
-                    # Optionally keep chunk_index if you want
-                    # "chunk_index": i
                 })
 
     return all_chunks
