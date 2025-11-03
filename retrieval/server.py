@@ -1,10 +1,10 @@
 # Just so local inclusion will work. Find a nicer way later...
 import sys, os
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from fastapi import FastAPI, Response, HTTPException
-from fastapi.responses import FileResponse
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI, HTTPException
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 import weaviate
@@ -12,7 +12,6 @@ from weaviate.classes.query import MetadataQuery
 from sentence_transformers import SentenceTransformer, CrossEncoder
 
 import httpx
-import os
 import logging
 import torch
 import uuid
@@ -72,41 +71,7 @@ STATIC_FILES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "ingestion", "kn
 REMOTE_BASE_URL = "https://os.cs.oslomet.no"
 
 # Ensure the static directory exists
-os.makedirs(STATIC_FILES_DIR, exist_ok=True)
-
-@app.get(config.STATIC_FILES_URI_PATH + "{file_path:path}")
-async def serve_docs(file_path: str):
-    local_path = os.path.join(STATIC_FILES_DIR, file_path)
-    
-    # Serve local file if it exists
-    if os.path.exists(local_path) and os.path.isfile(local_path):
-        return FileResponse(local_path)
-    """
-    # File not found locally, fetch from remote
-    remote_url = f"{REMOTE_BASE_URL}/{file_path}"
-    async with httpx.AsyncClient() as client:
-        r = await client.get(remote_url)
-        if r.status_code == 200:
-            # Ensure parent directories exist before saving
-            os.makedirs(os.path.dirname(local_path), exist_ok=True)
-            # Save file locally for future requests
-            with open(local_path, "wb") as f:
-                f.write(r.content)
-            return Response(content=r.content, media_type=r.headers.get("content-type"))
-        else:
-            return Response(status_code=404, content="File not found")
-            """
-    return Response(status_code=404, content="File not found")
-    
-
-origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+app.mount(config.STATIC_FILES_URI_PATH, StaticFiles(directory=STATIC_FILES_DIR))
 
 # Initialize the Reranker Model globally
 logger.info(f"Loading reranker model: {RERANKER_MODEL_ID}")
@@ -129,27 +94,6 @@ def load_embedder(model_id: str):
     """Loads and caches the SentenceTransformer embedding model."""
     logger.info(f"Loading embedder model: {model_id}")
     return SentenceTransformer(model_id, device="cuda" if torch.cuda.is_available() else "cpu", trust_remote_code=True)
-
-def rerank_hits(query: str, hits: list, top_k: int = 5):
-    """
-    Reranks the retrieved hits based on the query using the Cross-Encoder.
-    Handles both Qdrant PointStruct objects and Weaviate-adapted objects (with .payload).
-    """
-    pairs = []
-    for h in hits:
-        # Assuming h has a .payload attribute
-        payload = h.payload
-        text = payload.get("text") or payload.get("content") or ""
-        pairs.append((query, text))
-    
-    scores = reranker.predict(pairs)
-    reranked_combined = sorted(zip(hits, scores), key=lambda x: x[1], reverse=True)
-    reranked_hits = [h for h, _ in reranked_combined[:top_k]]
-    
-    if reranked_combined:
-        logger.info(f"Reranking done. Top score: {reranked_combined[0][1]:.4f}")
-        
-    return reranked_hits
 
 # ------------------- ENDPOINT -------------------
 
@@ -221,7 +165,6 @@ async def chat(req: ChatRequest):
                 payload = {
                     "identifier": obj.properties.get("identifier"),
                     "text": obj.properties.get("text"),
-                    "content": obj.properties.get("text"), # Map 'text' to 'content' for compatibility
                     "source": obj.properties.get("source"),
                     "anchor": obj.properties.get("anchor")
                 }
@@ -237,22 +180,15 @@ async def chat(req: ChatRequest):
     unique_contexts = {}
     for h in hits:
         payload = getattr(h, "payload", {}) or {}
-        # Prefer 'text' then 'content' to be compatible with different vector DBs
-        text_value = payload.get("text") or payload.get("content") or ""
+        text_value = payload.get("text") or ""
         txt = text_value.strip()
         if txt and txt not in unique_contexts:
             logger.info(h)
             unique_contexts[txt] = h
     
-    unique_candidates = list(unique_contexts.values())
+    final_hits = list(unique_contexts.values())
 
-    logger.info(f"Retrieved {len(hits)} total documents. {len(unique_candidates)} are unique candidates.")
-
-
-    # 3. Reranking (Keep the top 5 documents after reranking)
-    final_hits = unique_candidates #rerank_hits(req.message, unique_candidates, top_k=5)
-    
-    logger.info(f"Reranked and selected {len(final_hits)} final documents.")
+    logger.info(f"Retrieved {len(hits)} total documents. {len(final_hits)} are unique candidates.")
 
     # Build sources
     # Build sources for frontend replacement
@@ -264,7 +200,7 @@ async def chat(req: ChatRequest):
         anchor = payload.get("anchor")
 
         if anchor:
-            url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}{anchor}"
+            url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}#{anchor}"
         else:
             url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}"
         
