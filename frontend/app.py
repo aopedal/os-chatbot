@@ -52,6 +52,7 @@ if prompt := st.chat_input("Skriv en melding …"):
 
     # Initialize variables with default string values
     answer = "❌ Ingen respons fra serveren."
+    data = {}
     
     try:
         res = requests.post(
@@ -75,13 +76,11 @@ if prompt := st.chat_input("Skriv en melding …"):
     except Exception as e:
         answer = f"❌ Feil ved kommunikasjon med backend: {e}"
 
-    # Extract sources from server response
-    sources = data.get("sources", [])
-
     # Replace occurrences of source text in the answer with clickable links
     display_content = answer
+    sources = data.get("sources", [])
     for src in sources:
-        # Match ID in square brackets, e.g. [node6_17_515]
+        # Match ID in square brackets, e.g. [linux9.2]
         pattern = re.escape(f"[{src['identifier']}]")
         link = f"<a href='{src['url']}' target='_blank'>[{src['identifier']}]</a>"
         display_content = re.sub(pattern, link, display_content)
