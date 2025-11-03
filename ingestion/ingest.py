@@ -72,18 +72,14 @@ def setup_qdrant_collection(qdrant_client: QdrantClient, collection_name: str, v
     )
 
 def upsert_to_qdrant(qdrant_client: QdrantClient, collection_name: str, chunk_data: List[Dict[str, Any]]):
-    """Upserts data to Qdrant."""
+    """Upserts data to Qdrant with all available fields except the vector itself."""
     qdrant_points = []
     for data in chunk_data:
-        # Use the stored metadata and vector
-        payload = {
-            "identifier": data.get("identifier"),
-            "text": data.get("text"),
-            "source": data.get("source"),
-            "anchor": data.get("anchor")
-        }
+        # Copy all fields except the vector (Qdrant separates vectors from payload)
+        payload = {k: v for k, v in data.items() if k != "vector"}
         
-        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["identifier"])) 
+        # Use a deterministic UUID (based on identifier or text)
+        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data.get("identifier", data.get("text", str(uuid.uuid4())))))
         
         qdrant_points.append({
             "id": stable_uuid,
@@ -95,70 +91,84 @@ def upsert_to_qdrant(qdrant_client: QdrantClient, collection_name: str, chunk_da
     for i in range(0, len(qdrant_points), batch_size):
         qdrant_client.upsert(
             collection_name=collection_name, 
-            points=qdrant_points[i:i+batch_size], 
+            points=qdrant_points[i:i + batch_size],
             wait=True
-            )
+        )
+
     print(f"  -> Successfully indexed {len(chunk_data)} chunks to Qdrant/{collection_name}")
 
 # --- WEAVIATE FUNCTIONS ---
 
-def setup_weaviate_class(weaviate_client: WeaviateClient, class_name: str, vector_size: int):
-    """Sets up a Weaviate class (collection) for pre-computed vectors (v4)."""
+def setup_weaviate_class(
+    weaviate_client: WeaviateClient,
+    class_name: str,
+    vector_size: int,
+    sample_chunk: Dict[str, Any]
+):
+    """Sets up a Weaviate class dynamically based on chunk fields."""
     print(f"Setting up Weaviate class: {class_name}")
 
-    # 1. DELETE the collection if it exists (for recreation/idempotency)
+    # 1. DELETE existing class for clean recreation
     if weaviate_client.collections.exists(class_name):
-        print(f"  -> Deleting existing class: {class_name}")
+        print(f"  -> Deleting existing class: {class_name}")
         weaviate_client.collections.delete(class_name)
 
-    # 2. CREATE the new collection using v4 configuration classes
+    # 2. Dynamically infer property schema from the sample chunk
+    properties = []
+    for key, value in sample_chunk.items():
+        if key == "vector":
+            continue  # skip vector field
+        # Infer Weaviate data type based on Python type
+        if isinstance(value, (str, type(None))):
+            dtype = DataType.TEXT
+        elif isinstance(value, bool):
+            dtype = DataType.BOOL
+        elif isinstance(value, int):
+            dtype = DataType.INT
+        elif isinstance(value, float):
+            dtype = DataType.NUMBER
+        elif isinstance(value, list):
+            # You can refine this logic further (list of strings vs numbers)
+            dtype = DataType.TEXT_ARRAY
+        else:
+            dtype = DataType.TEXT  # fallback
+
+        properties.append(Property(name=key, data_type=dtype))
+
+    # 3. CREATE the new Weaviate class
     weaviate_client.collections.create(
         name=class_name,
         vector_config=Configure.Vectors.self_provided(
             vector_index_config=Configure.VectorIndex.hnsw(
-                distance_metric=VectorDistances.COSINE 
+                distance_metric=VectorDistances.COSINE
             )
         ),
-        
-        # Define the properties
-        properties=[
-            Property(name="identifier", data_type=DataType.TEXT),
-            Property(name="text", data_type=DataType.TEXT),
-            Property(name="source", data_type=DataType.TEXT),
-            Property(name="anchor", data_type=DataType.TEXT)
-        ],
+        properties=properties,
     )
+
+    print(f"  -> Created dynamic Weaviate class with {len(properties)} properties.")
+
     
 def upsert_to_weaviate(weaviate_client: WeaviateClient, class_name: str, chunk_data: List[Dict[str, Any]]):
-    """Upserts data to Weaviate using v4 client's insert_many."""
-    
-    # 1. Get the collection client
+    """Upserts data to Weaviate with all available fields except the vector itself."""
     collection = weaviate_client.collections.get(class_name)
-
     data_objects = []
+
     for data in chunk_data:
-        # Weaviate properties object from chunk payload
-        properties = {
-            "identifier": data.get("identifier"),
-            "text": data.get("text"),
-            "source": data.get("source"),
-            "anchor": data.get("anchor")
-        }
+        # Include all fields except the vector
+        properties = {k: v for k, v in data.items() if k != "vector"}
         
-        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data["identifier"]))
+        stable_uuid = str(uuid.uuid5(uuid.NAMESPACE_DNS, data.get("identifier", data.get("text", str(uuid.uuid4())))))
         
-        # 2. Create the DataObject for batch insertion
         data_object = DataObject(
             properties=properties,
             uuid=stable_uuid,
             vector=data["vector"]
         )
         data_objects.append(data_object)
-    
-    # 3. Insert the list of DataObjects.
+
     result = collection.data.insert_many(data_objects)
-    
-    # Optional: Check the result for errors
+
     if result.errors:
         print(f"  -> WARNING: {len(result.errors)} errors encountered during Weaviate batch import.")
         print(result.errors)
@@ -237,7 +247,7 @@ if __name__ == "__main__":
             upsert_to_qdrant(qdrant_client, Q_COLLECTION_NAME, chunks_with_vectors)
             
             # 3d. WEAVIATE Ingestion
-            setup_weaviate_class(weaviate_client, W_CLASS_NAME, vector_size)
+            setup_weaviate_class(weaviate_client, W_CLASS_NAME, vector_size, chunks_with_vectors[0])
             upsert_to_weaviate(weaviate_client, W_CLASS_NAME, chunks_with_vectors)
 
         except Exception as e:
