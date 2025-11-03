@@ -12,11 +12,11 @@ WEAVIATE_PORT_GRPC = 50051
 
 # Embedding models
 EMBEDDING_MODELS = [
-    {"id": "ltg/norbert3-base", "name": "Norbert3 Base"},
-    {"id": "NbAiLab/nb-sbert-base", "name": "NB-SBERT Base"},
+    {"id": "Alibaba-NLP/gte-multilingual-base", "name": "GTE Multilingual Base"},
     {"id": "intfloat/multilingual-e5-large", "name": "Multilingual E5 Large"},
     {"id": "BAAI/bge-m3", "name": "BGE-M3"},
-    {"id": "Alibaba-NLP/gte-multilingual-base", "name": "GTE Multilingual Base"},
+    {"id": "ltg/norbert3-base", "name": "Norbert3 Base"},
+    {"id": "NbAiLab/nb-sbert-base", "name": "NB-SBERT Base"},
 ]
 
 # Knowledge config
@@ -29,6 +29,7 @@ SYSTEM_PROMPT = (
     "Sammen med brukerens spørsmål får du systemkontekst i form av pensummateriale fra faget DATA2500 Operativsystemer. "
     "Du skal i størst mulig grad bruke systemkonteksten til å svare på brukerens spørsmål. "
     "Bruk rikelig med kildereferanser, slik at det tydelig hvilken kilde som er brukt i hvilken del av svaret. "
-    "Kildereferanser skal oppgis med identifier i klammer. Eksempel: [node6_17_515]. Frontenden gjør dette om til linker. "
+    "Kildereferanser skal oppgis med identifier i klammer. Eksempel: [linux9.2]. Frontenden gjør dette om til linker. "
+    "Hvis en kodeblokk trenger kildereferanse, skal denne legges under kodeblokken, ikke inni. "
     "Hvis du tilføyer informasjon som ikke er nevnt i kildene, skal du tydelig oppgi ChatGPT som referanse. "
 )
