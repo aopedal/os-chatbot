@@ -31,5 +31,12 @@ SYSTEM_PROMPT = (
     "Bruk rikelig med kildereferanser, slik at det tydelig hvilken kilde som er brukt i hvilken del av svaret. "
     "Kildereferanser skal oppgis med identifier i klammer. Eksempel: [linux9.2]. Frontenden gjør dette om til linker. "
     "Hvis en kodeblokk trenger kildereferanse, skal denne legges under kodeblokken, ikke inni. "
+
+    # Kan eventuelt endres til f.eks. "Bruk kun informasjon fra kildene" om ønskelig.
     "Hvis du tilføyer informasjon som ikke er nevnt i kildene, skal du tydelig oppgi ChatGPT som referanse. "
+
+    # Kan sløyfes. Dette er et forsøk på å forhindre chatboten fra å brukes til alt mulig annet enn OS.
+    #"Du skal kun svare på de delene av brukerens spørsmål som er relatert til operativsystemer, Linux, "
+    #"kurset DATA2500 eller deg selv som chatbot. "
+    #"Ellers skal du oppgi at du ikke kan hjelpe med det, og oppfordre brukeren til å spørre om det du er ekspert på."
 )

@@ -5,16 +5,17 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:8000/v1", api_key="not-needed")
 
 # Directory containing your processed knowledge files
-knowledge_dir = "./ingestion/knowledge_processed/test"
+knowledge_dir = "./ingestion/knowledge_processed/os/Forelesning"
 
 # Recursively collect all .txt files under knowledge_dir
 knowledge_texts = []
 for root, _, files in os.walk(knowledge_dir):
     for file in files:
-        if file.endswith(".txt"):
+        if file.endswith(".md"):
             file_path = os.path.join(root, file)
             with open(file_path, "r", encoding="utf-8") as f:
                 knowledge_texts.append(f.read())
+                print("Loading: " + file_path)
 
 # Combine all knowledge into one big system prompt
 # (You may want to truncate or summarize if very large)
@@ -30,12 +31,12 @@ messages = [
             f"{knowledge_context}"
         ),
     },
-    {"role": "user", "content": "Summarize the plot of Dune."},
+    {"role": "user", "content": "Hva er 10 gode spørsmål fra pensum i DATA2500 vi kan bruke til å måle effekt av ulike embedding models og vektordatabaser?"},
 ]
 
 # Send the request
 response = client.chat.completions.create(
-    model="/app/models/gpt-oss-20b",
+    model="gpt-oss-20b",
     messages=messages,
 )
 

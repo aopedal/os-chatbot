@@ -16,7 +16,6 @@ The current focus of the project is to make a working RAG chatbot, and in order 
 During the ingestion step, knowledge is transformed into embeddings for each of the five models and then stored in both Qdrant and Weaviate, for a total of 10 configurations to be compared.
 
 Next steps:
-- Refine knowledge processing. Delineate HTML structure better, and tag embeddings with a precise location for more accurate source references in the frontend later.
 - Containerize all components.
 - Develop a comparison pipeline:
   - Come up with some good benchmark questions to identify decent and poor embedding model quality. Can be done by feeding a few knowledge files directly to the LLM at a time and asking it to identify good questions for this purpose.
