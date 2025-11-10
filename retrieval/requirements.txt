@@ -3,4 +3,5 @@ fastapi[all]
 uvicorn
 httpx
 qdrant-client
+weaviate-client
 sentence-transformers
