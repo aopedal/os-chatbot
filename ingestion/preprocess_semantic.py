@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from typing import List, Dict, TypedDict, Union
-from urllib.parse import quote
 from bs4 import BeautifulSoup, Tag, Comment
 from bs4.element import NavigableString
 import re

@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from qdrant_client import QdrantClient
 import weaviate
 from weaviate.classes.query import MetadataQuery
-from sentence_transformers import SentenceTransformer, CrossEncoder
+from sentence_transformers import SentenceTransformer
 
 import httpx
 import logging
@@ -68,17 +68,9 @@ app = FastAPI(lifespan=lifespan)
 # --- STATIC FILE SERVING ---
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_FILES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "ingestion", "knowledge"))
-REMOTE_BASE_URL = "https://os.cs.oslomet.no"
 
 # Ensure the static directory exists
 app.mount(config.STATIC_FILES_URI_PATH, StaticFiles(directory=STATIC_FILES_DIR))
-
-# Initialize the Reranker Model globally
-logger.info(f"Loading reranker model: {RERANKER_MODEL_ID}")
-reranker = CrossEncoder(
-    RERANKER_MODEL_ID,
-    device="cuda" if torch.cuda.is_available() else "cpu"
-)
 
 # ------------------- SCHEMA -------------------
 class ChatRequest(BaseModel):
@@ -126,7 +118,6 @@ async def chat(req: ChatRequest):
     if errors:
         raise HTTPException(status_code=400, detail=errors)
 
-    # Now you can safely use the validated values
     inference_model = req.inference_model
     embedding_model = req.embedding_model
     vector_db = req.vector_db
@@ -139,7 +130,6 @@ async def chat(req: ChatRequest):
     
     hits = []
     
-    # 1. Retrieve a larger set of candidates for reranking (e.g., top 20)
     if vector_db == "qdrant":
         collection_name = to_qdrant_name(embedding_model_name)
         hits = qdrant.search(collection_name=collection_name, query_vector=qvec, limit=20) 
@@ -168,8 +158,6 @@ async def chat(req: ChatRequest):
                     "source": obj.properties.get("source"),
                     "anchor": obj.properties.get("anchor")
                 }
-                # Create a simple object wrapper to maintain compatibility with the rerank_hits function
-                # This works because the rerank_hits function only expects a .payload attribute
                 hits.append(type('WeaviateHit', (object,), {'payload': payload}))
 
         except Exception as e:
@@ -191,7 +179,6 @@ async def chat(req: ChatRequest):
     logger.info(f"Retrieved {len(hits)} total documents. {len(final_hits)} are unique candidates.")
 
     # Build sources
-    # Build sources for frontend replacement
     sources = []
     for h in final_hits:
         payload = h.payload or {}
@@ -199,10 +186,9 @@ async def chat(req: ChatRequest):
         source_file = payload.get("source") or "N/A"
         anchor = payload.get("anchor")
 
+        url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}"
         if anchor:
-            url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}#{anchor}"
-        else:
-            url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}"
+            url += f"#{anchor}"
         
         # Store mapping: id -> URL (text is optional)
         sources.append({
@@ -251,8 +237,7 @@ async def chat(req: ChatRequest):
     assistant_text = data["choices"][0]["message"]["content"]
     logger.info(f"LLM Response:\n{assistant_text}")
 
-    # Return sources from the final, reranked list
     return {
         "answer": assistant_text,
-        "sources": sources  # now each item is a dict with 'text' and 'url'
+        "sources": sources
     }
