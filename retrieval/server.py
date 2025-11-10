@@ -211,17 +211,24 @@ async def chat(req: ChatRequest):
             "text": payload.get("text", "")
         })
 
-    # Build prompt: instruct LLM to reference sources by their IDs
-    source_ids = ", ".join([s["identifier"] for s in sources])
-    user_prompt = (
-        f"KONTEKST:\n{source_ids}\n\n"
-        f"BRUKERENS SPØRSMÅL:\n{req.message}\n\n"
+    context = "\n\n---\n\n".join(
+        (
+            f"Kildereferanse: {s['identifier']}\n"
+            f"URL: {s['url']}\n"
+            f"Tekst: {s['text']}"
+        )
+        for s in sources
     )
 
-    logger.info(sources)
+    logger.info(context)
 
-    # 4. Build prompt
-    user_prompt = f"KONTEKST:\n{sources}\n\nBRUKERENS SPØRSMÅL:\n{req.message}"
+    user_prompt = req.message
+    system_prompt = (
+        f"{config.SYSTEM_PROMPT}\n\n"
+        f"---\n\n"
+        f"RELEVANT PENSUMMATERIALE:\n\n"
+        f"{context}"
+    )
 
     logger.info(f"Prompt sent to LLM:\n{user_prompt}")
 
@@ -229,7 +236,7 @@ async def chat(req: ChatRequest):
     payload = {
         "model": inference_model,
         "messages": [
-            {"role": "system", "content": config.SYSTEM_PROMPT},
+            {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         "max_tokens": config.MAX_TOKENS,
