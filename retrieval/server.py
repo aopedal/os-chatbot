@@ -186,7 +186,7 @@ async def chat(req: ChatRequest):
         source_file = payload.get("source") or "N/A"
         anchor = payload.get("anchor")
 
-        url = f"http://localhost:8080{config.STATIC_FILES_URI_PATH}{source_file}"
+        url = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{source_file}"
         if anchor:
             url += f"#{anchor}"
         

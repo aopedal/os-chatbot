@@ -1,14 +1,26 @@
+import os
+
 # Inference config
-LLM_BASE = "http://127.0.0.1:8000/v1"
+LLM_HOST = os.getenv("LLM_HOST", "localhost")
+LLM_PORT = int(os.getenv("LLM_PORT", 8000))
+LLM_BASE = f"http://{LLM_HOST}:{LLM_PORT}/v1"
 MAX_TOKENS = 2048
 TEMPERATURE = 0.2
 
 # Vector db config
-QDRANT_HOST = "localhost"
-QDRANT_PORT = 6333
-WEAVIATE_HOST = "localhost"
-WEAVIATE_PORT = 6444
-WEAVIATE_PORT_GRPC = 50051
+QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
+QDRANT_PORT = int(os.getenv("QDRANT_PORT", 6333))
+
+WEAVIATE_HOST = os.getenv("WEAVIATE_HOST", "localhost")
+WEAVIATE_PORT = int(os.getenv("WEAVIATE_PORT", 6444))
+WEAVIATE_PORT_GRPC = int(os.getenv("WEAVIATE_PORT_GRPC", 50051))
+
+# Retrieval server config
+RETRIEVAL_HOST = os.getenv("RETRIEVAL_HOST", "localhost")
+RETRIEVAL_PORT = int(os.getenv("RETRIEVAL_PORT", 8080))
+RETRIEVAL_URL = f"http://{RETRIEVAL_HOST}:{RETRIEVAL_PORT}"
+STATIC_FILES_HOST = os.getenv("STATIC_FILES_HOST", RETRIEVAL_URL)
+STATIC_FILES_URI_PATH = os.getenv("STATIC_FILES_URI_PATH", "/ref/")
 
 # Embedding models
 EMBEDDING_MODELS = [
@@ -21,7 +33,6 @@ EMBEDDING_MODELS = [
 
 # Knowledge config
 CHUNK_INPUT_FILE = "processed_chunks.jsonl"
-STATIC_FILES_URI_PATH = "/ref/"
 
 # System prompt
 SYSTEM_PROMPT = (

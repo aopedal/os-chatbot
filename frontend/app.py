@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import re
+import utils.config as app_config
 
 st.set_page_config(page_title="HårekBot", page_icon="💬", layout="centered")
 st.title("💬 Spør HårekBot")
@@ -8,7 +9,7 @@ st.title("💬 Spør HårekBot")
 # --- Fetch available backend options ---
 @st.cache_data
 def get_config():
-    res = requests.get("http://localhost:8080/config", timeout=10)
+    res = requests.get(f"{app_config.RETRIEVAL_URL}/config", timeout=10)
     res.raise_for_status()
     return res.json()
 
@@ -56,7 +57,7 @@ if prompt := st.chat_input("Skriv en melding …"):
     
     try:
         res = requests.post(
-            "http://localhost:8080/chat",
+            f"{app_config.RETRIEVAL_URL}/chat",
             json={
                 "message": prompt,
                 "inference_model": inference_model,
