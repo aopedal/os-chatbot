@@ -5,18 +5,23 @@ from qdrant_client import QdrantClient
 import weaviate
 from weaviate.classes.query import MetadataQuery
 from sentence_transformers import SentenceTransformer
+import torch
 
 import os
 import httpx
 import logging
-import torch
 import uuid
+import locale
+from datetime import datetime
 from functools import lru_cache
-from utils.naming import to_qdrant_name, to_weaviate_class
 from contextlib import asynccontextmanager
+
+from utils.naming import to_qdrant_name, to_weaviate_class
 import utils.config as config
 
 # ------------------- CONFIG -------------------
+locale.setlocale(locale.LC_TIME, 'nb_NO.UTF-8')
+
 AVAILABLE_INFERENCE_MODELS = [
     {"id": "gpt-oss-20b", "name": "GPT-OSS 20B"}
 ]
@@ -202,17 +207,18 @@ async def chat(req: ChatRequest):
         for s in sources
     )
 
-    logger.info(context)
+    current_time = datetime.now().strftime("%A %d. %B %Y kl. %H:%M")
 
     user_prompt = req.message
     system_prompt = (
         f"{config.SYSTEM_PROMPT}\n\n"
+        f"Nåværende tidspunkt: {current_time}\n\n"
         f"---\n\n"
         f"RELEVANT PENSUMMATERIALE:\n\n"
         f"{context}"
     )
 
-    logger.info(f"Prompt sent to LLM:\n{user_prompt}")
+    logger.info(f"Prompt sent to LLM:\n{system_prompt}")
 
     # 5. Call LLM
     payload = {

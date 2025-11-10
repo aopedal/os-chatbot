@@ -11,6 +11,19 @@ COPY retrieval/requirements.txt ./retrieval/requirements.txt
 # Install dependencies (cached as long as requirements.txt doesn't change)
 RUN pip install --no-cache-dir -r retrieval/requirements.txt
 
+# Install locales
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends locales && \
+    # Generate Norwegian Bokmål
+    sed -i '/nb_NO.UTF-8/s/^# //' /etc/locale.gen && \
+    locale-gen nb_NO.UTF-8 && \
+    rm -rf /var/lib/apt/lists/*
+
+# Set environment variables so Python sees it
+ENV LANG=nb_NO.UTF-8
+ENV LANGUAGE=nb_NO.UTF-8
+ENV LC_ALL=nb_NO.UTF-8
+
 # Copy app code after dependencies
 COPY utils utils
 COPY retrieval retrieval
