@@ -1,0 +1,27 @@
+services:
+  retrieval:
+    build:
+      context: .
+      dockerfile: Dockerfile.retrieval
+    container_name: retrieval
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    depends_on:
+      - weaviate
+      - qdrant
+
+    environment:
+      LLM_HOST: vllm
+      LLM_PORT: 8000
+
+      QDRANT_HOST: qdrant
+      QDRANT_PORT: 6333
+
+      WEAVIATE_HOST: weaviate
+      WEAVIATE_PORT: 8080
+      WEAVIATE_PORT_GRPC: 50051
+    
+      RETRIEVAL_HOST: retrieval
+      RETRIEVAL_PORT: 8080
+      STATIC_FILES_HOST: http://localhost:8080 # Change to http://os.cs.oslomet.no in prod

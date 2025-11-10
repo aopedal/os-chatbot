@@ -1,0 +1,23 @@
+FROM python:3.11-slim
+RUN pip install --upgrade pip
+
+# Set environment
+ENV PYTHONPATH=/app
+WORKDIR /app
+
+# Copy only requirements first
+COPY retrieval/requirements.txt ./retrieval/requirements.txt
+
+# Install dependencies (cached as long as requirements.txt doesn't change)
+RUN pip install --no-cache-dir -r retrieval/requirements.txt
+
+# Copy app code after dependencies
+COPY utils utils
+COPY retrieval retrieval
+COPY ingestion/knowledge ingestion/knowledge
+
+# Now switch to retrieval dir for running
+WORKDIR /app/retrieval
+EXPOSE 8080
+RUN chmod +x start.sh
+CMD ["./start.sh"]

@@ -1,0 +1,15 @@
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    container_name: frontend
+    ports:
+      - "8501:8501"
+    restart: unless-stopped
+    depends_on:
+      - retrieval
+
+    environment:
+      RETRIEVAL_HOST: retrieval
+      RETRIEVAL_PORT: 8080

@@ -2,3 +2,5 @@ name: os-chatbot
 include:
   - ./inference/compose.yaml
   - ./vectordb/compose.yaml
+  - ./compose-retrieval.yaml
+  - ./compose-frontend.yaml

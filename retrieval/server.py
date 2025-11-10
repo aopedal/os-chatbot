@@ -1,8 +1,3 @@
-# Just so local inclusion will work. Find a nicer way later...
-import sys, os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from fastapi import FastAPI, HTTPException
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
@@ -11,6 +6,7 @@ import weaviate
 from weaviate.classes.query import MetadataQuery
 from sentence_transformers import SentenceTransformer
 
+import os
 import httpx
 import logging
 import torch
