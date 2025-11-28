@@ -1,21 +1,22 @@
 import streamlit as st
-import requests
+import httpx
+import json
 import re
 import utils.config as app_config
 
 st.set_page_config(page_title="HårekBot", page_icon="💬", layout="centered")
 st.title("💬 Spør HårekBot")
 
-# --- Fetch available backend options ---
+# Fetch backend config
 @st.cache_data
 def get_config():
-    res = requests.get(f"{app_config.RETRIEVAL_URL}/config", timeout=10)
+    res = httpx.get(f"{app_config.RETRIEVAL_URL}/config", timeout=10)
     res.raise_for_status()
     return res.json()
 
 config = get_config()
 
-# --- Dropdowns ---
+# Sidebar configuration
 st.sidebar.header("⚙️ Configuration")
 inference_model = st.sidebar.selectbox(
     "Inference Model",
@@ -33,9 +34,7 @@ vector_db = st.sidebar.selectbox(
     format_func=lambda x: next(m["name"] for m in config["vector_db"] if m["id"] == x),
 )
 
-# --- Chat Interface ---
-
-# Store chat messages in Streamlit session state
+# Chat messages in session
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -46,51 +45,60 @@ for msg in st.session_state.messages:
     else:
         st.chat_message("assistant").markdown(msg["content"], unsafe_allow_html=True)
 
-# User input
+# Chat input
 if prompt := st.chat_input("Skriv en melding …"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    # Initialize variables with default string values
-    answer = "❌ Ingen respons fra serveren."
-    data = {}
-    
+    placeholder = st.chat_message("assistant").container()
+    message_area = placeholder.empty()
+
+    raw_buffer = ""
+    sources = {}
+
+    def replace_placeholders(text):
+        return re.sub(
+            r"\{([^\{\}]+)\}",
+            lambda m: f"<a href='{sources.get(m.group(1), '#')}' target='_blank'>[{m.group(1)}]</a>",
+            text
+        )
+
     try:
-        res = requests.post(
-            f"{app_config.RETRIEVAL_URL}/chat",
+        with httpx.stream(
+            "POST",
+            f"{app_config.RETRIEVAL_URL}/chat/stream",
             json={
                 "message": prompt,
                 "inference_model": inference_model,
                 "embedding_model": embedding_model,
                 "vector_db": vector_db,
             },
-            timeout=60
-        )
-        res.raise_for_status()
-        
-        data = res.json()
-        # Set answer, relying on the server response's 'answer' field
-        answer = data.get("answer") 
-        if answer is None:
-            answer = "❌ Serveren returnerte et uventet tomt svar."
-            
+            timeout=None
+        ) as response:
+            for line in response.iter_lines():
+                if not line:
+                    continue
+
+                chunk = json.loads(line)
+
+                if chunk["type"] == "sources":
+                    for src in chunk["sources"]:
+                        sources[src["identifier"]] = src["url"]
+
+                elif chunk["type"] == "delta":
+                    raw_buffer += chunk["text"]
+                    message_area.markdown(replace_placeholders(raw_buffer), unsafe_allow_html=True)
+
+                elif chunk["type"] == "done":
+                    break
+
     except Exception as e:
-        answer = f"❌ Feil ved kommunikasjon med backend: {e}"
+        raw_buffer += f"\n\n---\nFeil ved kommunikasjon med backend: {e}"
 
-    # Replace occurrences of source text in the answer with clickable links
-    display_content = answer
-    sources = data.get("sources", [])
-    for src in sources:
-        # Match ID in square brackets, e.g. [linux9.2]
-        pattern = re.escape(f"[{src['identifier']}]")
-        link = f"<a href='{src['url']}' target='_blank'>[{src['identifier']}]</a>"
-        display_content = re.sub(pattern, link, display_content)
+    final_message = replace_placeholders(raw_buffer)
+    message_area.markdown(final_message, unsafe_allow_html=True)
 
-    # Store and display
     st.session_state.messages.append({
         "role": "assistant",
-        "content": display_content,
-        "raw_answer": answer,
-        "sources": sources
+        "content": final_message
     })
-    st.chat_message("assistant").markdown(display_content, unsafe_allow_html=True)

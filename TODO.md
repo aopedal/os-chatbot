@@ -2,7 +2,6 @@
   * Egen collection i vectordb for å sikre at vi henter kilder både i pensummateriale og i forelesningsvideoer
   * Tagges med timestamp, slik at vi kan lage link til rett sted i videoen
   * Kan video embeddes direkte i chatten?
-* Streaming responses (vis svaret linje for linje mens det genereres)
 * Samtalekontekst (la boten huske hva vi nettopp snakket om)
   * Kan kontekst caches, eller sender vi bare samtalehistorikken sammen med hver nye prompt?
 * Husk tidligere samtaletråder, slik de fleste offentlige LLM-er gjør

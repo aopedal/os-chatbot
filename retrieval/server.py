@@ -1,4 +1,6 @@
+from typing import Any, Dict
 from fastapi import FastAPI, HTTPException
+from fastapi.responses import StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
@@ -12,9 +14,11 @@ import httpx
 import logging
 import uuid
 import locale
+import json
 from datetime import datetime
 from functools import lru_cache
 from contextlib import asynccontextmanager
+from importlib.metadata import version
 
 from utils.naming import to_qdrant_name, to_weaviate_class
 import utils.config as config
@@ -33,44 +37,37 @@ AVAILABLE_VECTOR_DBS = [
     {"id": "weaviate", "name": "Weaviate (6444)"}
 ]
 
-RERANKER_MODEL_ID = "cross-encoder/ms-marco-MiniLM-L-6-v2"
-
 # ------------------- LOGGING -------------------
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("retrieval")
 
 # ------------------- CLIENTS -------------------
-# Qdrant Client
 qdrant = QdrantClient(host=config.QDRANT_HOST, port=config.QDRANT_PORT)
-logger.info(f"Qdrant client initialized on {config.QDRANT_HOST}:{config.QDRANT_PORT}")
+logger.info(f"Qdrant client (version {version('qdrant-client')}) initialized on {config.QDRANT_HOST}:{config.QDRANT_PORT}")
 
 weaviate_client = weaviate.connect_to_custom(
     http_host=config.WEAVIATE_HOST,
     http_port=config.WEAVIATE_PORT,
-    http_secure=False,  # Set to True if using HTTPS
+    http_secure=False,
     grpc_host=config.WEAVIATE_HOST,
     grpc_port=config.WEAVIATE_PORT_GRPC,
-    grpc_secure=False,  # Set to True if using HTTPS/gRPC
+    grpc_secure=False,
 )
-logger.info(f"Weaviate client initialized on {config.WEAVIATE_HOST}:{config.WEAVIATE_PORT}")
+logger.info(f"Weaviate client (version {version('weaviate-client')}) initialized on {config.WEAVIATE_HOST}:{config.WEAVIATE_PORT}")
 
 # ------------------- APP -------------------
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup logic (optional)
     yield
-    # Shutdown logic
     if weaviate_client:
         weaviate_client.close()
         logger.info("Weaviate client connection closed gracefully.")
 
 app = FastAPI(lifespan=lifespan)
 
-# --- STATIC FILE SERVING ---
+# Static files
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_FILES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "ingestion", "knowledge"))
-
-# Ensure the static directory exists
 app.mount(config.STATIC_FILES_URI_PATH, StaticFiles(directory=STATIC_FILES_DIR))
 
 # ------------------- SCHEMA -------------------
@@ -84,13 +81,13 @@ class ChatRequest(BaseModel):
 # ------------------- UTIL -------------------
 @lru_cache(maxsize=None)
 def load_embedder(model_id: str):
-    """Loads and caches the SentenceTransformer embedding model."""
     logger.info(f"Loading embedder model: {model_id}")
-    return SentenceTransformer(model_id, device="cuda" if torch.cuda.is_available() else "cpu", trust_remote_code=True)
+    return SentenceTransformer(
+        model_id,
+        device="cuda" if torch.cuda.is_available() else "cpu",
+        trust_remote_code=True
+    )
 
-# ------------------- ENDPOINT -------------------
-
-# Map request fields to their available options
 AVAILABLE_OPTIONS = {
     "inference_model": AVAILABLE_INFERENCE_MODELS,
     "embedding_model": AVAILABLE_EMBEDDERS,
@@ -99,116 +96,70 @@ AVAILABLE_OPTIONS = {
 
 @app.get("/config")
 async def get_config():
-    """Returns the available models and vector databases."""
     return AVAILABLE_OPTIONS
 
-@app.post("/chat")
-async def chat(req: ChatRequest):
-    """Handles the RAG chat logic: embedding, retrieval, deduplication, reranking, and LLM call."""
+# ------------------- STREAMING CHAT -------------------
+@app.post("/chat/stream")
+async def chat_stream(req: ChatRequest):
     logger.info(f"Incoming message: {req.message}")
-    
-    # Validate params
-    errors = []
+
+    # Validate options
     for field_name, available_options in AVAILABLE_OPTIONS.items():
         value = getattr(req, field_name)
-        if value is None:
-            continue  # Optional: skip if no value provided
-        if not any(opt["id"] == value for opt in available_options):
-            errors.append(f"Invalid {field_name}: {value}. Available: {[opt['id'] for opt in available_options]}")
-
-    if errors:
-        raise HTTPException(status_code=400, detail=errors)
-
-    inference_model = req.inference_model
-    embedding_model = req.embedding_model
-    vector_db = req.vector_db
-    embedding_model_name = next((opt['name'] for opt in AVAILABLE_EMBEDDERS if opt['id'] == embedding_model))
-    
-    logger.info(f"Using DB: {vector_db}, embedding model: {embedding_model_name}, inference model: {inference_model}")
-
-    embedder = load_embedder(embedding_model)
-    qvec = embedder.encode(req.message, normalize_embeddings=True).tolist()
-    
-    hits = []
-    
-    if vector_db == "qdrant":
-        collection_name = to_qdrant_name(embedding_model_name)
-        hits = qdrant.search(collection_name=collection_name, query_vector=qvec, limit=20) 
-        
-    elif vector_db == "weaviate":
-        if not weaviate_client: # Use the correctly named client variable
-            return {"answer": "Weaviate client is not initialized or failed connection. Cannot perform retrieval.", "sources": []}
-            
-        try:
-            # Get the collection object
-            collection_name = to_weaviate_class(embedding_model_name)
-            collection = weaviate_client.collections.get(collection_name)
-            
-            # Perform a vector-based query (NearVector)
-            response = collection.query.near_vector(
-                near_vector=qvec,
-                limit=20,
-                return_properties=["identifier", "text", "source", "anchor"],
-                return_metadata=MetadataQuery(distance=True, score=True)
+        if value and not any(opt["id"] == value for opt in available_options):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Invalid {field_name}: {value}. Available: {[opt['id'] for opt in available_options]}"
             )
-            
-            for obj in response.objects:
-                payload = {
-                    "identifier": obj.properties.get("identifier"),
-                    "text": obj.properties.get("text"),
-                    "source": obj.properties.get("source"),
-                    "anchor": obj.properties.get("anchor")
-                }
-                hits.append(type('WeaviateHit', (object,), {'payload': payload}))
 
-        except Exception as e:
-            logger.error(f"Weaviate search failed: {e}")
-            return {"answer": f"Error during Weaviate retrieval: {e}", "sources": []}
-            
-    # 2. Context De-duplication
-    unique_contexts = {}
-    for h in hits:
-        payload = getattr(h, "payload", {}) or {}
-        text_value = payload.get("text") or ""
-        txt = text_value.strip()
-        if txt and txt not in unique_contexts:
-            logger.info(h)
-            unique_contexts[txt] = h
-    
-    final_hits = list(unique_contexts.values())
+    embedding_model_name = next((opt['name'] for opt in AVAILABLE_EMBEDDERS if opt['id'] == req.embedding_model))
 
-    logger.info(f"Retrieved {len(hits)} total documents. {len(final_hits)} are unique candidates.")
+    logger.info(f"Using DB: {req.vector_db}, embedding model: {embedding_model_name}, inference model: {req.inference_model}")
+    embedder = load_embedder(req.embedding_model)
+    qvec = embedder.encode(req.message, normalize_embeddings=True).tolist()
 
-    # Build sources
+    # Vector DB retrieval
+    payloads: list[Any] = []
+    if req.vector_db == "qdrant":
+        collection_name = to_qdrant_name(embedding_model_name)
+        response = qdrant.query_points(collection_name=collection_name, query=qvec, limit=20)
+        payloads = [point.payload for point in response.points]
+
+    elif req.vector_db == "weaviate":
+        collection_name = to_weaviate_class(embedding_model_name)
+        collection = weaviate_client.collections.get(collection_name)
+        response = collection.query.near_vector(
+            near_vector=qvec,
+            limit=20,
+            return_properties=["identifier", "text", "source", "anchor"],
+            return_metadata=MetadataQuery(distance=True, score=True)
+        )
+        payloads = [obj.properties for obj in response.objects]
+    else:
+        raise ValueError
+
+    # Build sources and context
     sources = []
-    for h in final_hits:
-        payload = h.payload or {}
-        chunk_id = payload.get("identifier") or str(uuid.uuid4())
+    context_texts = []
+    for payload in payloads:
+        identifier = payload.get("identifier") or str(uuid.uuid4())
         source_file = payload.get("source") or "N/A"
-        anchor = payload.get("anchor")
+        anchor = payload.get("anchor") or ""
+        text = payload.get("text") or ""
 
         url = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{source_file}"
         if anchor:
             url += f"#{anchor}"
         
-        # Store mapping: id -> URL (text is optional)
         sources.append({
-            "identifier": chunk_id,
+            "identifier": identifier,
             "url": url,
-            "text": payload.get("text", "")
+            "text": text
         })
+        context_texts.append(f"Kildereferanse: {identifier}\nURL: {url}\nTekst: {payload.get('text', '')}")
 
-    context = "\n\n---\n\n".join(
-        (
-            f"Kildereferanse: {s['identifier']}\n"
-            f"URL: {s['url']}\n"
-            f"Tekst: {s['text']}"
-        )
-        for s in sources
-    )
-
+    context = "\n\n---\n\n".join(context_texts)
     current_time = datetime.now().strftime("%A %d. %B %Y kl. %H:%M")
-
     user_prompt = req.message
     system_prompt = (
         f"{config.SYSTEM_PROMPT}\n\n"
@@ -220,26 +171,47 @@ async def chat(req: ChatRequest):
 
     logger.info(f"Prompt sent to LLM:\n{system_prompt}")
 
-    # 5. Call LLM
-    payload = {
-        "model": inference_model,
-        "messages": [
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        "max_tokens": config.MAX_TOKENS,
-        "temperature": config.TEMPERATURE,
-    }
+    # Streaming generator
+    async def event_stream():
+        # 1. Send sources first
+        yield f"{json.dumps({'type': 'sources', 'sources': sources})}\n\n"
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        resp = await client.post(f"{config.LLM_BASE}/chat/completions", json=payload)
-        resp.raise_for_status()
-        data = resp.json()
+        # 2. Stream LLM deltas
+        async with httpx.AsyncClient(timeout=None) as client:
+            async with client.stream(
+                "POST",
+                f"{config.LLM_BASE}/chat/completions",
+                json={
+                    "model": req.inference_model,
+                    "messages": [
+                        {"role": "system", "content": system_prompt},
+                        {"role": "user", "content": user_prompt}
+                    ],
+                    "max_tokens": config.MAX_TOKENS,
+                    "temperature": config.TEMPERATURE,
+                    "stream": True
+                }
+            ) as resp:
+                async for line in resp.aiter_lines():
+                    line = line.strip()
 
-    assistant_text = data["choices"][0]["message"]["content"]
-    logger.info(f"LLM Response:\n{assistant_text}")
+                    # Skip empty lines or stream control lines
+                    if not line or line.startswith("data: [DONE]"):
+                        continue
 
-    return {
-        "answer": assistant_text,
-        "sources": sources
-    }
+                    if line.startswith("data: "):
+                        # Parse JSON
+                        data = json.loads(line[len("data: "):])
+
+                        # Extract text delta
+                        delta = data.get("choices", [{}])[0].get("delta", {})
+                        content = delta.get("content")
+
+                        if content:
+                            # Send ONLY the text (plain string), as the frontend expects
+                            yield f"{json.dumps({'type': 'delta', 'text': content})}\n\n"
+
+        # 3. Signal end
+        yield f"{json.dumps({'type': 'done'})}\n\n"
+
+    return StreamingResponse(event_stream(), media_type="text/event-stream")

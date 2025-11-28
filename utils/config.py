@@ -43,7 +43,7 @@ SYSTEM_PROMPT = (
     "Du skal i størst mulig grad bruke denne til å svare på brukerens spørsmål. "
 
     "Bruk rikelig med kildereferanser, slik at det tydelig hvilken kilde som er brukt i hvilken del av svaret. "
-    "Det er veldig viktig at referanser til pensummaterialet ALLTID oppgis med klammer. Eksempel: [linux9.2], [os13.1]. "
+    "Det er veldig viktig at referanser til pensummaterialet ALLTID oppgis med { }. Eksempel: {linux9.2}, {os13.1}. "
     "Hvis en kodeblokk trenger kildereferanse, skal denne legges under kodeblokken, ikke inni. "
 
     # Alternativt: Du skal kun bruke informasjon fra kildene. Hvis kildene ikke inneholder svar på spørsmålet, skal du si...
