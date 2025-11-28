@@ -20,6 +20,7 @@
   * Må selvsagt informere tydelig om at samtalene kan bli lest av andre mennesker
 * Load-balansering til eksternt API
 * Stresstesting
+* Fortsatt bugs i parsing. Se f.eks. os1.2, det er ikke mellomrom mellom link/formatering og vanlig tekst. LLM feiloppfatter hva som er link
 
 - Develop a comparison pipeline:
   - Come up with some good benchmark questions to identify decent and poor embedding model quality. Can be done by feeding a few knowledge files directly to the LLM at a time and asking it to identify good questions for this purpose.
