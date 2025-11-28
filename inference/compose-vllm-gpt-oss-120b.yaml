@@ -1,0 +1,24 @@
+services:
+  vllm:
+    build:
+      context: .
+      dockerfile: Dockerfile.vllm-gpt-oss-120b
+    container_name: vllm-gpt-oss-120b
+    ports:
+      - "8000:8000"
+    command: >
+      python -m vllm.entrypoints.openai.api_server
+      --host 0.0.0.0
+      --port 8000
+      --model /app/models/gpt-oss-120b
+      --served-model-name gpt-oss-120b
+      --max_model_len 16384
+      --cpu-offload-gb 40
+#      --gpu-memory-utilization 0.75
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
