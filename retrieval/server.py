@@ -176,6 +176,8 @@ async def chat_stream(req: ChatRequest):
         # 1. Send sources first
         yield f"{json.dumps({'type': 'sources', 'sources': sources})}\n\n"
 
+        full_response = ""  # Collect full LLM response
+
         # 2. Stream LLM deltas
         async with httpx.AsyncClient(timeout=None) as client:
             async with client.stream(
@@ -208,10 +210,14 @@ async def chat_stream(req: ChatRequest):
                         content = delta.get("content")
 
                         if content:
-                            # Send ONLY the text (plain string), as the frontend expects
+                            full_response += content  # Append to full response
+                            # Stream delta to frontend
                             yield f"{json.dumps({'type': 'delta', 'text': content})}\n\n"
 
-        # 3. Signal end
+        # 3. Print full response to console
+        logger.info(f"Full LLM response:\n{full_response}")
+
+        # 4. Signal end
         yield f"{json.dumps({'type': 'done'})}\n\n"
 
     return StreamingResponse(event_stream(), media_type="text/event-stream")
