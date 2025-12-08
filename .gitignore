@@ -4,4 +4,4 @@ __pycache__/
 node_modules/
 #knowledge_processed/
 inference/models/
-processed_chunks.jsonl
+#processed_chunks.jsonl
