@@ -134,6 +134,7 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
         collection = to_qdrant_name(embedding_model_name)
         res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
         for point in res.points:
+            point.payload["type"] = "course_page"
             point.payload["source"] = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{point.payload['source']}"
 
         course_pages = [point.payload for point in res.points]
@@ -141,9 +142,10 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
         res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
         video_transcripts = [
             {
+                "type": "video_transcript",
                 "identifier": point.payload["chunk_id"],
                 "source": f"https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/{point.payload['lecture_id']}.mp4",
-                "anchor": point.payload["start"],
+                "anchor": f"t={point.payload['start']}",
                 "text": point.payload["text"],
             }
             for point in res.points
@@ -173,17 +175,16 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
     context_blocks = []
 
     for payload in payloads:
+        type = payload.get("type") or ""
         identifier = payload.get("identifier") or str(uuid.uuid4())
         source = payload.get("source") or ""
         anchor = payload.get("anchor") or ""
         text = payload.get("text") or ""
 
-        url = source
-        #url = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{source}"
-        if anchor:
-            url += f"#{anchor}"
+        url = f"{source}#{anchor}" if anchor else source
 
         sources.append({
+            "type": type,
             "identifier": identifier,
             "url": url,
             "text": text,
@@ -252,6 +253,8 @@ async def chat_stream(req: ChatRequest):
     logger.info(f"Memory:\n{memory_messages}")
     
     sources_text = "\n".join(
+        f"{source['identifier']}: {source['url']}\n{source['text']}"
+        if source['type'] == 'video_transcript' else
         f"{source['identifier']}: {source['url']}"
         for source in sources
     )
