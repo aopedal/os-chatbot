@@ -1,0 +1,1 @@
+{'text': ' Adresserommet... Ja, så vi trenger da å kunne adressere...', 'chunks': [{'timestamp': (0.0, 6.94), 'text': ' Adresserommet... Ja, så vi trenger da å kunne adressere...'}]}
