@@ -1,5 +1,6 @@
 import os
 import json
+import ast
 from typing import List, Dict
 import tiktoken
 
@@ -73,7 +74,7 @@ def process_folder(input_folder: str, output_folder: str):
     os.makedirs(output_folder, exist_ok=True)
 
     for filename in os.listdir(input_folder):
-        if not filename.endswith(".json"):
+        if not filename.endswith(".txt"):
             continue
 
         lecture_id = os.path.splitext(filename)[0]
@@ -81,7 +82,13 @@ def process_folder(input_folder: str, output_folder: str):
         output_path = os.path.join(output_folder, lecture_id + ".jsonl")
 
         with open(input_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            raw = f.read().strip()
+
+        try:
+            data = ast.literal_eval(raw)
+        except Exception as e:
+            print(f"❌ Failed to parse {filename}: {e}")
+            continue
 
         merged_chunks = merge_transcript_chunks(data["chunks"])
 
@@ -94,7 +101,7 @@ def process_folder(input_folder: str, output_folder: str):
                     "end": chunk["end"],
                     "token_count": chunk["token_count"],
                     "text": chunk["text"],
-                    "source": "lecture"
+                    "source": "lecture",
                 }
                 out.write(json.dumps(record, ensure_ascii=False) + "\n")
 
