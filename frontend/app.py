@@ -4,6 +4,11 @@ import json
 import re
 import utils.config as app_config
 
+import uuid
+
+if "user_id" not in st.session_state:
+    st.session_state.user_id = str(uuid.uuid4())
+
 st.set_page_config(page_title="HårekBot", page_icon="💬", layout="centered")
 st.title("💬 Spør HårekBot")
 
@@ -122,6 +127,7 @@ if prompt := st.chat_input("Skriv en melding …"):
             "POST",
             f"{app_config.RETRIEVAL_URL}/chat/stream",
             json={
+                "user_id": st.session_state.user_id,
                 "message": prompt,
                 "inference_model": inference_model,
                 "embedding_model": embedding_model,

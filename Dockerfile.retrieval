@@ -29,6 +29,9 @@ COPY utils utils
 COPY retrieval retrieval
 COPY ingestion/knowledge ingestion/knowledge
 
+# TODO: move into requirements.txt
+RUN pip install --no-cache-dir tiktoken
+
 # Now switch to retrieval dir for running
 WORKDIR /app/retrieval
 EXPOSE 8080
