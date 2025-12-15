@@ -9,6 +9,8 @@ MIN_TOKENS = 350
 MAX_TOKENS = 600
 OVERLAP_TOKENS = 100
 EMBEDDING_MODEL = "text-embedding-3-small"
+input_folder = "knowledge/os/Forelesning/video"
+output_path = "knowledge_processed/os/Forelesning/video/transcripts_processed.jsonl"
 
 # --- TOKENIZER ---
 enc = tiktoken.encoding_for_model(EMBEDDING_MODEL)
@@ -70,29 +72,30 @@ def merge_transcript_chunks(
     return merged
 
 
-def process_folder(input_folder: str, output_folder: str):
-    os.makedirs(output_folder, exist_ok=True)
+def process_folder(input_folder: str, output_path: str):
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
-    for filename in os.listdir(input_folder):
-        if not filename.endswith(".txt"):
-            continue
+    total_chunks = 0
 
-        lecture_id = os.path.splitext(filename)[0]
-        input_path = os.path.join(input_folder, filename)
-        output_path = os.path.join(output_folder, lecture_id + ".jsonl")
+    with open(output_path, "w", encoding="utf-8") as out:
+        for filename in os.listdir(input_folder):
+            if not filename.endswith(".txt"):
+                continue
 
-        with open(input_path, "r", encoding="utf-8") as f:
-            raw = f.read().strip()
+            lecture_id = os.path.splitext(filename)[0]
+            input_path = os.path.join(input_folder, filename)
 
-        try:
-            data = ast.literal_eval(raw)
-        except Exception as e:
-            print(f"❌ Failed to parse {filename}: {e}")
-            continue
+            with open(input_path, "r", encoding="utf-8") as f:
+                raw = f.read().strip()
 
-        merged_chunks = merge_transcript_chunks(data["chunks"])
+            try:
+                data = ast.literal_eval(raw)
+            except Exception as e:
+                print(f"❌ Failed to parse {filename}: {e}")
+                continue
 
-        with open(output_path, "w", encoding="utf-8") as out:
+            merged_chunks = merge_transcript_chunks(data["chunks"])
+
             for idx, chunk in enumerate(merged_chunks):
                 record = {
                     "lecture_id": lecture_id,
@@ -104,9 +107,12 @@ def process_folder(input_folder: str, output_folder: str):
                     "source": "lecture",
                 }
                 out.write(json.dumps(record, ensure_ascii=False) + "\n")
+                total_chunks += 1
 
-        print(f"{lecture_id}: wrote {len(merged_chunks)} chunks")
+            print(f"{lecture_id}: wrote {len(merged_chunks)} chunks")
+
+    print(f"\n✅ Done. Wrote {total_chunks} total chunks to {output_path}")
 
 # --- MAIN EXECUTION ---
 if __name__ == "__main__":
-    process_folder("knowledge/os/Forelesning/video", "knowledge_processed/os/Forelesning/video")
+    process_folder(input_folder, output_path)
