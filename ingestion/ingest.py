@@ -5,6 +5,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import json
 import uuid
 import torch
+import argparse
 from typing import List, Dict, Any
 from utils.naming import to_qdrant_name, to_weaviate_class
 import utils.config as config
@@ -179,10 +180,23 @@ def upsert_to_weaviate(weaviate_client: WeaviateClient, class_name: str, chunk_d
 # --- MAIN EXECUTION ---
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Ingest data into vector databases.")
+    parser.add_argument(
+        "source",
+        choices=["course_pages", "video_transcripts"],
+        help="Data source to ingest: 'course_pages' for HTML pages, 'video_transcripts' for video transcripts."
+    )
+    args = parser.parse_args()
+
+    # Set input file based on source
+    if args.source == "course_pages":
+        chunk_input_file = "processed_chunks.jsonl"
+    elif args.source == "video_transcripts":
+        chunk_input_file = "knowledge_processed/os/Forelesning/video/transcripts_processed.jsonl"
     
     # 1. Load Pre-processed Chunks
     print("--- LOADING PRE-PROCESSED CHUNKS ---")
-    chunks = load_chunks(config.CHUNK_INPUT_FILE)
+    chunks = load_chunks(chunk_input_file)
     
     if not chunks:
         print("No chunks loaded, exiting")
@@ -226,8 +240,8 @@ if __name__ == "__main__":
             print(f"\n[MODEL: {model_name}] Starting ingestion for {model_id}")
             
             # 3a. Initialize Embedder and Define Collection Names
-            Q_COLLECTION_NAME = to_qdrant_name(model_name)
-            W_CLASS_NAME = to_weaviate_class(model_name)
+            Q_COLLECTION_NAME = to_qdrant_name(f"{model_name}_{args.source}")
+            W_CLASS_NAME = to_weaviate_class(f"{model_name}_{args.source}")
             
             embedder = SentenceTransformer(
                 model_id,
