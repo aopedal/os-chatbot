@@ -133,7 +133,23 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
     if db_id == "qdrant":
         collection = to_qdrant_name(embedding_model_name)
         res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
-        return [point.payload for point in res.points]
+        for point in res.points:
+            point.payload["source"] = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{point.payload['source']}"
+
+        course_pages = [point.payload for point in res.points]
+        collection = to_qdrant_name(f"{embedding_model_name}_video_transcripts")
+        res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
+        video_transcripts = [
+            {
+                "identifier": point.payload["chunk_id"],
+                "source": f"https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/{point.payload['lecture_id']}.mp4",
+                "anchor": point.payload["start"],
+                "text": point.payload["text"],
+            }
+            for point in res.points
+        ]
+        return course_pages + video_transcripts
+        
 
     elif db_id == "weaviate":
         collection = weaviate_client.collections.get(to_weaviate_class(embedding_model_name))
@@ -162,7 +178,8 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
         anchor = payload.get("anchor") or ""
         text = payload.get("text") or ""
 
-        url = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{source}"
+        url = source
+        #url = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{source}"
         if anchor:
             url += f"#{anchor}"
 
