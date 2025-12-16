@@ -1,8 +1,7 @@
 * Stresstesting - prøv å sende 2, 5, 10, 20? requests samtidig, se hva som skjer med hastigheten, er det noe som knekker?
 * Forelesningsvideoer som kontekst
-  * Egen collection i vectordb for å sikre at vi henter kilder både i pensummateriale og i forelesningsvideoer
-  * Tagges med timestamp, slik at vi kan lage link til rett sted i videoen
   * Kan video embeddes direkte i chatten?
+  * Finne ut hvordan vi kan sørge for at chatbot alltid finner en videoreferanse der det er mulig.
 * Samtalekontekst (la boten huske hva vi nettopp snakket om)
   * Kan kontekst caches, eller sender vi bare samtalehistorikken sammen med hver nye prompt?
 * Husk tidligere samtaletråder, slik de fleste offentlige LLM-er gjør
