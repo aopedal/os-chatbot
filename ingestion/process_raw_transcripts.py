@@ -5,9 +5,9 @@ from typing import List, Dict
 import tiktoken
 
 # --- CONFIG ---
-MIN_TOKENS = 350
-MAX_TOKENS = 600
-OVERLAP_TOKENS = 100
+MIN_TOKENS = 150
+MAX_TOKENS = 300
+OVERLAP_TOKENS = 50
 EMBEDDING_MODEL = "text-embedding-3-small"
 input_folder = "knowledge/os/Forelesning/video"
 output_path = "knowledge_processed/os/Forelesning/video/transcripts_processed.jsonl"

@@ -26,3 +26,14 @@
     - Ask each question to each of the 10 configurations, and record the responses.
     - Feed each set of 10 responses back to the LLM, and ask it to rank them based on some criteria.
     - Whichever configuration gets the highest total score is our winner.
+    
+* Transkripsjoner:
+  * Bruke LLM for å gjøre transkripsjonene mer konsise, fjerne irrelevant informasjon
+  * Eksperimentere med chunk size og overlap
+  * Hente ut mindre chunks enn de som brukes til RAG lookup (altså, gjør lookup med stor chunk, men send en rekke mindre chunks til LLM-en for å få presise timestamps)
+  
+* Debug samtalekontekst. Ser ikke ut som LLM-en ser sammendraget?
+* Eksperimenter med kontekstvindu, token limits for minne osv.
+* Bedre navngiving av referanser
+* Egen collection med alle oppgaver i oppgavesett, kan brukes for å sjekke om brukeren vil ha hjelp med en oppgave og kanskje peile prompten mer inn mot å hjelpe med å løse oppgaven uten å bare gi svaret
+* Dokumentere prosess for å oppdatere vektordatabase
