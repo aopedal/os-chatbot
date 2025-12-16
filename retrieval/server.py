@@ -129,42 +129,33 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
     embedder = load_embedder(embedding_model_id)
     vector = embedder.encode(embed_text, normalize_embeddings=True).tolist()
     embedding_model_name = next((opt['name'] for opt in AVAILABLE_EMBEDDERS if opt['id'] == embedding_model_id))
+    all_payloads = []
+    
+    for type in ['course_page', 'video_transcript']:
+        payloads = []
+        if db_id == "qdrant":
+            collection = to_qdrant_name(f"{embedding_model_name}_{type}s")
+            res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
+            payloads = [point.payload for point in res.points]            
 
-    if db_id == "qdrant":
-        collection = to_qdrant_name(embedding_model_name)
-        res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
-        for point in res.points:
-            point.payload["type"] = "course_page"
-            point.payload["source"] = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{point.payload['source']}"
+        elif db_id == "weaviate":
+            class_name = to_weaviate_class(f"{embedding_model_name}_{type}s")
+            collection = weaviate_client.collections.get(class_name)
+            res = collection.query.near_vector(
+                near_vector=vector,
+                limit=20,
+                return_metadata=MetadataQuery(distance=True, score=True)
+            )
+            payloads = [obj.properties for obj in res.objects]
 
-        course_pages = [point.payload for point in res.points]
-        collection = to_qdrant_name(f"{embedding_model_name}_video_transcripts")
-        res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
-        video_transcripts = [
-            {
-                "type": "video_transcript",
-                "identifier": point.payload["chunk_id"],
-                "source": f"https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/{point.payload['lecture_id']}.mp4",
-                "anchor": f"t={point.payload['start']}",
-                "text": point.payload["text"],
-            }
-            for point in res.points
-        ]
-        return course_pages + video_transcripts
+        else:
+            raise ValueError("Unknown vector DB")
         
-
-    elif db_id == "weaviate":
-        collection = weaviate_client.collections.get(to_weaviate_class(embedding_model_name))
-        res = collection.query.near_vector(
-            near_vector=vector,
-            limit=20,
-            return_properties=["identifier", "text", "source", "anchor"],
-            return_metadata=MetadataQuery(distance=True, score=True)
-        )
-        return [obj.properties for obj in res.objects]
-
-    else:
-        raise ValueError("Unknown vector DB")
+        for payload in payloads:
+            payload["type"] = type
+            all_payloads.append(payload)
+        
+    return all_payloads
 
 
 # ============================================================
@@ -176,12 +167,25 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
 
     for payload in payloads:
         type = payload.get("type") or ""
-        identifier = payload.get("identifier") or str(uuid.uuid4())
-        source = payload.get("source") or ""
-        anchor = payload.get("anchor") or ""
-        text = payload.get("text") or ""
+        if type == 'course_page':
+            identifier = payload.get("identifier") or str(uuid.uuid4())
+            source = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{payload['source']}"
+            text = payload.get("text") or ""
+            
+            anchor = payload.get("anchor") or ""
+            url = f"{source}#{anchor}" if anchor else source
+            
+        elif type == 'video_transcript':
+            identifier = payload.get("chunk_id") or str(uuid.uuid4())
+            source = f"https://os.cs.oslomet.no/os/Forelesning/video/2021/{payload['lecture_id']}.mp4",
+            text = payload.get("text") or ""
+            
+            start = {payload.get("start")}
+            url = f"{source}#t={start}" if start else source
+            
+        else:
+            raise ValueError
 
-        url = f"{source}#{anchor}" if anchor else source
 
         sources.append({
             "type": type,
@@ -262,13 +266,13 @@ async def chat_stream(req: ChatRequest):
 
     # ---------------- STREAMING RESPONSE ----------------
     async def event_stream():
-        # 1. Send sources first
+        # Send sources first
         yield json.dumps({"type": "sources", "sources": sources}) + "\n\n"
 
         # Keep track of full response for logging purposes
         full_response = ""
 
-        # 2. Stream LLM deltas
+        # Stream LLM deltas
         async with httpx.AsyncClient(timeout=None) as client:
             async with client.stream(
                 "POST",
