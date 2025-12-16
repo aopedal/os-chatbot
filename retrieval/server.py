@@ -59,7 +59,12 @@ AVAILABLE_OPTIONS = {
 # ============================================================
 
 memory_store = ConversationMemoryStore()
-memory_manager = ConversationMemoryManager(memory_store, recent_turns=3, memory_max_tokens=6000)
+memory_manager = ConversationMemoryManager(
+    memory_store,
+    recent_turns=3,
+    summary_max_tokens=800,
+    recent_max_tokens=1500
+)
 
 # ============================================================
 #  INIT CLIENTS
@@ -135,7 +140,7 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
         payloads = []
         if db_id == "qdrant":
             collection = to_qdrant_name(f"{embedding_model_name}_{type}s")
-            res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
+            res = qdrant.query_points(collection_name=collection, query=vector, limit=10)
             payloads = [point.payload for point in res.points]            
 
         elif db_id == "weaviate":
@@ -143,7 +148,7 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
             collection = weaviate_client.collections.get(class_name)
             res = collection.query.near_vector(
                 near_vector=vector,
-                limit=20,
+                limit=10,
                 return_metadata=MetadataQuery(distance=True, score=True)
             )
             payloads = [obj.properties for obj in res.objects]
@@ -177,10 +182,10 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
             
         elif type == 'video_transcript':
             identifier = payload.get("chunk_id") or str(uuid.uuid4())
-            source = f"https://os.cs.oslomet.no/os/Forelesning/video/2021/{payload['lecture_id']}.mp4",
+            source = f"https://os.cs.oslomet.no/os/Forelesning/video/2021/{payload['lecture_id']}.mp4"
             text = payload.get("text") or ""
             
-            start = {payload.get("start")}
+            start = payload.get("start")
             url = f"{source}#t={start}" if start else source
             
         else:
@@ -230,7 +235,25 @@ async def chat_stream(req: ChatRequest):
     logger.info(f"Using model={req.inference_model}, embedder={req.embedding_model}, db={req.vector_db}")
 
     # ---------------- RAG RETRIEVAL ----------------
-    payloads = await retrieve_context(req.vector_db, req.message, req.embedding_model)
+    summary = await memory_store.get_summary(req.user_id)
+    recent_msgs = await memory_store.get_recent_messages(req.user_id)
+
+    retrieval_query = "\n".join([
+        summary,
+        *[m["content"] for m in recent_msgs[-2:] if m["role"] == "user"],
+        req.message
+    ])
+
+    logger.info(
+        f"Retrieval query tokens: {len(retrieval_query.split())}"
+    )
+
+    payloads = await retrieve_context(
+        req.vector_db,
+        retrieval_query,
+        req.embedding_model
+    )
+    
     sources, context = build_context_docs(payloads)
 
     # ---------------- PROMPT BUILDER ----------------    
@@ -253,6 +276,16 @@ async def chat_stream(req: ChatRequest):
         *memory_messages,
         {"role": "user", "content": user_prompt},
     ]
+    
+    prompt_tokens = sum(
+        len(m["content"].split()) for m in messages
+    )
+    context_tokens = len(context.split())
+
+    logger.info(
+        f"Prompt token estimate: {prompt_tokens}, "
+        f"RAG context size: {context_tokens}"
+    )
     
     logger.info(f"Memory:\n{memory_messages}")
     
@@ -302,9 +335,12 @@ async def chat_stream(req: ChatRequest):
         logger.info(f"LLM full response:\n{full_response}")
         
         # Add to conversation memory
-        await memory_store.append_message(req.user_id, "user", user_prompt)
-        await memory_store.append_message(req.user_id, "assistant", full_response)
-
+        await memory_manager.update(
+            req.user_id,
+            user_prompt,
+            full_response,
+            sources
+        )
 
         # Signal to client that response is complete
         yield json.dumps({"type": "done"}) + "\n\n"
