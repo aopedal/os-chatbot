@@ -5,7 +5,7 @@ LLM_HOST = os.getenv("LLM_HOST", "localhost")
 LLM_PORT = int(os.getenv("LLM_PORT", 8000))
 LLM_BASE = f"http://{LLM_HOST}:{LLM_PORT}/v1"
 MAX_TOKENS = 16384
-TEMPERATURE = 0.2
+TEMPERATURE = 0.05
 
 # Vector db config
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
@@ -57,7 +57,7 @@ SYSTEM_PROMPT = (
                  
     Husk følgende om Markdown-syntaks:
     - Hvis du har kodeblokker inni tabeller, må pipe-tegn (|) 
-      escapes med backslash (\) for at tabellen skal vises på riktig måte.
+      escapes med backslash (\\) for at tabellen skal vises på riktig måte.
     - Enkelt linjeskift annoteres med to mellomrom ("  ") på slutten av en linje. IKKE bruk <br> eller andre HTML-tagger.
                  
     Hvis brukeren stiller spørsmål som fremstår helt urelatert til ditt tiltenkte formål,

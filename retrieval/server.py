@@ -135,7 +135,7 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
         payloads = []
         if db_id == "qdrant":
             collection = to_qdrant_name(f"{embedding_model_name}_{type}s")
-            res = qdrant.query_points(collection_name=collection, query=vector, limit=20)
+            res = qdrant.query_points(collection_name=collection, query=vector, limit=10)
             payloads = [point.payload for point in res.points]            
 
         elif db_id == "weaviate":
@@ -143,7 +143,7 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
             collection = weaviate_client.collections.get(class_name)
             res = collection.query.near_vector(
                 near_vector=vector,
-                limit=20,
+                limit=10,
                 return_metadata=MetadataQuery(distance=True, score=True)
             )
             payloads = [obj.properties for obj in res.objects]
@@ -177,10 +177,10 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
             
         elif type == 'video_transcript':
             identifier = payload.get("chunk_id") or str(uuid.uuid4())
-            source = f"https://os.cs.oslomet.no/os/Forelesning/video/2021/{payload['lecture_id']}.mp4",
+            source = f"https://os.cs.oslomet.no/os/Forelesning/video/2021/{payload['lecture_id']}.mp4"
             text = payload.get("text") or ""
             
-            start = {payload.get("start")}
+            start = payload.get("start")
             url = f"{source}#t={start}" if start else source
             
         else:
