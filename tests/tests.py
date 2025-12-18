@@ -6,7 +6,7 @@ from datetime import datetime
 import os
 
 # Config
-default_inference_model = "gpt-4o" # Feil 
+default_inference_model = "gpt-oss-20b" 
 
 # Function to send a POST request
 def send_request(user_id, message, inference_model, embedding_model, vector_db, endpoint):
