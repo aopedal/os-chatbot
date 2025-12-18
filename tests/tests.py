@@ -1,4 +1,9 @@
+import sys, os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+
 import requests
+import httpx
+import utils.config as app_config
 import json
 import argparse
 import time
@@ -10,16 +15,34 @@ default_inference_model = "gpt-oss-20b"
 
 # Function to send a POST request
 def send_request(user_id, message, inference_model, embedding_model, vector_db, endpoint):
-    payload = {
-        "user_id": user_id,
-        "message": message,
-        "inference_model": inference_model,
-        "embedding_model": embedding_model,
-        "vector_db": vector_db,
-    }
+    
+    response_string = ""
 
-    response = requests.post(endpoint, json=payload)
-    return response.json()
+    with httpx.stream(
+            "POST",
+            f"{app_config.RETRIEVAL_URL}{endpoint}",
+            json={
+                "user_id": user_id,
+                "message": message,
+                "inference_model": inference_model,
+                "embedding_model": embedding_model,
+                "vector_db": vector_db,
+            },
+            timeout=None,
+        ) as response:
+            for line in response.iter_lines():
+                if not line:
+                    continue
+
+                chunk = json.loads(line)
+
+                if chunk["type"] == "delta":
+                    response_string += chunk["text"]
+
+                elif chunk["type"] == "done":
+                    break
+            
+    return response_string
 
 # Main function
 def main():
@@ -58,12 +81,15 @@ def main():
 
     # Prepare the output file name
     time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+    os.mkdir('test_results') if not os.path.exists('test_results') else None
     output_filename = f'test_{args.embedding_model}_{args.embedding_model}_{args.inference_model}_{time_stamp}.txt'
+    output_filename = output_filename.replace('/', '_')
+    output_filename = os.path.join('test_results', output_filename)
     
     # Write results to output file
     with open(output_filename, 'w') as output_file:
         output_file.write(f"Message Prompt: {message}\n")
-        output_file.write(f"Responses: {json.dumps(results, indent=2)}\n")
+        output_file.write(f"Responses: {response}\n")
         output_file.write(f"Number of Requests: {args.num_requests}\n")
         output_file.write(f"Delay: {args.delay} seconds\n")
         output_file.write(f"Total Time: {total_duration:.2f} seconds\n")
