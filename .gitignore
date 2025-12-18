@@ -1,4 +1,6 @@
 .venv/
+venv/
+tests/test_results/
 .navatar/
 __pycache__/
 node_modules/
