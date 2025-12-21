@@ -146,14 +146,15 @@ async def retrieve_context(db_id: str, embed_text: str, embedding_model_id: str)
                 limit=10,
                 return_metadata=MetadataQuery(distance=True, score=True)
             )
-            payloads = [obj.properties for obj in res.objects]
+            payloads = [dict(obj.properties) for obj in res.objects if obj.properties]
 
         else:
             raise ValueError("Unknown vector DB")
         
         for payload in payloads:
-            payload["type"] = type
-            all_payloads.append(payload)
+            if payload is not None:
+                payload["type"] = type
+                all_payloads.append(payload)
         
     return all_payloads
 
@@ -211,6 +212,8 @@ async def chat_stream(req: ChatRequest):
     # Require user_id for memory
     if not req.user_id:
         raise HTTPException(status_code=400, detail="user_id is required")
+    
+    user_id: str = req.user_id
     
     for field, opts in AVAILABLE_OPTIONS.items():
         val = getattr(req, field)
@@ -302,9 +305,8 @@ async def chat_stream(req: ChatRequest):
         logger.info(f"LLM full response:\n{full_response}")
         
         # Add to conversation memory
-        await memory_store.append_message(req.user_id, "user", user_prompt)
-        await memory_store.append_message(req.user_id, "assistant", full_response)
-
+        await memory_store.append_message(user_id, "user", user_prompt)
+        await memory_store.append_message(user_id, "assistant", full_response)
 
         # Signal to client that response is complete
         yield json.dumps({"type": "done"}) + "\n\n"
