@@ -82,6 +82,20 @@ logger.info(f"Weaviate client (version {version('weaviate-client')}) initialized
 # ============================================================
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Preload all configured embedding models on startup so the first
+    # request doesn't incur model loading latency. Use threads to avoid
+    # blocking the event loop while heavy model initialization runs.
+    logger.info("Preloading embedding models on startup...")
+    for emb in AVAILABLE_EMBEDDERS:
+        model_id = emb.get("id")
+        if not model_id:
+            continue
+        try:
+            await asyncio.to_thread(load_embedder, model_id)
+            logger.info(f"Preloaded embedder: {model_id}")
+        except Exception as e:
+            logger.error(f"Failed to preload embedder {model_id}: {e}")
+
     yield
     try:
         weaviate_client.close()
