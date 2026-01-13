@@ -280,6 +280,7 @@ async def chat_stream(req: ChatRequest):
                     "messages": messages,
                     "max_tokens": config.MAX_TOKENS,
                     "temperature": config.TEMPERATURE,
+                    "repetition_penalty": config.REPETITION_PENALTY,
                     "stream": True
                 }
             ) as resp:

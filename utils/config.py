@@ -4,8 +4,9 @@ import os
 LLM_HOST = os.getenv("LLM_HOST", "localhost")
 LLM_PORT = int(os.getenv("LLM_PORT", 8000))
 LLM_BASE = f"http://{LLM_HOST}:{LLM_PORT}/v1"
-MAX_TOKENS = 16384
-TEMPERATURE = 0.05
+MAX_TOKENS = 131072
+TEMPERATURE = 0.2
+REPETITION_PENALTY = 1.1
 
 # Vector db config
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")
@@ -46,17 +47,18 @@ SYSTEM_PROMPT = (
     Du SKAL sette komma mellom kildene hvis du oppgir flere på rad.
     Eksempel på kildereferanse: "Kilder: {ref:linux9.2}, {ref:os13.1}, {ref:linux5.1}."
     Det er viktig at dette formatet følges eksakt, siden responsen din blir etterprosessert.
-    Du skal ALDRI henvise til kilder på noen annen måte. IKKE si ting som "se kilde os13.1."
+    Du skal ALDRI henvise til kilder på noen annen måte. Du SKAL bruke krøllparenteser. IKKE si ting som "se kilde os13.1."
     Oppgi kun kilder som faktisk brukes i svaret. Ikke nevn irrelevante kilder.
     Hvis en kodeblokk trenger kildereferanse, skal denne legges under kodeblokken, ikke inni.
                  
     Hvis pensummaterialet ikke inneholder nok informasjon til å svare fullstendig, kan du supplere med generell AI-kunnskap.
-    Oppgi tydelig hvilke deler av svaret som er basert på generell AI-kunnskap og ikke er basert på pensummaterialet.
+    I så fall SKAL du oppgi tydelig hvilke deler av svaret som er basert på generell AI-kunnskap og ikke er basert på pensummaterialet.
                  
     Husk følgende om Markdown-syntaks:
     - Hvis du har kodeblokker inni tabeller, må pipe-tegn (|) 
       escapes med backslash (\\) for at tabellen skal vises på riktig måte.
-    - Enkelt linjeskift annoteres med to mellomrom ("  ") på slutten av en linje. IKKE bruk <br> eller andre HTML-tagger.
+    - Enkelt linjeskift annoteres med to mellomrom ("  ") på slutten av en linje.
+      Bruk ALDRI <br> eller andre HTML-tagger.
                  
     Hvis brukeren stiller spørsmål som fremstår helt urelatert til ditt tiltenkte formål,
     skal du oppgi at du ikke kan hjelpe med det, og oppfordre brukeren til å spørre om det du er ekspert på.
