@@ -7,6 +7,8 @@ import weaviate
 from weaviate.classes.query import MetadataQuery
 from sentence_transformers import SentenceTransformer
 import torch
+import asyncio
+import time
 
 import os
 import httpx
@@ -237,12 +239,16 @@ async def chat_stream(req: ChatRequest):
 
     if not req.vector_db:
         raise HTTPException(400, "Missing vector_db")
+    
+    start_time = time.time()
 
     logger.info(f"\n\n\n{'=' * 50}\nIncoming message: {req.message}")
     logger.info(f"Using model={req.inference_model}, embedder={req.embedding_model}, db={req.vector_db}")
 
     # ---------------- RAG RETRIEVAL ----------------
     payloads = await retrieve_context(req.vector_db, req.message, req.embedding_model)
+    retrieval_time = time.time()
+    logger.info(f"Retrieval completed in {retrieval_time - start_time}")
     sources, context = build_context_docs(payloads)
 
     # ---------------- PROMPT BUILDER ----------------    
@@ -313,6 +319,8 @@ async def chat_stream(req: ChatRequest):
 
         # Log full response
         logger.info(f"LLM full response:\n{full_response}")
+        end_time = time.time()
+        logger.info(f"Time elapsed: {end_time - start_time}")
         
         # Add to conversation memory
         await memory_store.append_message(user_id, "user", user_prompt)
