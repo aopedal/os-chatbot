@@ -16,6 +16,8 @@ default_inference_model = "gpt-oss-20b"
 # Function to send a POST request
 def send_request(user_id, message, inference_model, embedding_model, vector_db, endpoint):
 
+    start_request_time = time.time()
+
     print(f"Sending request for user_id: {user_id}")
     response_string = ""
 
@@ -43,7 +45,10 @@ def send_request(user_id, message, inference_model, embedding_model, vector_db, 
                 elif chunk["type"] == "done":
                     break
 
-    return response_string
+    end_request_time = time.time()
+    response_time = end_request_time - start_request_time
+
+    return response_string, response_time
 
 # Main function
 def main():
@@ -68,6 +73,7 @@ def main():
     user_id = "sample_user_id"  # Replace with appropriate user ID from session state
 
     results = []
+    response_times = []
 
     # Send requests
     start_time = time.time()
@@ -82,16 +88,18 @@ def main():
             print(f"Sent {args.num_requests} requests in parallel.")
 
             for future in as_completed(futures):
-                response = future.result()
+                response, response_time = future.result()
                 results.append(response)
+                response_times.append(response_time)
 
                 # Print statement for each response received
                 print(f"Response received for request ID: {futures[future]}")
 
     else:
         for i in range(args.num_requests):
-            response = send_request(i, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint)
+            response, response_time = send_request(i, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint)
             results.append(response)
+            response_times.append(response_time)
 
             # Delay between requests
             if i < args.num_requests - 1:
@@ -102,8 +110,7 @@ def main():
     # Prepare the output file name
     time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
     os.makedirs('test_results', exist_ok=True)
-    output_filename = f'test_{args.embedding_model}_{args.inference_model}_{time_stamp}.txt'
-    output_filename = output_filename.replace('/', '-')
+    output_filename = f'test_{time_stamp}.txt'
     output_filename = os.path.join('test_results', output_filename)
     
     # Write results to output file
@@ -113,9 +120,12 @@ def main():
         output_file.write(f"Vector DB: {args.vector_db}\n")
         output_file.write(f"Message Prompt: {message}\n")
         output_file.write(f"Number of Requests: {args.num_requests}\n")
-        output_file.write(f"Delay: {args.delay} seconds\n")
-        output_file.write(f"Total Time: {total_duration:.2f} seconds\n")
-        output_file.write(f"Responses: \n\n{'\n\n--------------------\n\n'.join(results)}\n")
+        # output_file.write(f"Delay: {args.delay} seconds\n")
+        output_file.write(f"Total Time: {total_duration:.2f} seconds\n\n")
+        output_file.write("Response Times (in seconds):\n")
+        for i, response_time in enumerate(response_times):
+            output_file.write(f"Request ID {i}: {response_time:.2f} seconds\n")
+        output_file.write(f"\n\nResponses: \n\n--------------------\n\n{'\n\n--------------------\n\n'.join(results)}\n")
         
     print(f"Results written to {output_filename}")
 
