@@ -1,7 +1,6 @@
 from typing import Any, Dict, List, Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
-from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from qdrant_client import QdrantClient
 import weaviate
@@ -92,10 +91,6 @@ async def lifespan(app: FastAPI):
 
 app = FastAPI(lifespan=lifespan)
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-STATIC_FILES_DIR = os.path.abspath(os.path.join(BASE_DIR, "..", "ingestion", "knowledge"))
-app.mount(config.STATIC_FILES_URI_PATH, StaticFiles(directory=STATIC_FILES_DIR))
-
 # ============================================================
 #  REQUEST SCHEMA
 # ============================================================
@@ -170,7 +165,7 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
         type = payload.get("type") or ""
         if type == 'course_page':
             identifier = payload.get("identifier") or str(uuid.uuid4())
-            source = f"{config.STATIC_FILES_HOST}{config.STATIC_FILES_URI_PATH}{payload['source']}"
+            source = f"{config.STATIC_FILES_URI_PATH}{payload['source']}"
             text = payload.get("text") or ""
             
             anchor = payload.get("anchor") or ""
@@ -178,7 +173,7 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
             
         elif type == 'video_transcript':
             identifier = payload.get("chunk_id") or str(uuid.uuid4())
-            source = f"https://os.cs.oslomet.no/os/Forelesning/video/2021/{payload['lecture_id']}.mp4"
+            source = f"{config.STATIC_VIDEOS_URI_PATH}{payload['lecture_id']}.mp4"
             text = payload.get("text") or ""
             
             start = payload.get("start")

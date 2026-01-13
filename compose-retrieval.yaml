@@ -21,4 +21,3 @@ services:
     
       RETRIEVAL_HOST: retrieval
       RETRIEVAL_PORT: 8080
-      STATIC_FILES_HOST: http://localhost:8080 # Change to http://os.cs.oslomet.no in prod
