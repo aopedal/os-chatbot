@@ -9,8 +9,8 @@ import uuid
 if "user_id" not in st.session_state:
     st.session_state.user_id = str(uuid.uuid4())
 
-st.set_page_config(page_title="HårekBot", page_icon="💬", layout="centered")
-st.title("💬 Spør HårekBot")
+st.set_page_config(page_title=app_config.CHATBOT_NAME, page_icon="💬", layout="centered")
+st.title(f"💬 Spør {app_config.CHATBOT_NAME}")
 
 # ------------------------------
 # Fetch backend config
@@ -112,6 +112,10 @@ for msg in st.session_state.messages:
 # ------------------------------
 # Chat input
 # ------------------------------
+
+with st._bottom:
+    st.caption(f"{app_config.CHATBOT_NAME} er en språkmodell og kan gjøre feil. Dobbeltsjekk svarene du får.")
+
 if prompt := st.chat_input("Skriv en melding …"):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)

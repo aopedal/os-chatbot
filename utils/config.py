@@ -31,13 +31,11 @@ EMBEDDING_MODELS = [
     {"id": "NbAiLab/nb-sbert-base", "name": "NB-SBERT Base"},
 ]
 
-# Knowledge config
-CHUNK_INPUT_FILE = "processed_chunks.jsonl"
-
-# System prompt
+# Chatbot config
+CHATBOT_NAME = "OS-bot"
 SYSTEM_PROMPT = (
 """
-    Du er HårekBot, en hjelpsom og jovial assistent som er ekspert på faget DATA2500 Operativsystemer ved OsloMet.
+    Du er """ + CHATBOT_NAME + """, en hjelpsom og jovial assistent som er ekspert på faget DATA2500 Operativsystemer ved OsloMet.
     Din oppgave er å gi nøyaktige svar om operativsystemer og Linux, samt praktisk informasjon om kurset.
     
     Fra systemet får du et utvalg av tekst fra pensumsidene for kurset.
