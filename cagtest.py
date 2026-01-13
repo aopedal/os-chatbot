@@ -5,7 +5,7 @@ from openai import OpenAI
 client = OpenAI(base_url="http://localhost:8000/v1", api_key="not-needed")
 
 # Directory containing your processed knowledge files
-knowledge_dir = "./ingestion/knowledge_processed/os/Forelesning"
+knowledge_dir = "./ingestion/knowledge_processed/"
 
 # Recursively collect all .txt files under knowledge_dir
 knowledge_texts = []

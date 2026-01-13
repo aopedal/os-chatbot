@@ -1,0 +1,1240 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>11 Forelesning 2/4-26(2 timer). Java threads og synkronisering</TITLE>
+<META NAME="description" CONTENT="11 Forelesning 2/4-26(2 timer). Java threads og synkronisering">
+<META NAME="keywords" CONTENT="os">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY  bgcolor="#ffffff">
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html1075"
+  HREF="node12.html#SECTION000121000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html1076"
+  HREF="node12.html#SECTION000122000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+<LI><A ID="tex2html1077"
+  HREF="node12.html#SECTION000123000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">3</SPAN> Mange samtidige Java-tråder</A>
+<LI><A ID="tex2html1078"
+  HREF="node12.html#SECTION000124000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">4</SPAN> Java threads-eksempel: Prioritet</A>
+<LI><A ID="tex2html1079"
+  HREF="node12.html#SECTION000125000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">5</SPAN> Prior.java kjørt på Linux</A>
+<LI><A ID="tex2html1080"
+  HREF="node12.html#SECTION000126000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">6</SPAN> Prior.java kjørt på Windows 10</A>
+<LI><A ID="tex2html1081"
+  HREF="node12.html#SECTION000127000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">7</SPAN> Blokkerende systemkall</A>
+<LI><A ID="tex2html1082"
+  HREF="node12.html#SECTION000128000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">8</SPAN> Thread-modeller</A>
+<LI><A ID="tex2html1083"
+  HREF="node12.html#SECTION000129000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">9</SPAN> Synkronisering</A>
+<LI><A ID="tex2html1084"
+  HREF="node12.html#SECTION0001210000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN> Serialisering</A>
+<UL>
+<LI><A ID="tex2html1085"
+  HREF="node12.html#SECTION0001210100000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">1</SPAN> Eksempel: To web-prosesser som skriver ut billetter</A>
+<LI><A ID="tex2html1086"
+  HREF="node12.html#SECTION0001210200000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">2</SPAN> Eksempel: to prosesser som oppdaterer en felles variabel</A>
+</UL>
+<BR>
+<LI><A ID="tex2html1087"
+  HREF="node12.html#SECTION0001211000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">11</SPAN> Kritisk avsnitt</A>
+<LI><A ID="tex2html1088"
+  HREF="node12.html#SECTION0001212000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN> Kritisk avsnitt: Java-eksempel</A>
+<UL>
+<LI><A ID="tex2html1089"
+  HREF="node12.html#SECTION0001212100000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">1</SPAN> Årsaken: race conditions</A>
+</UL>
+<BR>
+<LI><A ID="tex2html1090"
+  HREF="node12.html#SECTION0001213000000000000000"><SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">13</SPAN> Race condition med C, to pthreads og én instruksjon</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION000120000000000000000">
+<SPAN CLASS="arabic">11</SPAN> Forelesning 2/4-26(2 timer).  Java threads og synkronisering</A>
+</H1>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Avsnitt fra Tanenbaum: 2.2
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<A ID="tex2html277"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/12.pdf">Slides brukt i forelesningen</A>
+<P>
+
+<H2><A ID="SECTION000121000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+<A ID="tex2html278"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11time1.mp4">Uredigert opptak av hele første time av forelesningen ( 00:38:56)</A>
+<P>
+<A ID="tex2html279"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11time2.mp4">Uredigert opptak av hele andre time av forelesningen ( 00:45:01)</A>
+<P>
+Opptak av forelesningen inndelt etter temaer:
+<A ID="tex2html280"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del2.mp4">os11del2.mp4</A>
+(01:37) Sist, plattformuavhengighet og tråder
+
+<BR><A ID="tex2html281"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del3.mp4">os11del3.mp4</A>
+(07:45) Demo: CalcMany.java, et java-program som starter 20 tråder
+
+<BR><A ID="tex2html282"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del4.mp4">os11del4.mp4</A>
+(09:58) Demo: Prioritet av Java-tråder på Linux
+
+<BR><A ID="tex2html283"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del5.mp4">os11del5.mp4</A>
+(05:28) Slides: Blokkerende systemkall og tråd-modeller
+
+<BR><A ID="tex2html284"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del6.mp4">os11del6.mp4</A>
+(04:57) Slides: Synkronisering og serialisering
+
+<BR><A ID="tex2html285"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del7.mp4">os11del7.mp4</A>
+(01:30) Spørsmål: Hva er meningen med tråder når prioriteten ikke tas hensyn til?
+
+<BR><A ID="tex2html286"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del8.mp4">os11del8.mp4</A>
+(02:11) Spørsmål: Hvordan kopiere filer fra egen Windows til studssh? Demo av WinSCP og scp i PowerShell
+
+<BR><A ID="tex2html287"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del9.mp4">os11del9.mp4</A>
+(03:35) Demo: Prioritet av Java-tråder på Windows
+
+<BR><A ID="tex2html288"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del10.mp4">os11del10.mp4</A>
+(04:28) Slides: Problem med to web-prosesser som skriver ut billetter. Må serialiseres.
+
+<BR><A ID="tex2html289"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del11.mp4">os11del11.mp4</A>
+(07:05) Slides: Race condition med en kodelinje, to prosesser oppdaterer en felles variabel saldo; en million blir borte!
+
+<BR><A ID="tex2html290"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del12.mp4">os11del12.mp4</A>
+(03:29) Demo: Saldo.java, to tråder oppdaterer felles variabel saldo og resultatet blir forskjellig hver gang det kjøres.
+
+<BR><A ID="tex2html291"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del13.mp4">os11del13.mp4</A>
+(04:52) Demo: Hvordan ser Java-byte koden som kjøres ut? Kan sees med javap -private. Programmet er ikke trådsikkert
+
+<BR><A ID="tex2html292"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os11del14.mp4">os11del14.mp4</A>
+(17:27) Demo: Race condition med C, to pthreads og én instruksjon
+
+<BR>
+<P>
+
+<H2><A ID="SECTION000122000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+</H2>
+
+<UL>
+<LI>Plattformavhengighet
+</LI>
+<LI>Tråder
+</LI>
+<LI>Java-threads
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION000123000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">3</SPAN> Mange samtidige Java-tråder</A>
+</H2>
+Man kan starte et gitt antall tråder med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+.
+.
+.
+    static double saldo[] = new double[5000000]; // Felles array. 5M*8 byte = 40MByte
+.
+.
+.
+       int threads = 20;
+       CalcThread tr[] = new CalcThread[threads];
+       System.out.println("Starts " +threads + " threads !\n");
+
+       for(k = 0;k &lt; threads;k++)
+           {
+               tr[k] = new CalcThread();
+               System.out.println("Thread has id " + tr[k].id + "\n");
+               tr[k].start();
+           }
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette vil lage en prosess med mange tråder. Med top på Linux så dette tidligere ut som 20 uavhengige prosesser, 
+selvom de egentlig var tåder. På en Linux host med to CPU'er ser det idag slik ut:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND                              
+ 4448 haugerud  20   0  246m  59m  15m S  199  2.9   0:16.19 java
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Legg merke til at prosessen bruker 199% CPU, det skyldes at de 20 trådene tilsammen bruker så 
+mye CPU ved at de av OS-kjernen scheduleres på begge CPU-ene. Om man taster H får man se alle 
+trådene:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND                                   
+ 4458 haugerud  20   0  246m  59m  15m R 10.8  2.9   0:59.51 java                                      
+ 4466 haugerud  20   0  246m  59m  15m R 10.8  2.9   0:59.38 java                                      
+ 4450 haugerud  20   0  246m  59m  15m R 10.5  2.9   0:59.60 java                                      
+ 4454 haugerud  20   0  246m  59m  15m R 10.5  2.9   0:59.54 java                                      
+ 4465 haugerud  20   0  246m  59m  15m R 10.5  2.9   0:59.34 java                                      
+ 4455 haugerud  20   0  246m  59m  15m R 10.2  2.9   0:59.53 java                                      
+ 4459 haugerud  20   0  246m  59m  15m R 10.2  2.9   0:59.49 java                                      
+ 4460 haugerud  20   0  246m  59m  15m R 10.2  2.9   0:59.49 java                                      
+ 4451 haugerud  20   0  246m  59m  15m R  9.9  2.9   0:59.58 java                                      
+ 4461 haugerud  20   0  246m  59m  15m R  9.6  2.9   0:52.16 java                                      
+ 4467 haugerud  20   0  246m  59m  15m R  9.3  2.9   0:52.01 java                                      
+ 4452 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.18 java                                      
+ 4456 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.18 java                                      
+ 4462 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.14 java                                      
+ 4463 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.13 java                                      
+ 4464 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.13 java                                      
+ 4468 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.08 java                                      
+ 4469 haugerud  20   0  246m  59m  15m R  9.0  2.9   0:52.01 java                                      
+ 4453 haugerud  20   0  246m  59m  15m R  8.7  2.9   0:52.22 java                                      
+ 4457 haugerud  20   0  246m  59m  15m R  8.7  2.9   0:52.15 java
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Det ser ut som det er 20 prosesser som bruker 59MByte hver, men de deler i virkeligheten på et stort felles array, <code>saldo[]</code>.
+Legg merke til at hver tråd har sin egen PID. Det er slik OS-kjernen ser trådene, de scheduleres som selvstendige enheter og får
+like mye CPU hver. Hvis man i top taster f og velger
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+TPGID   = Tty Process Grp Id  
+nTH     = Number of Threads
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>vil man se at dette er PID for den opprinnelige prosessen som startet alle de andre trådene, tråd nummer 21 i listingen nedenfor:
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI    VIRT    RES    SHR S %CPU %MEM     TIME+ COMMAND          TPGID nTH 
+ 7617 haugerud  20   0 8241296  60408  16644 R 43,9  0,4   1:30.37 java              7586  40 
+ 7623 haugerud  20   0 8241296  60408  16644 R 41,6  0,4   1:29.58 java              7586  40 
+ 7624 haugerud  20   0 8241296  60408  16644 R 41,6  0,4   1:31.18 java              7586  40 
+ 7607 haugerud  20   0 8241296  60408  16644 R 41,3  0,4   1:31.09 java              7586  40 
+ 7622 haugerud  20   0 8241296  60408  16644 R 41,3  0,4   1:30.59 java              7586  40 
+ 7619 haugerud  20   0 8241296  60408  16644 R 40,3  0,4   1:32.93 java              7586  40 
+ 7625 haugerud  20   0 8241296  60408  16644 R 40,3  0,4   1:32.86 java              7586  40 
+ 7606 haugerud  20   0 8241296  60408  16644 R 39,9  0,4   1:31.49 java              7586  40 
+ 7614 haugerud  20   0 8241296  60408  16644 R 39,9  0,4   1:30.02 java              7586  40 
+ 7615 haugerud  20   0 8241296  60408  16644 R 39,9  0,4   1:30.50 java              7586  40 
+ 7620 haugerud  20   0 8241296  60408  16644 R 39,9  0,4   1:30.47 java              7586  40 
+ 7609 haugerud  20   0 8241296  60408  16644 R 38,9  0,4   1:31.44 java              7586  40 
+ 7610 haugerud  20   0 8241296  60408  16644 R 38,9  0,4   1:30.85 java              7586  40 
+ 7611 haugerud  20   0 8241296  60408  16644 R 38,3  0,4   1:30.66 java              7586  40 
+ 7613 haugerud  20   0 8241296  60408  16644 R 38,0  0,4   1:30.76 java              7586  40 
+ 7616 haugerud  20   0 8241296  60408  16644 R 38,0  0,4   1:30.37 java              7586  40 
+ 7608 haugerud  20   0 8241296  60408  16644 R 37,3  0,4   1:30.91 java              7586  40 
+ 7618 haugerud  20   0 8241296  60408  16644 R 37,3  0,4   1:29.09 java              7586  40 
+ 7621 haugerud  20   0 8241296  60408  16644 R 37,3  0,4   1:29.92 java              7586  40 
+ 7612 haugerud  20   0 8241296  60408  16644 R 37,0  0,4   1:30.44 java              7586  40 
+ 7586 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7587 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.06 java              7586  40 
+ 7588 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7589 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7590 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7591 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7592 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7593 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7594 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7595 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7596 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:16.10 java              7586  40 
+ 7597 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7598 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7599 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7600 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.02 java              7586  40 
+ 7601 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.02 java              7586  40 
+ 7602 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7603 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.02 java              7586  40 
+ 7604 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.00 java              7586  40 
+ 7605 haugerud  20   0 8241296  60408  16644 S  0,0  0,4   0:00.05 java              7586  40
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>Og hvis man taster H igjen, er det bare denne prosessen man ser som bruker nesten 800% CPU, siden serveren har 
+8 CPU'er i dette tilfellet.
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+ PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND     TPGID nTH 
+ 7586 haugerud  20   0 8241296  60548  16644 S 790,4  0,4  86:37.05 java       7586  40
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000124000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">4</SPAN> Java threads-eksempel: Prioritet</A>
+</H2>
+En Java-tråd kan tilordnes prioritet med <code>setPriority()</code>. Eksempelet under viser også at en tråd selv kan endre sin prioritet. 
+Når en tråd med høyere prioritet starter er meningen at den skal ta over CPU fra tråder med lavere
+prioritet, eventuelt gis mer CPU-tid. 
+Men dette er ikke et absolutt krav i spesifikasjonen og praksis viser at 
+dette ikke er tilfelle for alle JVM'er. 
+
+<P>
+Om man hadde kjørt programmet i eksempelet med tråder implementert i user-space, ville OS ikke 
+vært involvert i scheduleringen. Med Java green-threads (jdk1.1) startes først tråd 1 med prioritet 5 
+og tråd 2 med prioritet 10. Tråd 2 "sover" i 3 sekunder, så i starten kjører tråd 1 alene. 
+Når tråd 2 våkner, tar den fullstendig over CPU-en og utfører <code>work()</code> helt til den setter 
+sin egen prioritet til 1. Da tar tråd 1 over igjen til den er helt ferdig og til slutt 
+fullføres tråd 2. 
+
+<P>
+Kjøres det samme med native-threads, som er implementert i alle nyere JVM'er, vil trådene scheduleres av OS-kjernen 
+og dermed timeslices og kjøre samtidig. På Linux vil prioriteten i praksis ikke ha noen innflytelse, trådene kjøres samtidig og deler 
+likt på CPU, uansett hva prioriteten settes til. Dette skjer også om trådene tvinges til å kjøre på samme CPU med taskset. Det ville vært
+mulig å bruke <code>nice</code> til å implementere prioritet i en Linux JVM, men man har valgt å ikke gjøre det som default siden dette ikker er et
+absolutt krav i spesifikasjonen for JVM-implementasjonen. Se ukeoppgavene om hvordan man kan få prioritet til å virke under Linux.
+
+<P>
+Under Windows vil trådene både timeslice og resprektere prioriteten, men i så stor grad at threads med lavere prioritet nesten ikke slipper til.
+Og denne prioriteringen skjer kun hvis trådene deler samme CPU. Om det er flere CPUer tilgjengelig, kjører trådene på hver sin CPU og
+får like mye CPU-tid hver. Moralen er: Java Threads er ikke plattformuavhengig og avhengig av hvordan JVM i samarbeid med det
+underliggende OS schedulerer trådene.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+import java.lang.Thread;
+
+class PriorThread extends Thread
+{
+   static int count = 0;
+   int id,mil;
+   int max = 400000000;
+   
+   PriorThread(int millisek)
+	{
+	 count++;
+	 id = count;
+	 mil = millisek;
+	}
+
+   public void run()
+	{
+	 try {sleep (mil);} catch (Exception e) {}	 	 
+	 System.out.println("Thread nr." + id + " med prioritet " + getPriority() + " starter");
+	 System.out.println("Thread nr." + id + " regnet ut " + work()+ "\n");
+	 if(id == 2)
+	    {
+	    setPriority(1);
+	    System.out.println("\nEndrer prioritet for Thread nr." + id + ". Prioritet er nå "+getPriority()+"\n");
+	    }
+	 System.out.println("Thread nr." + id + " regnet ut " + work()+ "\n");
+	}
+
+   private float work()
+	{
+	 int i,j;
+	 float res = 0;
+	 for(j=1;j&lt;=8;j++)
+	     {
+		 for(i = 1;i &lt; max;i++)
+		     {
+			 res += 1.0/(1.0*i*i);
+		     }
+		 System.out.println("Thread nr." + id + " avsluttet work(" + j + ")");
+	     }
+	 return(res);
+	}
+}
+
+class Prior
+{
+   public static void main(String args[])
+   {
+    System.out.println("\nStarter to threads!\n");
+    PriorThread s1 = new PriorThread(1);
+    s1.start();
+    s1.setPriority(5);
+    System.out.println("Default prioritet er " + s1.NORM_PRIORITY + " for en thread");
+    System.out.println("Max er " + s1.MAX_PRIORITY + " og min er " + s1.MIN_PRIORITY + "\n");
+
+    PriorThread s2 = new PriorThread(0);
+    s2.setPriority(10);
+    s2.start();  
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000125000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">5</SPAN> Prior.java kjørt på Linux</A>
+</H2>
+Man ser av kjøringen under at selvom man tvinger trådene til å dele samme CPU, har ikke prioriteten noen effekt:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/threads$ taskset -c 0 java Prior
+
+Starter to threads!
+
+Default prioritet er 5 for en thread
+Max er 10 og min er 1
+
+Thread nr.2 med prioritet 10 starter
+Thread nr.1 med prioritet 5 starter
+Thread nr.1 avsluttet work(1)
+Thread nr.2 avsluttet work(1)
+Thread nr.1 avsluttet work(2)
+Thread nr.2 avsluttet work(2)
+Thread nr.1 avsluttet work(3)
+Thread nr.2 avsluttet work(3)
+Thread nr.1 avsluttet work(4)
+Thread nr.2 avsluttet work(4)
+Thread nr.1 avsluttet work(5)
+Thread nr.2 avsluttet work(5)
+Thread nr.1 avsluttet work(6)
+Thread nr.2 avsluttet work(6)
+Thread nr.1 avsluttet work(7)
+Thread nr.2 avsluttet work(7)
+Thread nr.2 avsluttet work(8)
+Thread nr.1 avsluttet work(8)
+Thread nr.1 regnet ut 13.15576
+
+Thread nr.2 regnet ut 13.15576
+
+Endrer prioritet for Thread nr.2. Prioritet er nå 1
+
+Thread nr.1 avsluttet work(1)
+Thread nr.2 avsluttet work(1)
+Thread nr.1 avsluttet work(2)
+Thread nr.2 avsluttet work(2)
+Thread nr.2 avsluttet work(3)
+Thread nr.1 avsluttet work(3)
+Thread nr.2 avsluttet work(4)
+Thread nr.1 avsluttet work(4)
+Thread nr.2 avsluttet work(5)
+Thread nr.1 avsluttet work(5)
+Thread nr.2 avsluttet work(6)
+Thread nr.1 avsluttet work(6)
+Thread nr.2 avsluttet work(7)
+Thread nr.1 avsluttet work(7)
+Thread nr.2 avsluttet work(8)
+Thread nr.2 regnet ut 13.15576
+
+Thread nr.1 avsluttet work(8)
+Thread nr.1 regnet ut 13.15576
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000126000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">6</SPAN> Prior.java kjørt på Windows 10</A>
+</H2>
+Kjører man PriorThread-eksempelet under Windows, på en maskin med kun en CPU, vil prioriteten 
+tas hensyn til, men tråd med høyere prioritet tar da over nesten all CPU-tiden og slipper ikke den andre tråden til:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+PS C:\Users\os\threads&gt; java Prior
+
+Starter to threads!
+
+Default prioritet er 5 for en thread
+Max er 10 og min er 1
+
+Thread nr.2 med prioritet 10 starter
+Thread nr.2 avsluttet work(1)
+Thread nr.2 avsluttet work(2)
+Thread nr.1 med prioritet 5 starter
+Thread nr.2 avsluttet work(3)
+Thread nr.2 avsluttet work(4)
+Thread nr.2 avsluttet work(5)
+Thread nr.2 avsluttet work(6)
+Thread nr.2 avsluttet work(7)
+Thread nr.2 avsluttet work(8)
+Thread nr.2 regnet ut 13.15576
+
+Thread nr.1 avsluttet work(1)
+Thread nr.1 avsluttet work(2)
+
+Endrer prioritet for Thread nr.2. Prioritet er nå 1
+
+Thread nr.1 avsluttet work(3)
+Thread nr.1 avsluttet work(4)
+Thread nr.1 avsluttet work(5)
+Thread nr.1 avsluttet work(6)
+Thread nr.1 avsluttet work(7)
+Thread nr.1 avsluttet work(8)
+Thread nr.1 regnet ut 13.15576
+
+Thread nr.1 avsluttet work(1)
+Thread nr.1 avsluttet work(2)
+Thread nr.1 avsluttet work(3)
+Thread nr.1 avsluttet work(4)
+Thread nr.1 avsluttet work(5)
+Thread nr.1 avsluttet work(6)
+Thread nr.1 avsluttet work(7)
+Thread nr.1 avsluttet work(8)
+Thread nr.1 regnet ut 13.15576
+
+Thread nr.2 avsluttet work(1)
+Thread nr.2 avsluttet work(2)
+Thread nr.2 avsluttet work(3)
+Thread nr.2 avsluttet work(4)
+Thread nr.2 avsluttet work(5)
+Thread nr.2 avsluttet work(6)
+Thread nr.2 avsluttet work(7)
+Thread nr.2 avsluttet work(8)
+Thread nr.2 regnet ut 13.15576
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man ser at når thread nr. 2 endrer prioritet, kjører thread nr. 1 to runder før thread nr 2
+får tid til å skrive ut sin kommentar om at prioriteten er senket.
+
+<P>
+Kjører man eksemplet med mange tråder, kan man på Windows taskmanager se hvor mange 
+tråder JVM bruker. For å få til det må man høyreklikke på en av kolonne-navnene og be om at thread-kolonnen vises. 
+I utganspunktet bruker Windows JVM 10 tråder. Hvis man starter 20 egne tråder viser 
+dermed Taskmanager 30 tråder. 
+
+<P>
+
+<H2><A ID="SECTION000127000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">7</SPAN> Blokkerende systemkall</A>
+</H2>
+Den viktigste årsaken til at man i det hele tatt begynte med threads var såkalte blokkerende I/O requests.
+Blokkerende betyr at applikasjonen som ber om I/O blir satt på vent av operativsystemet til resultatet fra
+I/O operasjonen returnerer. Blokkerende I/O forespørsler kan for eksempel være å lese fra en fil eller fra
+tastaturet. Programmet kan da ikke kjøre videre før det får resultatet. 
+Generelt leder forespørsler om I/O til systemkall og disse er da blokkerende eller ikke-blokkerende
+systemkall. Eksempler på blokkerende systemkall:
+
+<UL>
+<LI>read/write
+</LI>
+<LI>wait
+</LI>
+<LI>sleep
+</LI>
+</UL>
+De to første er alltid blokkerende, mens read og write kan bli gjort til nonblocking ved å bruke
+buffere og ordninger som sender signaler når lesingen/skrivingen er ferdig. Ikke blokkerende
+systemkall:
+
+<UL>
+<LI>getpid
+</LI>
+<LI>gettimeofday
+</LI>
+<LI>setuid
+</LI>
+</UL>
+Dette er systemkall som ikke trenger å vente på I/O, andre prosesser eller noe annent for å fullføre. Uansett
+vil et systemkall føre til en trap til OS-kjernen. 
+
+<P>
+
+<H2><A ID="SECTION000128000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">8</SPAN> Thread-modeller</A>
+</H2>
+Det finnes tre hovedmetoder for hvordan  et operativsystem skedulerer threads. De tre metodene er forskjellige med hensyn på hvor uavhengig av hverandre trådene skeduleres.
+
+<P>
+
+<DIV class="CENTER"><A ID="thread"></A><A ID="1706"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Thread-modeller i OS-kjernen</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+</DIV>
+<P>
+<DIV class="CENTER"><IMG
+ WIDTH="544" HEIGHT="185" STYLE=""
+ SRC="img85.png"
+ ALT="\includegraphics[width=12cm]{fig/thread.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<DL>
+<DT><STRONG>en til mange</STRONG></DT>
+<DD>Alle trådene skeduleres som en prosess, en enhet. 
+Java: green-threads, JVM sørger selv for skedulering; ingen multitasking. 
+Default på gamle versjoner av Linux(Debian) og Solaris.
+</DD>
+<DT><STRONG>en til en</STRONG></DT>
+<DD>Den mest brukte modellen. Hver tråd skeduleres uavhengig av de andre. Windows Java-threads, 
+Linux native Java-threads, Linux Posix-threads (pthreads)
+</DD>
+<DT><STRONG>mange til mange</STRONG></DT>
+<DD>Tråder skeduleres uavhengig om de ikke er for mange. 
+Kjernen kan begrense antall tråder i RR-køen. Solaris, Digital Unix, IRIX  pthreads
+</DD>
+</DL>
+
+<P>
+Et operativsystem som bruker en-til-mange metoden vil behandle en prosess som inneholder mange tråder akkurat som en prosess med bare en tråd. Den gir prosessen biter av CPU-tid som alle andre prosesser og bryr seg ikke om at prosessen egentlig består av flere tråder. Det gjør at tråd-programmet selv må sørge for skedulering. En måte å gjøre dette på er at trådene kaller på <code>yield()</code> for å signalisere til de andre trådene at den er ferdig med sin del av jobben. Alternativt kan tråd-programmet selv lag en round robin schedulering som fordeler tid mellom trådene. For Java green-threads, som var default metode i de første Java-versjonene, var det JVM som selv sørget for skedulering. Hvis man i en slik versjon av Java setter igang to tråder, vil de ikke jobbe annen hver gang som man ville forvente, men første tråd kjøre til den er ferdig og så vil trå nummer to ta over.
+
+<P>
+De aller fleste av dagens operativsystemer bruker en-til-en metoden hvor det er en kjerne-tråd for hver bruker-tråd. Det betyr ikke at det for hver bruker-prosess er en egen prosess eller tråd i kjernen, men at kjernen for hver tråd har lagret data som registerverdier, program counter, tilstand, tråd-ID, prioritet og så videre og skedulerer hver tråd uavhengig av de andre trådene. For prosesser med bare en tråd, har kjernen lagret disse dataene i en tabell som inneholder informasjon om alle prosessene som kjører. For prosesser som har flere tråder, har kjernen for hver av disse en tabell som inneholder data for de individuelle trådene. Når operativsystemets scheduler skal velge hvilken tråd den skal kjøre på en CPU, velger den mellom alle tilgjengelige tråder, uavhengig av hvilken prosess de tilhører og uavhengig av hvor mange tråder hver prosess har. OS-kjernen fordeler CPU-tid jevnt mellom alle trådene og ikke mellom prosessene. En prosess som har veldig mange tråder vil derfor få mer CPU-tid enn en prosess med få tråder.  
+
+<P>
+
+<H2><A ID="SECTION000129000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">9</SPAN> Synkronisering</A>
+</H2>
+Samtidige prosesser som deler felles ressurser/data
+ må <SPAN  CLASS="textbf">synkroniseres</SPAN>.
+
+<UL>
+<LI>prosesser må ikke endre felles data samtidig
+</LI>
+<LI>en prosess bør ikke lese felles data mens en annen endrer dem
+</LI>
+<LI>en prosess må kunne vente på (f. eks. resultater fra) en annen prosess
+</LI>
+</UL>
+ Distribuerte systemer mer og mer vanlig. Synkronisering er da essensielt.
+
+<H2><A ID="SECTION0001210000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN> Serialisering</A>
+</H2>
+Prosesser/tråder som aksesserer felles data må serialiseres; jobbe en av gangen på 
+felles data. Problemstillingen kalles <B>Race Condition</B> (konkurranse om 
+felles ressurser). 
+<EM>Brukeren må selv serialisere sine prosesser. OS legger mulighetene til rette.</EM>
+
+<H3><A ID="SECTION0001210100000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">1</SPAN> Eksempel: To web-prosesser som skriver ut billetter</A>
+</H3>
+Anta at man kan kjøpe billetter på en web-side. På web-serveren starter det da 
+opp en prosess for hver bruker som bestiller en billett. Disse prosessene er helt uavhengige, 
+bortsett fra at de har en felles variabel <code>LedigeBilletter</code> som er antall ledige billetter. 
+Koden prosessene kjører kan se omtrent slik ut:
+<TABLE><TR><TD><PRE >
+
+if(LedigeBilletter &gt; 0){
+   LedigeBilletter--;
+   SkrivUtBillett();
+}
+</PRE></TD></TR></TABLE>
+Dette fungerer greit når bare en slik prosess kjøres av gangen, men det kan oppstå problemer 
+hvis de kjører samtidig(husk at <code>LedigeBilletter</code> er en felles variabel):
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">P1-kode</TH>
+<TH CLASS="LEFT">P2-kode</TH>
+<TH CLASS="CENTER">LedigeBilletter</TH>
+</TR>
+<TR><TD CLASS="LEFT">if(LedigeBilletter &gt; 0){</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT">&mdash;Context Switch<!-- MATH
+ $\Longrightarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img86.png"
+ ALT="$\Longrightarrow$"></SPAN></TD>
+<TD CLASS="LEFT">if(LedigeBilletter &gt; 0){</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">LedigeBilletter&mdash;;</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">SkrivUtBillett();</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">}</TD>
+<TD CLASS="CENTER">0</TD>
+</TR>
+<TR><TD CLASS="LEFT">LedigeBilletter&mdash;;</TD>
+<TD CLASS="LEFT"><!-- MATH
+ $\Longleftarrow$
+ -->
+<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img87.png"
+ ALT="$\Longleftarrow$"></SPAN>Context Switch&mdash;</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT">SkrivUtBillett();</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+<TR><TD CLASS="LEFT">}</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="CENTER">-1</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+En Context Switch kan forekomme når som helst og hvis den skjer rett etter 
+at P1 har sjekket at <code>(LedigeBilletter &gt; 0)</code>, men før den har senket verdien 
+med en, vil P1 og P2 skrive ut den samme (og siste) billetten til to forskjellige kunder. 
+Dette er opplagt galt. Prosessene må serialiseres, slik at denne kodebiten (som kalles 
+et kritisk avsnitt) gjøres av en prosess av gangen.
+
+<P>
+
+<H3><A ID="SECTION0001210200000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">2</SPAN> Eksempel: to prosesser som oppdaterer en felles variabel</A>
+</H3>
+Det er viktig å huske at en linje høynivåkode ofte oversettes til mange linjer 
+makinkode. Dermed kan en Race Condition oppstå selv inni en kodelinje, fordi en Context Switch 
+kan oppstå mellom to hvilke som helst maskininstruksjoner. CPU-en ser kun maskininstruksjoner og 
+aner ikke noe om høynivåkoden som ligger bak. Anta at to prosesser P1 og P2 kjører følgende høynivåkode som oppdaterer en konto:
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="CENTER">P1-kode</TH>
+<TH CLASS="CENTER">P2-kode</TH>
+</TR>
+<TR><TD CLASS="CENTER">static int saldo;</TD>
+<TD CLASS="CENTER">static int saldo;</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">saldo = saldo - mill;</TD>
+<TD CLASS="CENTER">saldo = saldo + mill;</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR><EM>Variabelen <code>saldo</code> er da en felles variabel begge kan endre.</EM>
+
+<P>
+<DL>
+<DT><STRONG>Problem</STRONG></DT>
+<DD>Hva skjer om OS switcher fra P1 til P2 mens P1 ufører 
+<code>saldo = saldo - mill</code> ?
+</DD>
+<DT><STRONG>Hvorfor?</STRONG></DT>
+<DD>Prosessen utfører maskinkode, linje for linje, og kan bli avbrutt etter en instruksjon.
+</DD>
+</DL>
+<TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">P1</TH>
+<TH CLASS="LEFT">P2</TH>
+</TR>
+<TR><TD CLASS="LEFT">saldo = saldo - mill;</TD>
+<TD CLASS="LEFT">saldo = saldo + mill;</TD>
+</TR>
+<TR><TD CLASS="LEFT">mov saldo,%ax</TD>
+<TD CLASS="LEFT">mov saldo,%ax</TD>
+</TR>
+<TR><TD CLASS="LEFT">mov mill,%bx</TD>
+<TD CLASS="LEFT">mov mill,%bx</TD>
+</TR>
+<TR><TD CLASS="LEFT">sub %bx,%ax</TD>
+<TD CLASS="LEFT">add %bx,%ax</TD>
+</TR>
+<TR><TD CLASS="LEFT">mov %ax,saldo</TD>
+<TD CLASS="LEFT">mov %ax,saldo</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<BR>
+Anta at P1 blir Context switchet etter å ha utført <code>mov mill,\%bx</code> og P2 
+overtar. Og videre at saldo er 5 til å begynne med og mill er 1. Følgende 
+skjer, sett fra prosessoren: 
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="CENTER">Prosess som kjører</TH>
+<TH CLASS="LEFT">Instruksjon (IR)</TH>
+<TH CLASS="CENTER">%ax</TH>
+<TH CLASS="CENTER">%bx</TH>
+<TH CLASS="CENTER">saldo</TH>
+</TR>
+<TR><TD CLASS="CENTER">P1</TD>
+<TD CLASS="LEFT">mov saldo,%ax</TD>
+<TD CLASS="CENTER">5</TD>
+<TD CLASS="CENTER">0</TD>
+<TD CLASS="CENTER">5</TD>
+</TR>
+<TR><TD CLASS="CENTER">P1</TD>
+<TD CLASS="LEFT">mov mill,%bx</TD>
+<TD CLASS="CENTER">5</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">5</TD>
+</TR>
+<TR><TD CLASS="CENTER">OS</TD>
+<TD CLASS="LEFT">Context switch</TD>
+<TD CLASS="CENTER">0</TD>
+<TD CLASS="CENTER">0</TD>
+<TD CLASS="CENTER">5</TD>
+</TR>
+<TR><TD CLASS="CENTER">P2</TD>
+<TD CLASS="LEFT">mov saldo, %ax</TD>
+<TD CLASS="CENTER">5</TD>
+<TD CLASS="CENTER">0</TD>
+<TD CLASS="CENTER">5</TD>
+</TR>
+<TR><TD CLASS="CENTER">P2</TD>
+<TD CLASS="LEFT">mov mill,%bx</TD>
+<TD CLASS="CENTER">5</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">5</TD>
+</TR>
+<TR><TD CLASS="CENTER">P2</TD>
+<TD CLASS="LEFT">add %bx,%ax</TD>
+<TD CLASS="CENTER">6</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">5</TD>
+</TR>
+<TR><TD CLASS="CENTER">P2</TD>
+<TD CLASS="LEFT">mov %ax,saldo</TD>
+<TD CLASS="CENTER">6</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">6</TD>
+</TR>
+<TR><TD CLASS="CENTER">OS</TD>
+<TD CLASS="LEFT">Context switch</TD>
+<TD CLASS="CENTER">5</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">6</TD>
+</TR>
+<TR><TD CLASS="CENTER">P1</TD>
+<TD CLASS="LEFT">sub %bx,%ax</TD>
+<TD CLASS="CENTER">4</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">6</TD>
+</TR>
+<TR><TD CLASS="CENTER">P1</TD>
+<TD CLASS="LEFT">mov  %ax,saldo</TD>
+<TD CLASS="CENTER">4</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER">4</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<P>
+Når P2 er ferdig vil P1 bruke den gamle saldoverdien 5 og sluttresultatet blir saldo = 4. 
+Det burde ha blitt saldo = 5 og en mill er borte!! Konklusjon: må serialisere aksess til 
+felles data!
+
+<P>
+
+<H2><A ID="SECTION0001211000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">11</SPAN> Kritisk avsnitt</A>
+</H2>
+
+<P>
+To prosesser P1 og P2 kjører:
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="CENTER">P1-kode</TH>
+<TH CLASS="CENTER">P2-kode</TH>
+</TR>
+<TR><TD CLASS="CENTER">static int saldo;</TD>
+<TD CLASS="CENTER">static int saldo;</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="CENTER">.</TD>
+</TR>
+<TR><TD CLASS="CENTER">saldo = saldo - mill;</TD>
+<TD CLASS="CENTER">saldo = saldo + mill;</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<P>
+Utregningen av saldo er et <SPAN  CLASS="textbf">kritisk avsnitt</SPAN> i koden til P1 og P2. Et 
+kritisk avsnitt <B>må fullføres</B> av prosessen som utfører det uten at 
+andre prosesser slipper til; prosessene må serialiseres.
+
+<P>
+
+<H2><A ID="SECTION0001212000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN> Kritisk avsnitt: Java-eksempel</A>
+</H2>
+Anta at to tråder samarbeider om et felles int-variabel saldo. Den ene 
+tråden øker en million ganger saldo med 1, mens tråd nummer to minker 
+verdien av saldo med en million ganger. Koden kan se slik ut:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+// Kompileres med  javac NosynchThread.java
+// Run: java NosynchThread
+
+import java.lang.Thread;
+
+class SaldoThread extends Thread
+{
+    static int MAX = 1000000; // En million
+    static int count = 0;
+    public static int saldo; // Felles variable, gir race condition
+    int id; 
+    
+    SaldoThread()
+    {
+        count++;
+        id = count;
+    }
+    
+    public void run()
+    {
+	System.out.println("Tråd nr. "+ id +", med prioritet " + getPriority() + " starter");
+	updateSaldo();
+    }
+    
+    private void updateSaldo()
+    {
+	int i;
+	if(id == 1) 
+	{
+	    for(i = 1;i &lt; MAX;i++) 
+	    {
+		saldo++;
+	    }
+	}
+	else      
+	{
+	    for(i = 1;i &lt; MAX;i++)
+	    {
+	        saldo--;
+	    }
+	}
+	System.out.println("Tråd nr. " + id + " ferdig. Saldo: " + saldo);
+    }
+}
+
+class NosynchThread extends Thread
+{
+   public static void main (String args[])
+   {
+       int i;
+       System.out.println("Starter to tråder!");
+
+       SaldoThread s1 = new SaldoThread();
+       SaldoThread s2 = new SaldoThread();
+       s1.start();
+       s2.start();
+
+       try{s1.join();} catch (InterruptedException e){}
+       try{s2.join();} catch (InterruptedException e){}
+
+       System.out.println("Endelig total saldo: " +SaldoThread.saldo);
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN><EM>Her stod det inntil 14 april 2024 i koden <code> public synchronized void updateSaldo()</code> men det var trolig fra
+en test; det hjelper ikke å bruke synchronized slik, se mer om dette i neste forelesning. I videoen er koden korrekt
+presentert, uten synchronized.</EM>
+
+<P>
+Man skulle tro at saldo dermed ender opp som 0, men en kjøring kan gi noe 
+slikt som:
+
+<P>
+<TABLE><TR><TD><PRE >
+
+rex:~/threads/nosync$ java NosynchThread 
+Starter to tråder!
+Tråd nr. 2, med prioritet 5 starter
+Tråd nr. 1, med prioritet 5 starter
+Tråd nr. 2 ferdig. Saldo: -7831
+Tråd nr. 1 ferdig. Saldo: -4892
+Endelig total saldo: -4892
+</PRE></TD></TR></TABLE>
+
+<P>
+eller
+
+<P>
+<TABLE><TR><TD><PRE >
+
+rex:~/threads/nosync$ java NosynchThread 
+Starter to tråder!
+Tråd nr. 1, med prioritet 5 starter
+Tråd nr. 2, med prioritet 5 starter
+Tråd nr. 1 ferdig. Saldo: 8055
+Tråd nr. 2 ferdig. Saldo: 3727
+Endelig total saldo: 3727
+</PRE></TD></TR></TABLE>
+
+<P>
+Altså flere tusen feil og varierende resultat fra gang til gang. 
+Dette skyldes at trådenes lesning og lagring av den felles variabelen ikke 
+er synkronisert. 
+
+<P>
+
+<H3><A ID="SECTION0001212100000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">12</SPAN>.<SPAN CLASS="arabic">1</SPAN> Årsaken: race conditions</A>
+</H3>
+Ser man på bytekoden som kjøres vil den delen av updateSaldo() 
+som legger til 1 se slik ut
+
+<P>
+<TABLE><TR><TD><PRE >
+
+\normalsize
+$ javap -private -c SaldoThread
+ -private for å vise alle metoder, ellers vises ikke updateSaldo()
+.
+.
+      17: getstatic     #17                 // Field saldo:I
+      20: iconst_1
+      21: iadd
+      22: putstatic     #17                 // Field saldo:I
+.
+.
+</PRE></TD></TR></TABLE>
+
+<P>
+og tilsvarende del av koden for subtraksjon ser slik ut
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+      40: getstatic     #17                 // Field saldo:I
+      43: iconst_1
+      44: isub
+      45: putstatic     #17                 // Field saldo:I
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+JVM er en stack-maskin og getstatic laster verdien fra saldo på stacken før 
+iadd øker verdien med en. Til slutt lagres verdien på stacken med putstatic. 
+Årsaken til regnefeilene er at trådene når som helst kan context switches og 
+om det skjer mellom getstatic og putstatic, vil regneoperasjonen bli usynkroniserte 
+og trådene overser deler av hverandres regneoperasjoner.
+
+<P>
+
+<H2><A ID="SECTION0001213000000000000000">
+<SPAN CLASS="arabic">11</SPAN>.<SPAN CLASS="arabic">13</SPAN> Race condition med C, to pthreads og én instruksjon</A>
+</H2>
+Vi så i eksempelet med Java-tråder at instruksjonen
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+saldo++;
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+faktisk ikke utføres av en enkelt Java bytecode-instruksjon, men av flere. Dermed vil det selvom trådene kjører på samme CPU kunne skje en context switch rett etter at verdien på saldo er lastet inn og før verdien er lagret igjen. Når den andre tråen så går inn og leser verdien på saldo vil den bruke den ikke oppdaterte verdien og en race condition oppstår. Sluttresultatet vil avhenge av hvilken tråd som leser verdien først og vil dermed være forskjellig for hver gang programmet kjøres. Men hva om det faktisk bare var en enkelt instruksjon som blir utført i det kritiske avsnittet? Kan det også da oppstå en race condition?
+
+<P>
+For å undersøke det lager vi et ligenende program hvor vi bruker en enkelt assembly-instruksjon for å forsikre oss om at det kun er en enkelt instruksjon som utføres og at kompilatoren ikke lager maskinkode som involverer flere instruksjoner. Tråder er ikke inkludert som default i C, men man kan introdusere tråder ved hjelp av pthreads-biblioteket. Koden nedenfor viser et C-program som lager to tråder som begge oppdaterer en felles variabel med navn <code>svar</code>. I dette tilfellet øker begge tråder verdien til variabelen like mange ganger og dermed vet vi at verdien må bli det dobbelte av det hver tråd øker med hvis det ikke inntreffer en race condition.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;pthread.h&gt;
+
+int svar = 0;
+
+extern void enlinje();
+
+void *inc() 
+{
+   printf("Starter; svar verdi: %d\n", svar);
+   
+   for (int i = 0; i &lt; 10000000; i++) 
+     {
+	enlinje();
+     }
+   
+   printf("Avslutter; svar verdi: %d\n", svar);
+}
+
+
+int main()
+{
+           pthread_t thread1, thread2;
+      
+          /* Lager uavhengige threads som utfører inc-funksjonen */
+      
+           pthread_create( &amp;thread1, NULL, inc,NULL);
+           pthread_create( &amp;thread2, NULL, inc, NULL);
+      
+           /* Venter med join til begge tråder er ferdige */
+      
+           pthread_join( thread1, NULL);
+           pthread_join( thread2, NULL); 
+      
+           printf("Main avslutter; svar verdi: %d\n", svar);
+           exit(0);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+I første omgang skriver vi enlinje-funksjonen med vanlig C-kode i en fil med navn <code>en.c</code>, alt den gjør er å øke verdien av den felles variabelen <code>svar</code> med en:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+void enlinje()
+{
+   extern int svar;
+   svar++;
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Når vi så kompilerer og kjører programmet på følgende måte:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/threads/lock$ gcc -pthread thread.c en.c
+rex:~/threads/lock$ ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 629979
+Avslutter; svar verdi: 10026464
+Avslutter; svar verdi: 12261597
+Main avslutter; svar verdi: 12261597
+
+rex:~/threads/lock$ ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 204229
+Avslutter; svar verdi: 7132793
+Avslutter; svar verdi: 10668956
+Main avslutter; svar verdi: 10668956
+
+rex:~/threads/lock$ ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 114562
+Avslutter; svar verdi: 9936660
+Avslutter; svar verdi: 10127784
+Main avslutter; svar verdi: 10127784
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+ser vi at en race condition oppstår fordi svaret blir forskjellig for hver gang og avhenger av rekkefølgen de to trådene oppdaterer variabelen. At svaret er litt over 10 millioner er forenlig med det som skjer hvis begge henter ut verdien 1 omtrent samtidig og øker den til 2 og så skriver tilbake omtrent samtidig, vil den totale økningen være 1, mens den burde vært 2. Når trådene fortsetter slik uten å samarbeide, vil ca halvparten av økningene med 1 forsvinne. Men kan dette skyldes at kompilatoren lager maskinkode som involverer flere instruksjoner? Ja, det kan være årsaken (å undersøke om det virkelig er tilfelle at kompilatoren lager flere linjer, overlates til en av ukens oppgaver). For å være helt sikker på at enlinje-funksjonen kun utfører en enkelt insturksjon, erstatter vi <code>en.c</code> med assembly-filen <code>minimal.s</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+	.globl	enlinje
+enlinje:
+	incl svar(%rip)
+	ret
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Når vi nå kompilerer og kjører er vi sikker på at det kun er en enkelt instruksjon som oppdaterer variabelen <code>svar</code>, den blir ikke lagret i et register først. Likevel, når vi kompilerer og kjører oppstår det fortsatt en race condition:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/threads/lock$ gcc -pthread thread.c minimal.s 
+rex:~/threads/lock$ ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 748235
+Avslutter; svar verdi: 7065807
+Avslutter; svar verdi: 10768013
+Main avslutter; svar verdi: 10768013
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette skyldes at de to trådene kjører på hver sin CPU og at det ikke er noen koordinering CPUene imellom om å vente på hverandre når en variabel skal hentes fra RAM. Men hva om man tvinger begge trådene til å kjøre på samme kjerne eller CPU? Da bør vel en race condition avverges? Det kan testes ved å starte prosessen med taskset, den vil tvinge prosessen og alle dens tråder til å kjøre på samme CPU. Og ganske riktig, da løses problemet:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/threads/lock$ taskset -c 0 ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 3258051
+Avslutter; svar verdi: 17614192
+Avslutter; svar verdi: 20000000
+Main avslutter; svar verdi: 20000000
+
+rex:~/threads/lock$ taskset -c 0 ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 3348312
+Avslutter; svar verdi: 17502515
+Avslutter; svar verdi: 20000000
+Main avslutter; svar verdi: 20000000
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Uansett hvor mange ganger man kjører dette, vil det gi riktig resultat. Dette er fordi en enkelt maskininstruksjon fullføres før en context switch skjer, dermed vil et kritisk avsnitt alltid fullføres før neste tråd tar over.
+
+<P>
+En mer genrell løsning består i å legge til maskininstruksjonen <code>lock</code> rett før oppdateringen av <code>svar</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+	.globl	enlinje
+enlinje:
+        lock
+	incl	svar(%rip)
+	ret
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Denne instruksjonen låser minnebussen slik at ingen andre prosesser får bruke den før den selv har utført neste instruksjon. Dermed løses problemet:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/threads/lock$ ./a.out 
+Starter; svar verdi: 0
+Starter; svar verdi: 116546
+Avslutter; svar verdi: 19886202
+Avslutter; svar verdi: 20000000
+Main avslutter; svar verdi: 20000000
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette er en metode å løse race condition problemer på, i neste forelesning ser vi på denne og andre metoder. Forøvrig bruker programmet tre ganger så lang tid på å kjøre når man bruker <code>lock</code>. Dette er fordi det tar mye ekstra tid å synkronisere prosessene, de må vente på hverandre når minnebussen låses.
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

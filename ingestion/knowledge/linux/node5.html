@@ -1,0 +1,691 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>4 Forelesning 5/2-26(2 timer). Bash-scripting</TITLE>
+<META NAME="description" CONTENT="4 Forelesning 5/2-26(2 timer). Bash-scripting">
+<META NAME="keywords" CONTENT="linux">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY >
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html543"
+  HREF="node5.html#SECTION00051000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html544"
+  HREF="node5.html#SECTION00052000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+<LI><A ID="tex2html545"
+  HREF="node5.html#SECTION00053000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> Shell-programmering</A>
+<LI><A ID="tex2html546"
+  HREF="node5.html#SECTION00054000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN> if-test</A>
+<LI><A ID="tex2html547"
+  HREF="node5.html#SECTION00055000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">5</SPAN> if-eksempel; fil-testing</A>
+<LI><A ID="tex2html548"
+  HREF="node5.html#SECTION00056000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">6</SPAN> Flere filtester og sammenligning</A>
+<LI><A ID="tex2html549"
+  HREF="node5.html#SECTION00057000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">7</SPAN> Logiske operatorer</A>
+<LI><A ID="tex2html550"
+  HREF="node5.html#SECTION00058000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">8</SPAN> for-løkke</A>
+<LI><A ID="tex2html551"
+  HREF="node5.html#SECTION00059000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">9</SPAN> Break og Continue</A>
+<LI><A ID="tex2html552"
+  HREF="node5.html#SECTION000510000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">10</SPAN> Numerikk</A>
+<LI><A ID="tex2html553"
+  HREF="node5.html#SECTION000511000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">11</SPAN> Script og argumenter</A>
+<LI><A ID="tex2html554"
+  HREF="node5.html#SECTION000512000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">12</SPAN> Argumenter i for-løkke og exit-verdier.</A>
+<LI><A ID="tex2html555"
+  HREF="node5.html#SECTION000513000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">13</SPAN> while</A>
+<LI><A ID="tex2html556"
+  HREF="node5.html#SECTION000514000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">14</SPAN> /proc - et vindu til kjernen</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00050000000000000000">
+<SPAN CLASS="arabic">4</SPAN> Forelesning 5/2-26(2 timer).   Bash-scripting</A>
+</H1>
+
+<P>
+
+<H2><A ID="SECTION00051000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+Denne forelesningen ble ikke holdt live, men opptak av forelesningene er samlet her. 
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html47"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del1.mp4">linux4del1.mp4</A>
+(03:17) Slide: Innledning om shell-programmering
+
+<BR><A ID="tex2html48"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del2.mp4">linux4del2.mp4</A>
+(10:52) Demo: If-tester
+
+<BR><A ID="tex2html49"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del3.mp4">linux4del3.mp4</A>
+(04:37) Demo: Vanlige feil i if tester. Bruk doble apostrofer rundt variabler! ( "$var" )
+
+<BR><A ID="tex2html50"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del4.mp4">linux4del4.mp4</A>
+(02:05) Demo: Vær pinlig nøyaktig med mellomrom i bash-syntaks!
+
+<BR><A ID="tex2html51"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del5.mp4">linux4del5.mp4</A>
+(07:23) Demo: Flere filtester, sammenligning og logiske operatorer
+
+<BR><A ID="tex2html52"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del6.mp4">linux4del6.mp4</A>
+(06:28) Demo: For-løkker
+
+<BR><A ID="tex2html53"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del7.mp4">linux4del7.mp4</A>
+(02:32) Demo: IFS, splitting på andre tegn enn mellomrom
+
+<BR><A ID="tex2html54"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del8.mp4">linux4del8.mp4</A>
+(03:46) Demo: Break og continue
+
+<BR><A ID="tex2html55"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del9.mp4">linux4del9.mp4</A>
+(02:56) Demo: Numerikk i shellet
+
+<BR><A ID="tex2html56"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del10.mp4">linux4del10.mp4</A>
+(04:55) Demo: Script og argumenter
+
+<BR><A ID="tex2html57"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del11.mp4">linux4del11.mp4</A>
+(06:44) Demo: while-løkker
+
+<BR><A ID="tex2html58"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux4del12.mp4">linux4del12.mp4</A>
+(04:51) Demo: /proc - et vindu mot operativsystem-kjernen
+
+<H2><A ID="SECTION00052000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+</H2>
+
+<P>
+
+<UL>
+<LI>Globale og lokale shell variabler
+</LI>
+<LI>Prosesser
+</LI>
+<LI>Apostrofer
+</LI>
+<LI>Omdirigering
+</LI>
+<LI>pipes
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00053000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> Shell-programmering</A>
+</H2>
+
+<P>
+Vi kan lage script som er
+
+<UL>
+<LI>nye kommandoer
+</LI>
+<LI>oppstartsprogrammer/program som gjør systemarbeid
+</LI>
+<LI>innstallasjonsprogrammer
+</LI>
+<LI>daemons; prosesser som alltid går i bakgrunnen og utfører tjenester.
+</LI>
+</UL>
+<code> $mittprog&amp;</code> vil fortsette å kjøre etter logout. 
+
+<P>
+Når du skriver script:
+
+<UL>
+<LI>begynn med et skjelett (som f. eks. kun behandler argumentene) og få det til å virke
+</LI>
+<LI>utvid med en detalj av gangen; test for hver gang
+</LI>
+<LI>test små deler med copy&amp;paste til et kommandovindu
+</LI>
+</UL>
+
+<P>
+Debugging:
+
+<UL>
+<LI><code>bash -x mittscript</code> viser hva som skjer
+</LI>
+<LI>Legg inn linjer som <code>echo "Har nå kommet hit"</code>
+</LI>
+</UL>
+ Feilmeldinger fra bash er ofte kryptiske og misvisende, så det er vanskelig 
+å finne feil i et stort
+script. 
+
+<P>
+
+<H2><A ID="SECTION00054000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN> if-test</A>
+</H2>
+
+<P>
+<PRE>
+if test1
+then
+   kommando1
+elif test2
+then 
+   kommando2
+else
+   kommando3
+fi
+</PRE>
+
+<P>
+
+<H2><A ID="SECTION00055000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">5</SPAN> if-eksempel; fil-testing</A>
+</H2>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+#! /bin/bash
+
+fil=$1
+if [ -f "$fil" ]
+ then
+   echo $fil er en fil
+elif [ -d "$fil" ]; then
+   echo $fil er en mappe
+else
+   echo $fil er hverken fil eller mappe
+fi
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Man <SPAN  CLASS="textbf">må</SPAN> ha mellomrom før og etter [ og før ] i 
+if-testene. Semikolon adskiller generelt to kommandoer på samme måte som et linjeskift.</EM>
+
+<P>
+Følgende script prøver å teste om det ikke er gitt noe argument:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+#! /bin/bash
+
+argument1=$1
+if [ $argument1 = "" ]
+then
+        echo "Ingen argumenter"
+fi
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Men det gir en feilmelding når det kjøres uten argumenter
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ./script
+./script: line 5: [: =: unary operator expected
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+fordi det ikke er anførselstegn rundt $argument1 og da ser bash en linje som ser ut som 
+<code>if [  = "" ]</code> og gir feilmelding. Analogt vil testen <code>if [ -f ]</code> alltid slå til. Bruk derfor 
+alttid anførselstegn rundt det som skal testes, slik at det blir en tom streng og dermed syntaktisk riktig 
+om variabelen du tester ikke eksisterer eller er tom.
+
+<P>
+
+<H2><A ID="SECTION00056000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">6</SPAN> Flere filtester og sammenligning</A>
+</H2>
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Filtest</TD>
+<TD CLASS="LEFT">Sann hvis</TD>
+</TR>
+<TR><TD CLASS="LEFT">-L fil</TD>
+<TD CLASS="LEFT">fil er en link</TD>
+</TR>
+<TR><TD CLASS="LEFT">-r fil</TD>
+<TD CLASS="LEFT">fil er lesbar</TD>
+</TR>
+<TR><TD CLASS="LEFT">-w fil</TD>
+<TD CLASS="LEFT">fil er skrivbar</TD>
+</TR>
+<TR><TD CLASS="LEFT">-e fil</TD>
+<TD CLASS="LEFT">fil eksisterer</TD>
+</TR>
+<TR><TD CLASS="LEFT">-x fil</TD>
+<TD CLASS="LEFT">fil er eksekverbar</TD>
+</TR>
+<TR><TD CLASS="LEFT">s1 = s2</TD>
+<TD CLASS="LEFT">strengene s1 og s2 er like</TD>
+</TR>
+<TR><TD CLASS="LEFT">s1 != s2</TD>
+<TD CLASS="LEFT">strengen s1 og s2 er forskjellige</TD>
+</TR>
+<TR><TD CLASS="LEFT">x -eq y</TD>
+<TD CLASS="LEFT">heltallene x og y er like</TD>
+</TR>
+<TR><TD CLASS="LEFT">x -lt y</TD>
+<TD CLASS="LEFT">x er mindre enn y
+<A ID="tex2html59"
+  HREF="footnode.html#foot624"><SUP><SPAN CLASS="arabic">2</SPAN></SUP></A></TD>
+</TR>
+<TR><TD CLASS="LEFT">x -gt y</TD>
+<TD CLASS="LEFT">x er større enn y</TD>
+</TR>
+<TR><TD CLASS="LEFT">t1 -a t2</TD>
+<TD CLASS="LEFT">Logisk og - sann hvis t1 OG t2 er sanne</TD>
+</TR>
+<TR><TD CLASS="LEFT">t1 -o t2</TD>
+<TD CLASS="LEFT">Logisk eller - sann hvis t1 ELLER t2 er sanne</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION00057000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">7</SPAN> Logiske operatorer</A>
+</H2>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="CENTER">Operator</TD>
+<TD CLASS="LEFT">betydning</TD>
+</TR>
+<TR><TD CLASS="CENTER">!</TD>
+<TD CLASS="LEFT">logisk NOT</TD>
+</TR>
+<TR><TD CLASS="CENTER">-a</TD>
+<TD CLASS="LEFT">logisk AND</TD>
+</TR>
+<TR><TD CLASS="CENTER">-o</TD>
+<TD CLASS="LEFT">logisk OR</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION00058000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">8</SPAN> for-løkke</A>
+</H2>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+for variable in list
+do
+  kommandoer
+done
+</PRE><SPAN CLASS="SPAN"> 
+</SPAN><EM>hvor  <code>list</code> er en liste av ord adskilt av mellomrom. F. eks. gir</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+for var in h1 h2 h3
+do
+   echo $var
+done
+</PRE><SPAN CLASS="SPAN"> 
+</SPAN>til output 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+h1
+h2
+h3
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Info om nøkkelord som <code>for</code>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~$ type for
+for is a shell keyword
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+kan man få med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~$ help for
+for: for NAME [in WORDS ... ] ; do COMMANDS; done
+    Execute commands for each member in a list.
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Eksempler på <code>list</code> eller WORDS:
+
+<UL>
+<LI><code> $(ls) </code>
+</LI>
+<LI><code> $(cat fil) </code>
+</LI>
+<LI><code> * </code>
+</LI>
+<LI><code> dir/*.txt </code>
+</LI>
+<LI><code> $filer   # ( filer="fil1 fil2 fil3") </code>
+</LI>
+</UL>
+<EM>En liste splittes med mellomrom. Variabelen IFS (Internal Field Separator)  kan
+settes om man ønsker å splitte på et annet tegn. Det skjer ved at 
+IFS-tegnet byttes ut med mellomrom når verdien av en shellvaribael 
+benyttes.
+Den må fjernes med <code>unset</code> 
+om man ønsker å splitte på mellomrom igjen.</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ var=fil1:fil2:fil3
+$ echo $var
+fil1:fil2:fil3
+$ IFS=:
+$ echo $var
+fil1 fil2 fil3
+$ for fil in $var
+&gt; do
+&gt; echo $fil
+&gt; done
+fil1
+fil2
+fil3
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Å bruke kolon til å splitte er nyttig om man ønsker å løpe igjennom PATH eller en linje i passordfilen. 
+Med noen opsjoner til cat, kan man se hva som skjuler seg bak $IFS:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~$ echo "$IFS" | cat -vet
+ ^I$
+$
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette betyr at IFS splitter på de tre tegnene &lt;space&gt;&lt;tab&gt;&lt;newline&gt;, noe man kan se i bash sin manual-side om man søker på IFS. 
+
+<P>
+Fra og med bash versjon 2.0 kan man også skrive vanlige for-løkker med en syntaks som 
+ligner mer på Java:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+for (( i=1;i &lt; 30;i++ ))
+do 
+   echo $i
+done
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00059000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">9</SPAN> Break og Continue</A>
+</H2>
+Break og Continue kan brukes mellom do og done til å avbryte for og while løkker:
+<DL>
+<DT><STRONG>continue</STRONG></DT>
+<DD>Fortsett med neste runde i for/while løkke.
+</DD>
+<DT><STRONG>break</STRONG></DT>
+<DD>Avslutt for/while løkke; hopp til etter done
+</DD>
+<DT><STRONG>break n</STRONG></DT>
+<DD>Hopp ut n nivåer
+</DD>
+</DL>
+
+<P>
+
+<H2><A ID="SECTION000510000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">10</SPAN> Numerikk</A>
+</H2>
+Tungt å bruke <code>expr</code> som er eneste alternativ i Bourne-shell:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+a=`expr $a + 1`               # increment a
+a=`expr 4 + 10 \* 5`          # 4+10*5
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Enklere innenfor (( )) for da kan Java-syntaks for numerikk 
+brukes(men bare i bash 2.x).
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ (( x = 1 ))
+$ echo $x
+1
+$ (( x += 1))
+$ echo $x
+2
+$ (( total = 4*$x + x )) # Virker med x uten $ foran!
+$ echo $total
+10
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Den numeriske testen
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+if ((x &lt; y))
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+er et Bash 2.x alternativ til 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+if [ $x -lt $y ]
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Den beste løsningen er å bruke syntaksen med doble paranteser, (( )), selvom
+syntaksen (for å være bakoverkompatibel) er litt uvanlig.
+
+<P>
+
+<H2><A ID="SECTION000511000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">11</SPAN> Script og argumenter</A>
+</H2>
+
+<P>
+Argumenter blir lagret i spesielle variabler.
+<BR>
+Kjøres scriptet argscript.bash med tre argumenter:
+<BR>
+<BR> <SPAN  CLASS="texttt">$&nbsp;argscript.sh fil1 fil2 fil3</SPAN>
+<BR>
+<BR>
+vil følgende variabler bli satt:
+<BR>
+<BR>
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">variabel</TD>
+<TD CLASS="LEFT">innhold</TD>
+<TD CLASS="LEFT">verdi i eksempelet</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$*</SPAN></TD>
+<TD CLASS="LEFT">hele argumentstrengen</TD>
+<TD CLASS="LEFT">fil1 fil2 fil3</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$#</SPAN></TD>
+<TD CLASS="LEFT">antall argumenter</TD>
+<TD CLASS="LEFT">3</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$1</SPAN></TD>
+<TD CLASS="LEFT">arg nr 1</TD>
+<TD CLASS="LEFT">fil1</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$2</SPAN></TD>
+<TD CLASS="LEFT">arg nr 2</TD>
+<TD CLASS="LEFT">fil2</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$3</SPAN></TD>
+<TD CLASS="LEFT">arg nr 3</TD>
+<TD CLASS="LEFT">fil3</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION000512000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">12</SPAN> Argumenter i for-løkke og exit-verdier.</A>
+</H2>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ cat forarg
+#!/bin/bash 
+
+if [ $# -lt 1 ]
+then
+   echo No arguments
+   exit 1             # Avsluttet scriptet
+fi
+
+for arg in $*
+do
+  echo $arg was an argument
+done
+
+echo total number: $#
+
+$ forarg hei du
+hei was an argument
+du was an argument
+total number: 2
+$ echo $?
+0
+$ forarg 
+No arguments
+$ echo $?
+1
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Variabelen <code>$?</code> inneholder exit-verdien til programmet/kommandoen som sist ble 
+utført. Det finnes andre variabler som er definert, som de to følgende:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+echo "PID = $$, navn: $0"
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000513000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">13</SPAN> while</A>
+</H2>
+syntaks:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+while test
+do
+     kommandoer
+done
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Eksempel; alternativ måte å behandle argumenter: 
+<EM>bedre hvis "strenger med mellomrom" er blant argumentene</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+#! /bin/bash
+
+while [ $# -gt 0 ]  # Så lenge det er noe i $*
+do
+        echo "arg: $1"
+        shift          # skyver ut $1 og legger neste argument i $1
+done
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Deamon-eksempel
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+#! /bin/bash
+
+while [ "true" ]  # evig løkke; en streng er alltid 'sann'
+do
+        echo "Running $0, a process with PID $$"
+        sleep 5   # sover i 5 sekunder
+done
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000514000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">14</SPAN> /proc - et vindu til kjernen</A>
+</H2>
+
+<P>
+Linux tilbyr oss en enkel måte å undersøke tilstanden til
+operativsystemet på. Det finnes nemlig en mappe <SPAN  CLASS="texttt">/proc</SPAN> som
+egentlig ikke finnes på harddisken, men som likevel inneholder
+&ldquo;filer&rdquo; som vi kan lese innholdet fra.
+Hver gang vi åpner en av filene i /proc, kjøres en metode i
+kjernen som skriver ut innholdet der og da. Man får altså et
+øyeblikksbildet av hva som skjer. Her er en liste over interessante
+filer og mapper i /proc:
+
+<P>
+
+<UL>
+<LI><SPAN  CLASS="texttt">cpuinfo</SPAN>
+</LI>
+<LI><SPAN  CLASS="texttt">meminfo</SPAN>
+</LI>
+<LI><SPAN  CLASS="texttt">interrupts</SPAN>
+</LI>
+<LI>Hver prosess har en egen mappe som har samme navnsom prosessens
+PID. Spennende filer i en slik mappe kan være:
+
+<UL>
+<LI><SPAN  CLASS="texttt">status</SPAN> - Navn og status på prosessen
+</LI>
+<LI><SPAN  CLASS="texttt">stat</SPAN> - Teller prosessorbruk, minnebruk osv. se `man proc'
+</LI>
+</UL>
+</LI>
+<LI><SPAN  CLASS="texttt">uptime</SPAN>
+</LI>
+<LI><SPAN  CLASS="texttt">version</SPAN>
+</LI>
+<LI><SPAN  CLASS="texttt">net/</SPAN>
+</LI>
+</UL>
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

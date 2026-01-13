@@ -190,9 +190,9 @@ if __name__ == "__main__":
 
     # Set input file based on source
     if args.source == "course_pages":
-        chunk_input_file = "processed_chunks.jsonl"
+        chunk_input_file = "chunks_course_pages.jsonl"
     elif args.source == "video_transcripts":
-        chunk_input_file = "knowledge_processed/os/Forelesning/video/transcripts_processed.jsonl"
+        chunk_input_file = "chunks_video_transcripts.jsonl"
     
     # 1. Load Pre-processed Chunks
     print("--- LOADING PRE-PROCESSED CHUNKS ---")

@@ -1,0 +1,984 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>2 Forelesning 23/1-26(2 timer). Linux-filsystem, Linux-kommandoer</TITLE>
+<META NAME="description" CONTENT="2 Forelesning 23/1-26(2 timer). Linux-filsystem, Linux-kommandoer">
+<META NAME="keywords" CONTENT="linux">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY >
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html498"
+  HREF="node3.html#SECTION00031000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">1</SPAN> Sist</A>
+<LI><A ID="tex2html499"
+  HREF="node3.html#SECTION00032000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">2</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html500"
+  HREF="node3.html#SECTION00033000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">3</SPAN> Manualsider og apropos</A>
+<LI><A ID="tex2html501"
+  HREF="node3.html#SECTION00034000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">4</SPAN> Tidsbesparende triks i et Linux-shell</A>
+<LI><A ID="tex2html502"
+  HREF="node3.html#SECTION00035000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">5</SPAN> Linux-shellscript</A>
+<LI><A ID="tex2html503"
+  HREF="node3.html#SECTION00036000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">6</SPAN> Absolutt og relativ path</A>
+<LI><A ID="tex2html504"
+  HREF="node3.html#SECTION00037000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">7</SPAN> Mer filbehandling</A>
+<LI><A ID="tex2html505"
+  HREF="node3.html#SECTION00038000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">8</SPAN> Sletting av filer og mapper</A>
+<LI><A ID="tex2html506"
+  HREF="node3.html#SECTION00039000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">9</SPAN> Enda mer filbehandling</A>
+<LI><A ID="tex2html507"
+  HREF="node3.html#SECTION000310000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">10</SPAN> Lovlige filnavn</A>
+<LI><A ID="tex2html508"
+  HREF="node3.html#SECTION000311000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">11</SPAN> Prosesser</A>
+<LI><A ID="tex2html509"
+  HREF="node3.html#SECTION000312000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">12</SPAN> Linux-maskiner</A>
+<LI><A ID="tex2html510"
+  HREF="node3.html#SECTION000313000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">13</SPAN> Orientering: Hvem, hva, hvor</A>
+<LI><A ID="tex2html511"
+  HREF="node3.html#SECTION000314000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">14</SPAN> Symbolske linker til filer (symbolic links)</A>
+<LI><A ID="tex2html512"
+  HREF="node3.html#SECTION000315000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">15</SPAN> Symbolske linker til mapper</A>
+<LI><A ID="tex2html513"
+  HREF="node3.html#SECTION000316000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">16</SPAN> Filrettigheter</A>
+<LI><A ID="tex2html514"
+  HREF="node3.html#SECTION000317000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">17</SPAN> Hvordan forstå filrettigheter</A>
+<LI><A ID="tex2html515"
+  HREF="node3.html#SECTION000318000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">18</SPAN> Endre filrettigheter</A>
+<LI><A ID="tex2html516"
+  HREF="node3.html#SECTION000319000000000000000"><SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">19</SPAN> umask</A>
+<LI><A ID="tex2html517"
+  HREF="node3.html#SECTION000320000000000000000">Spørsmål</A>
+<UL>
+<LI><A ID="tex2html518"
+  HREF="node3.html#SECTION000320001000000000000">Gir skriverettighet leserettighet?</A>
+<LI><A ID="tex2html519"
+  HREF="node3.html#SECTION000320002000000000000">Kan man sette bare skriverettigheter på en fil?</A>
+<LI><A ID="tex2html520"
+  HREF="node3.html#SECTION000320003000000000000">Hvilke rettigheter trenger man for å kunne slette en fil?</A>
+<LI><A ID="tex2html521"
+  HREF="node3.html#SECTION000320004000000000000">Kan man slette en fil man selv ikke har skriverettigheter til?</A>
+<LI><A ID="tex2html522"
+  HREF="node3.html#SECTION000320005000000000000">Hva skjer med eierskapet om man kopierer en annens fil?</A>
+</UL></UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00030000000000000000">
+<SPAN CLASS="arabic">2</SPAN> Forelesning 23/1-26(2 timer).  Linux-filsystem, Linux-kommandoer</A>
+</H1>
+
+<P>
+
+<H2><A ID="SECTION00031000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">1</SPAN> Sist</A>
+</H2>
+
+<P>
+
+<UL>
+<LI>Jobb med oppgaver!
+</LI>
+<LI>Shell
+</LI>
+<LI>Shell-script
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00032000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">2</SPAN> Forelesningsvideoer</A>
+</H2>
+Denne forelesningen ble ikke holdt live, men opptak av forelesningene er samlet her. 
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html16"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del1.mp4">linux2del1.mp4</A>
+(02:42) Demo: Manualsider
+
+<BR><A ID="tex2html17"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del2.mp4">linux2del2.mp4</A>
+(04:02) Demo: Tidsbesparende triks i et Linux-shell
+
+<BR><A ID="tex2html18"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del3.mp4">linux2del3.mp4</A>
+(03:08) Slides: Oppsummering om Linux-shellscript 
+
+<BR><A ID="tex2html19"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del4.mp4">linux2del4.mp4</A>
+(03:06) Demo: Absolutt og relativ path  
+
+<BR><A ID="tex2html20"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del5.mp4">linux2del5.mp4</A>
+(06:42) Demo: Flytte og kopiere mapper og undermapper
+
+<BR><A ID="tex2html21"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del6.mp4">linux2del6.mp4</A>
+(04:57) Demo: Hvordan slette mapper og filer. Mer filbehandling.
+
+<BR><A ID="tex2html22"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del7.mp4">linux2del7.mp4</A>
+(07:05) Demo: Filnavn, prosesser, Linux-hosts, Orientering
+
+<BR><A ID="tex2html23"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del8.mp4">linux2del8.mp4</A>
+(03:35) Demo: Symbolske linker til mapper og filer
+
+<BR><A ID="tex2html24"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del9.mp4">linux2del9.mp4</A>
+(10:29) Demo: Informasjon fra ls -l og filrettigheter
+
+<BR><A ID="tex2html25"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux2del10.mp4">linux2del10.mp4</A>
+(04:03) Demo: Alternativ bruk av chmod. Umask og default rettigheter.
+
+<BR>
+<P>
+
+<H2><A ID="SECTION00033000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">3</SPAN> Manualsider og apropos</A>
+</H2>
+For å finne ut hvordan en viss kommando (f. eks. date) virker, kan man slå opp i manualsiden med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ man date
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Manualsiden er vanligvis for lang til å vises på en side. Du kan manøvrere deg nedover en side av
+gangen ved å taste space. Man søker ved å taste <code>/søkeord</code> og så taste "n" fortløpende for flere
+forekomster. Tast "q" for å avslutte.
+
+<P>
+Apropos: finner kommandoer relatert til et emne.
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~$ apropos compare
+[ (1)                - check file types and compare values
+bcmp (3)             - compare byte sequences
+bzcmp (1)            - compare bzip2 compressed files
+bzdiff (1)           - compare bzip2 compressed files
+cg_diff (1)          - compares two Cachegrind output files
+cmp (1)              - compare two files byte by byte
+comm (1)             - compare two sorted files line by line
+diff (1)             - compare files line by line
+
+haugerud@studssh:~$ man diff
+DIFF(1)                                                User Commands                                                DIFF(1)
+
+NAME
+       diff - compare files line by line
+
+SYNOPSIS
+       diff [OPTION]... FILES
+
+DESCRIPTION
+       Compare FILES line by line.
+
+       Mandatory arguments to long options are mandatory for short options too.
+
+       --normal
+              output a normal diff (the default)
+      -i, --ignore-case
+              ignore case differences in file contents
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Alt som er listet i [] er opsjoner som kan men ikke må tas med. Tast "q" for å avslutte.</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+studssh$ diff -i fil1 fil2
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Og et google-søk med 'linux command line' eller 'linux bash' og det du ønsker å finne gir ofte raskt det du leter etter. 
+
+<P>
+
+<H2><A ID="SECTION00034000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">4</SPAN> Tidsbesparende triks i et Linux-shell</A>
+</H2>
+Det finnes mange smarte knep som gjør inntasting av shell-kommandoer enklere. Bla tilbake i tidligere kommandoer og rediger dem med piltastene og trykk TAB-tasten for å finne mulige forlengelser av det du har skrevet inn.
+
+<P>
+
+<UL>
+<LI>Tidligere kommandoer kan gjentas og endres med piltaster og vanlig editering
+</LI>
+<LI><SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img3.png"
+ ALT="$\leftarrow$"></SPAN>,<SPAN CLASS="MATH"><IMG
+ STYLE="height: 1.05ex; vertical-align: -0.12ex; " SRC="img4.png"
+ ALT="$\rightarrow$"></SPAN> editere en tidligere kommando, og utføre den på nytt med Enter
+</LI>
+<LI><code>$ exit</code> og CTRL-d avslutter et shell. 
+</LI>
+<LI>Bruk Ctrl-C Hvis du skal stoppe et program som går i et shell
+</LI>
+</UL>
+Man kan søke bakover i tidligere kommandoer ved å taste CTRL-r og så fortløpende det man søker etter, "mitt" i eksempelet under:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+(reverse-i-search)`': 
+(reverse-i-search)`mitt': mv mitt.sh new
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Generelt kan man få skallet til å komplettere filnavn og kommandoer ved å trykke på TAB-tasten.
+Skal man f.eks. flytte til mappen kjempelangtnavn:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ cd kj [TAB]
+$ cd kjempelangtnavn
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Hvis du også har en mappe der du står som heter kjiipt, piper det etter TAB</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ cd kj [TAB] [TAB]
+kjempelangtnavn/ kjiipt/   
+$ cd kje [TAB]
+$ cd kjempelangtnavn
+$ loc [TAB]
+local      locale     localedef  locate     lockfile
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Du kan også bruke TAB-tasten til å komplettere kommandoer du skal utføre. Skriver du
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ net
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og så trykker TAB-tasten to ganger vil du få alle kommandoer som begynner på "net".
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ net
+net         netcat      netkit-ftp  netstat
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+tast en "s" og TAB igjen og "netstat" fullføres av shellet.
+
+<P>
+Se mer om dette og andre tips under 'Nyttige tips om bruk av Linux' under Linux-help ikonet på kurs-siden.
+
+<P>
+Hvis du kjører Linux med grafisk brukergrensesnitt vil i noen tilfeller kopiering og lignende være litt anderledes enn i andre systemer:
+
+<UL>
+<LI>Copy = Merk område med venstre musetast
+</LI>
+<LI>Paste = høyre musetast (putty) eller midtre musetast(linux)
+</LI>
+<LI>Windows varianten: cut=CTRL-x copy=CTRL-c og paste=CTRL-v virker i de fleste nyere GUI-applikasjoner
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00035000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">5</SPAN> Linux-shellscript</A>
+</H2>
+
+<UL>
+<LI>Samling av kommandolinjer
+</LI>
+<LI>program som utføres linje for linje
+</LI>
+<LI>Kompileres ikke
+</LI>
+</UL>
+
+<P>
+<table width="90%"><tr><td align="right" valign="top">+</td><td valign="top">&nbsp;Raskt å lage.</td></tr>
+<tr><td align="right" valign="top">+</td><td valign="top">&nbsp;Fint for små oppgaver.</td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;Langsomt i forhold til kompilert kode.</td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;Mangler avanserte datastrukturer.</td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;Kryptisk syntaks</td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;Vanskelig å feilsøke/debugge
+</td></tr></table>
+
+<P>
+En meget nyttig måte å teste ut bash-script på er å bruke -x parameteren. Kjør scriptet ditt, som heter f. eks. mittscript, slik:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ bash -x mittscript
+$ bash -x mittscript
++ '[' -f /etc/passwd ']'
++ echo Bra
+Bra
+og hver kommando som utføres blir skrevet til skjermen.
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00036000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">6</SPAN> Absolutt og relativ path</A>
+</H2>
+En path (bane) til en mappe eller en fil angis alltid absolutt eller relativt til 
+posisjonen man er i filtreet. Absolutt path begynner alltid med / som er rot-mappen som 
+alle de andre henger på.
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ pwd
+   /
+$ cd home
+$ pwd
+   /home
+$ cd etc               &lt;----- Relativ path
+bash: cd: etc: No such file or directory
+$ cd /etc              &lt;----- Absolutt path
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<DIV class="CENTER">
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Alt I: <SPAN  CLASS="textit">Relativ path</SPAN></TD>
+<TD CLASS="LEFT">AltII: <SPAN  CLASS="textit">Absolutt path</SPAN></TD>
+</TR>
+<TR><TD CLASS="LEFT">Fra /</TD>
+<TD CLASS="LEFT">Fra hvor som helst</TD>
+</TR>
+<TR><TD CLASS="LEFT" COLSPAN=1><SPAN><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;usr</SPAN></SPAN></TD>
+<TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;/usr/bin</SPAN></TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;bin</SPAN></TD>
+<TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;pwd</SPAN></TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;pwd</SPAN></TD>
+<TD CLASS="LEFT"><SPAN  CLASS="texttt">/usr/bin</SPAN></TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">/usr/bin</SPAN></TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+</TR>
+<TR><TD CLASS="LEFT">Begynner <EM>ikke</EM> med /</TD>
+<TD CLASS="LEFT">Begynner med /</TD>
+</TR>
+</TABLE>
+</DIV>
+<P>
+<DIV class="CENTER">
+</DIV>
+
+<P>
+
+<DIV class="CENTER"><A ID="source"></A><A ID="248"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Mappen /usr/bin i filtreet.</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="454" HEIGHT="213" STYLE=""
+ SRC="img5.png"
+ ALT="\includegraphics[width=10cm]{unixFig/usrbin.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H2><A ID="SECTION00037000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">7</SPAN> Mer filbehandling</A>
+</H2>
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Linux-kommando</TD>
+<TD CLASS="LEFT">resultat</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ tree</SPAN></TD>
+<TD CLASS="LEFT">viser den underliggende mappe-strukturen</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ sudo apt-get install tree</SPAN></TD>
+<TD CLASS="LEFT">Installerer programmet tree om det ikke finnes fra før</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;mv&nbsp;dir1 dir2</SPAN></TD>
+<TD CLASS="LEFT">flytter mappen dir1 til mappen dir2</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cp&nbsp;/bin/c*&nbsp;/tmp</SPAN></TD>
+<TD CLASS="LEFT">Kopier alt som begynner på c i /bin til /tmp</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cp&nbsp;-R dir1 dir2</SPAN></TD>
+<TD CLASS="LEFT">Kopier dir1 med undermapper til dir2</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<DIV class="CENTER"><A ID="264"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">mv av hele mapper</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="542" HEIGHT="401" STYLE=""
+ SRC="img6.png"
+ ALT="\includegraphics[width=12cm]{unixFig/mv.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<DIV class="CENTER"><A ID="270"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">cp -R av hele mapper</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="543" HEIGHT="393" STYLE=""
+ SRC="img7.png"
+ ALT="\includegraphics[width=12cm]{unixFig/cp.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H2><A ID="SECTION00038000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">8</SPAN> Sletting av filer og mapper</A>
+</H2>
+NB! Fjernes for godt (ingen undelete)
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Linux-kommando</TD>
+<TD CLASS="LEFT">resultat</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;rm&nbsp;fil1</SPAN></TD>
+<TD CLASS="LEFT">sletter fil1 (umulig å få tilbake)</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;rmdir&nbsp;Mappe</SPAN></TD>
+<TD CLASS="LEFT">kun tom mappe</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;rm&nbsp;-R&nbsp;Mappe</SPAN></TD>
+<TD CLASS="LEFT">sletter mappe og alle undermapper. Farlig</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;rm&nbsp;-i&nbsp;fil2</SPAN></TD>
+<TD CLASS="LEFT">ber om bekreftelse først</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION00039000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">9</SPAN> Enda mer filbehandling</A>
+</H2>
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Linux-kommando</TD>
+<TD CLASS="LEFT">resultat</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;locate&nbsp;noe</SPAN></TD>
+<TD CLASS="LEFT">finner alle filer og mapper med navn som inneholder tekststrengen &ldquo;noe&rdquo;</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;find&nbsp;tmp&nbsp;-name&nbsp;fil.txt</SPAN></TD>
+<TD CLASS="LEFT">finner alt under tmp med navn som inneholder fil.txt</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;find&nbsp;.&nbsp;-name&nbsp;"*fil*"</SPAN></TD>
+<TD CLASS="LEFT">finner alt under mappen du står som inneholder strengen "fil" i navnet</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;more&nbsp;fil1</SPAN></TD>
+<TD CLASS="LEFT">skriv til skjerm; en side av gangen</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;grep&nbsp;group&nbsp;/etc/passwd</SPAN></TD>
+<TD CLASS="LEFT">skriv til skjerm alle linjer som inneholder strengen group</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;wc&nbsp;-l&nbsp;/etc/passwd</SPAN></TD>
+<TD CLASS="LEFT">tell antall linjer i /etc/passwd</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;grep&nbsp;group&nbsp;/etc/passwd&nbsp;|&nbsp;wc&nbsp;-l</SPAN></TD>
+<TD CLASS="LEFT">tell antall linjer som inneholder strengen group</TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+<P>
+
+<H2><A ID="SECTION000310000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">10</SPAN> Lovlige filnavn</A>
+</H2>
+Alle tegn untatt / er lov//
+unngå spesielle tegn som æ,ø,å og mellomrom <EM>for de 
+må spesialbehandles (som "en fin fil")</EM>
+<BR>
+Bruk A-Z a-z 0-9 _ . 
+
+<UL>
+<LI>fil1
+</LI>
+<LI>fil1.txt
+</LI>
+<LI>Index.html
+</LI>
+<LI>VeldigLangeFilnavn.help
+</LI>
+<LI>fil2.ver3.tekst
+</LI>
+</UL>
+Linux er case-sensitiv. <B>fil1 er IKKE den samme filen som FIL1</B>.
+
+<P>
+
+<H2><A ID="SECTION000311000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">11</SPAN> Prosesser</A>
+</H2>
+
+<UL>
+<LI><code>ps</code>
+</LI>
+<LI><code>ps aux</code>
+</LI>
+<LI><code>ps aux | grep root</code>
+</LI>
+<LI><code>man ps</code>
+</LI>
+<LI><code>top</code>
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION000312000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">12</SPAN> Linux-maskiner</A>
+</H2>
+
+<UL>
+<LI>Hver Linux-maskin kalles en "host" (vert)
+</LI>
+<LI>Flere brukere kan logge inn og bruke samme host samtidig. 
+</LI>
+<LI>Hver host har et navn: studssh (Linux, fil og www-server), rex (desktop), etc.
+</LI>
+<LI>Entydig adresse som kan nås fra hele verden krever domenenavn i tillegg:  studssh.cs.oslomet.no, login.uio.no
+</LI>
+</UL>
+Man kan logge inn fra hvorsomhelst i verden til en annen maskin:
+<SPAN CLASS="SPAN"></SPAN><PRE>
+ssh os@studssh.cs.oslomet.no
+os@studssh.cs.oslomet.no's password:
+[os]studssh:~$
+</PRE><SPAN CLASS="SPAN">
+Når man logger inn med ssh (Secure Shell) krypteres alt som sendes.
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000313000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">13</SPAN> Orientering: Hvem, hva, hvor</A>
+</H2>
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Linux-kommando</TD>
+<TD CLASS="LEFT">Gir deg</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;whoami</SPAN></TD>
+<TD CLASS="LEFT">brukernavn</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;hostname</SPAN></TD>
+<TD CLASS="LEFT">maskin-navn</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;uname</SPAN></TD>
+<TD CLASS="LEFT">Operativsystem (Linux, Solaris,.....)</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;uname&nbsp;-a</SPAN></TD>
+<TD CLASS="LEFT">OS, versjon, etc.</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;who</SPAN></TD>
+<TD CLASS="LEFT">hvem som er logget inn</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;type chmod</SPAN></TD>
+<TD CLASS="LEFT">hviklet program kjøres med chmod?</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;history</SPAN></TD>
+<TD CLASS="LEFT">tidligere kommandoer</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION000314000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">14</SPAN> Symbolske linker til filer (symbolic links)</A>
+</H2>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ln -s fil1 fil2
+$ ls -l
+-rw-------   1 haugerud drift             20 Sep  4 18:44 fil1
+lrwxrwxrwx   1 haugerud drift              4 Sep  4 18:43 fil2 -&gt; fil1
+$ cat fil2
+Denne teksten står i fil1
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000315000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">15</SPAN> Symbolske linker til mapper</A>
+</H2>
+Ved å lage en link til en mappe kan man lage en snarvei i filtreet.
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ pwd
+/home/min/dir1
+$ ln -s /usr/bin mbin
+$ ls -l
+lrwxrwxrwx   1 haugerud drift              8 Sep  4 19:02 mbin -&gt; /usr/bin
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<DIV class="CENTER"><A ID="325"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Symbolsk link fra mbin til /usr/bin</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="544" HEIGHT="216" STYLE=""
+ SRC="img8.png"
+ ALT="\includegraphics[width=12cm]{unixFig/link.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ cd mbin
+$ ls
+822-date                giftopnm                    nawk                  rcsmerge
+Esetroot                giftrans                    ncftp                 rdist
+.......etc.......            # alle filene i /usr/bin
+$
+$ pwd
+/home/min/dir1/mbin          # /bin/pwd gir path relativt til linken
+$ type pwd
+pwd is a shell builtin       # kommandoen pwd er bygd inn i bash
+$ /bin/pwd                   # /bin/pwd gir absolutt path til der du er
+/usr/bin
+$ cd ..
+$ pwd
+/home/min/dir1               # ikke /usr
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000316000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">16</SPAN> Filrettigheter</A>
+</H2>
+Alle filer tilhører en bruker og en gruppe av brukere. 
+For hver mappe og fil kan eieren sette rettighetene for
+
+<P>
+
+<UL>
+<LI>brukeren filen tilhører (seg selv)
+</LI>
+<LI>gruppen filen tilhører
+</LI>
+<LI>alle andre 
+</LI>
+</UL>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ls -l
+-rwxrw-r--   1 haugerud drift           7512 Aug 30 14:20 fil.exe
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<table width="90%"><tr><td align="right" valign="top"><B>- </B></td><td valign="top">&nbsp;fil (d = mappe, l = link)</td></tr>
+<tr><td align="right" valign="top"><B>rwx</B></td><td valign="top">&nbsp;fileier sine rettigheter (r = read, w = write, x = executable) </td></tr>
+<tr><td align="right" valign="top"><B>rw- </B></td><td valign="top">&nbsp;gruppens rettigheter (kan lese og skrive)</td></tr>
+<tr><td align="right" valign="top"><B>r-&nbsp;- </B></td><td valign="top">&nbsp;alle andre sine rettigheter (kan bare lese filen)</td></tr>
+<tr><td align="right" valign="top"><B>1 </B></td><td valign="top">&nbsp;antall hard links</td></tr>
+<tr><td align="right" valign="top"><B>haugerud </B></td><td valign="top">&nbsp;eiers brukernavn</td></tr>
+<tr><td align="right" valign="top"><B>drift </B></td><td valign="top">&nbsp;gruppen som filen tilhører (definert i /etc/group)</td></tr>
+<tr><td align="right" valign="top"><B>7512 </B></td><td valign="top">&nbsp;antall byte</td></tr>
+<tr><td align="right" valign="top"><B>Aug 30 14:20</B></td><td valign="top">&nbsp;tidspunkt filen sist ble endret</td></tr>
+<tr><td align="right" valign="top"><B>fil.exe </B></td><td valign="top">&nbsp;filnavn
+</td></tr></table>
+
+<P>
+For mapper betyr x at man har tilgang til mappen. Er ikke x satt, kan man ikke 
+gå dit. Og da kan man heller ikke liste filer der eller kopiere noe dit.
+
+<P>
+
+<H2><A ID="SECTION000317000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">17</SPAN> Hvordan forstå filrettigheter</A>
+</H2>
+
+<P>
+Rettighetene til eier, gruppe og andre er representert med kun tre
+bit. Dette begrenser hvor mange forskjellige rettigheter man kan ha,
+samtidig gjør det det enkelt å representere rettighetene som
+tall og å regne ut rettigheter i hodet. Dette gjør man på
+følgende måte:
+<BR>
+<P>
+
+<UL>
+<LI>kjørerettigheter = 1
+</LI>
+<LI>skriverettigheter = 2
+</LI>
+<LI>leserettigheter = 4
+</LI>
+</UL>
+
+<P>
+Ved hjelp av disse tallene (og tallet 0) kan vi telle fra 0 til 7 ved
+å kombinere dem på forskjellige måter. F.eks:
+<BR>
+<P>
+
+<UL>
+<LI>Kjørerettigheter + leserettigheter = 5
+</LI>
+<LI>Kjøre + lese + skrive = 7 (maks)
+</LI>
+<LI>skrive og kjøre, men ikke lese = 3
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION000318000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">18</SPAN> Endre filrettigheter</A>
+</H2>
+Numerisk endring av filrettigheter:
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ chmod 644 fil.txt &lt;- gir rw-r--r--
+$ chmod -R 755 dir  &lt;- gir rwxr-xr-x til dir og alle filer og mapper under dir
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Tallene betyr:
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="CENTER">rwx</TD>
+<TD CLASS="CENTER">octal</TD>
+<TD CLASS="CENTER">tekst</TD>
+</TR>
+<TR><TD CLASS="CENTER">000</TD>
+<TD CLASS="CENTER">0</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">-&nbsp;-&nbsp;-</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">001</TD>
+<TD CLASS="CENTER">1</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">-&nbsp;-&nbsp;x</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">010</TD>
+<TD CLASS="CENTER">2</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">-&nbsp;w&nbsp;-</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">011</TD>
+<TD CLASS="CENTER">3</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">-&nbsp;w&nbsp;x</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">100</TD>
+<TD CLASS="CENTER">4</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">r&nbsp;-&nbsp;-</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">101</TD>
+<TD CLASS="CENTER">5</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">r&nbsp;-&nbsp;x</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">110</TD>
+<TD CLASS="CENTER">6</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">r&nbsp;w&nbsp;-</SPAN></TD>
+</TR>
+<TR><TD CLASS="CENTER">111</TD>
+<TD CLASS="CENTER">7</TD>
+<TD CLASS="CENTER"><SPAN  CLASS="texttt">r&nbsp;w&nbsp;x</SPAN></TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+<BR>
+For mapper: Rettighet x (execute) gir tilgang til mappen.
+<BR>
+<BR> 
+<DIV class="CENTER"><A ID="369"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Man må ha tilgangsrettighet (x) til alle
+  mappene i path for å kunne lese en fil (her: se et web-bilde i /home/www/bilder).</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="441" HEIGHT="285" STYLE=""
+ SRC="img9.png"
+ ALT="\includegraphics[width=10cm]{unixFig/chmod.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+Alternativt:
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ chmod a+xr fil.txt &lt;- gir read og execute til alle (a)
+$ chmod g-w fil.exe  &lt;- fratar gruppen skriverettigheter
+</PRE><SPAN CLASS="SPAN">
+u = user, g = group, o = other, a = all (både u, g og o)
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000319000000000000000">
+<SPAN CLASS="arabic">2</SPAN>.<SPAN CLASS="arabic">19</SPAN> umask</A>
+</H2>
+Kommandoen <code>umask</code> setter hva som skal være standard rettigheter 
+for nye filer og mapper. 
+
+<P>
+<PRE>
+$ umask
+0022
+$ mkdir dir
+$ touch fil
+$ ls -l
+total 1
+drwxr-xr-x  2 haugerud drift 512 Aug 30 23:52 dir
+-rw-r--r--  1 haugerud drift   0 Aug 30  2006 fil
+</PRE>
+<code>umask</code> er en 'maskering'. For hver brukergruppe settes rettighet 
+'111 minus mask' for mapper og '110 minus mask' for filer. Bit som er satt i 
+mask, settes alltid til null.
+<PRE>
+$ umask 027
+$ mkdir dir2
+$ touch fil2
+$ ls -l
+total 2
+drwxr-x---  2 haugerud drift 512 Aug 30 23:53 dir2
+-rw-r-----  1 haugerud drift   0 Aug 30  2006 fil2
+</PRE>
+
+<P>
+Det er ikke så viktig å vite detaljene i hvordan umask virker, for man kan raskt 
+teste ut hva resultatet blir om man har en viss forståelse. 
+Slik beregnes rettighetene:
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">For mappe</TD>
+<TD CLASS="CENTER">7 = 111</TD>
+<TD CLASS="CENTER">7 = 111</TD>
+<TD CLASS="CENTER">7 = 111</TD>
+</TR>
+<TR><TD CLASS="LEFT">minus mask</TD>
+<TD CLASS="CENTER">0 = 000</TD>
+<TD CLASS="CENTER">2 = 010</TD>
+<TD CLASS="CENTER">7 = 111</TD>
+</TR>
+<TR><TD CLASS="LEFT">resultat</TD>
+<TD CLASS="CENTER">7 = 111</TD>
+<TD CLASS="CENTER">5 = 101</TD>
+<TD CLASS="CENTER">0 = 000</TD>
+</TR>
+<TR><TD CLASS="LEFT">rettighet</TD>
+<TD CLASS="CENTER">7 = <SPAN  CLASS="texttt">r&nbsp;w&nbsp;x</SPAN></TD>
+<TD CLASS="CENTER">5 = <SPAN  CLASS="texttt">r&nbsp;-&nbsp;x</SPAN></TD>
+<TD CLASS="CENTER">0 = <SPAN  CLASS="texttt">-&nbsp;-&nbsp;-</SPAN></TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+og for filer
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">For fil</TD>
+<TD CLASS="CENTER">6 = 110</TD>
+<TD CLASS="CENTER">6 = 110</TD>
+<TD CLASS="CENTER">6 = 110</TD>
+</TR>
+<TR><TD CLASS="LEFT">minus mask</TD>
+<TD CLASS="CENTER">0 = 000</TD>
+<TD CLASS="CENTER">2 = 010</TD>
+<TD CLASS="CENTER">7 = 111</TD>
+</TR>
+<TR><TD CLASS="LEFT">resultat</TD>
+<TD CLASS="CENTER">6 = 110</TD>
+<TD CLASS="CENTER">4 = 100</TD>
+<TD CLASS="CENTER">0 = 000</TD>
+</TR>
+<TR><TD CLASS="LEFT">rettighet</TD>
+<TD CLASS="CENTER">6 =  <SPAN  CLASS="texttt">r&nbsp;w&nbsp;-</SPAN></TD>
+<TD CLASS="CENTER">4 =  <SPAN  CLASS="texttt">r&nbsp;-&nbsp;-</SPAN></TD>
+<TD CLASS="CENTER">0 =  <SPAN  CLASS="texttt">-&nbsp;-&nbsp;-</SPAN></TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION000320000000000000000">
+Spørsmål</A>
+</H2>
+
+<H5><A ID="SECTION000320001000000000000">
+Gir skriverettighet leserettighet?</A>
+</H5>
+Har man automatisk leserettigheter hvis man har skriverettighet?
+<BR>
+Svar: Nei, r, w og x settes uavhengig av hverandre. Men <code>-w-</code>
+(kun skriverettigheter) brukes i praksis aldri.
+
+<P>
+
+<H5><A ID="SECTION000320002000000000000">
+Kan man sette bare skriverettigheter på en fil?</A>
+</H5>
+Ja. <SPAN  CLASS="texttt">chmod 200 fil</SPAN> Da kan man skrive til filen, men ikke lese den.
+
+<P>
+
+<H5><A ID="SECTION000320003000000000000">
+Hvilke rettigheter trenger man for å kunne slette en fil?</A>
+</H5>
+w, skriverettigheter. 
+
+<H5><A ID="SECTION000320004000000000000">
+Kan man slette en fil man selv ikke har skriverettigheter til?</A>
+</H5>
+Ja, om man har skriverettigheter til mappen den ligger i, men man får en advarsel og blir spurt først. 
+Det samme gjelder en fil med ingen rettigheter, 000.
+
+<H5><A ID="SECTION000320005000000000000">
+Hva skjer med eierskapet om man kopierer en annens fil?</A>
+</H5>
+Da blir man selv eier til den kopierte filen.
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,432 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>14 Forelesning 23/4-26. Internminne i praksis</TITLE>
+<META NAME="description" CONTENT="14 Forelesning 23/4-26. Internminne i praksis">
+<META NAME="keywords" CONTENT="os">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY  bgcolor="#ffffff">
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html1135"
+  HREF="node15.html#SECTION000151000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html1136"
+  HREF="node15.html#SECTION000152000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">2</SPAN> Dynamisk allokering</A>
+<LI><A ID="tex2html1137"
+  HREF="node15.html#SECTION000153000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">3</SPAN> VIRT, RES og SHR i top</A>
+<LI><A ID="tex2html1138"
+  HREF="node15.html#SECTION000154000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">4</SPAN> Noen minne-begreper</A>
+<LI><A ID="tex2html1139"
+  HREF="node15.html#SECTION000155000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">5</SPAN> RAM-test</A>
+<LI><A ID="tex2html1140"
+  HREF="node15.html#SECTION000156000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">6</SPAN> free</A>
+<LI><A ID="tex2html1141"
+  HREF="node15.html#SECTION000157000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">7</SPAN> top</A>
+<LI><A ID="tex2html1142"
+  HREF="node15.html#SECTION000158000000000000000"><SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">8</SPAN> Eksempler på minnebruk</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION000150000000000000000">
+<SPAN CLASS="arabic">14</SPAN> Forelesning 23/4-26.  Internminne i praksis</A>
+</H1>
+
+<P>
+<A ID="tex2html349"
+  HREF="https://www.cs.oslomet.no/~haugerud/memogdisk.pdf">Slides  brukt i forelesningen</A>
+<P>
+
+<H2><A ID="SECTION000151000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+
+<P>
+<A ID="tex2html350"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14time1.mp4">Uredigert opptak av hele første time av forelesningen ( 00:46:42)</A>
+<P>
+<A ID="tex2html351"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14time2.mp4">Uredigert opptak av hele andre time av forelesningen ( 00:49:26)</A>
+<P>
+<A ID="tex2html352"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del2.mp4">os14del2.mp4</A>
+(02:52) Oppsummering av det vi jobbet med sist, virtuelle adresser, MMU,pagetables, TLB
+
+<BR><A ID="tex2html353"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del3.mp4">os14del3.mp4</A>
+(03:58) Slide: Dynamisk allokering
+
+<BR><A ID="tex2html354"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del4.mp4">os14del4.mp4</A>
+(15:43) Demo: Kjøring av C-program med statisk og dynamisk allokering av minne og mointorering av RAM-bruk med top; VIRT, RES og SHR
+
+<BR><A ID="tex2html355"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del5.mp4">os14del5.mp4</A>
+(07:03) Demo: ramsmp, test av RAM-hastighet ved lesing og skriving av blokker av forskjellig størrelse
+
+<BR><A ID="tex2html356"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del6.mp4">os14del6.mp4</A>
+(03:04) Demo: Linux kommandoen free, fil-cache
+
+<BR><A ID="tex2html357"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del7.mp4">os14del7.mp4</A>
+(02:34) Demo: Linux kommandoen top og RAM, VIRT, RES og SHR
+
+<BR><A ID="tex2html358"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del8.mp4">os14del8.mp4</A>
+(03:01) Spørsmål: Hvordan kan VIRT være så stort som 4516 KByte før man i det hele tatt begynner å kjøre programmet res.c?
+
+<BR><A ID="tex2html359"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del9.mp4">os14del9.mp4</A>
+(03:35) Tegning og forklaring: SI-enheter: K, M og GByte, binære enheter: Ki, Mi og Gi
+
+<BR><A ID="tex2html360"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del10.mp4">os14del10.mp4</A>
+(14:41) Demo og tegning og forklaring: C-program med et array på 4 GByte, små og store hopp i RAM gir svært forskjellig tidsbruk
+
+<BR><A ID="tex2html361"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del11.mp4">os14del11.mp4</A>
+(09:08) Demo: monitorering av kjøring av array-programmet med programmet perf, cache-references, cache-misses og minor faults
+
+<BR><A ID="tex2html362"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del12.mp4">os14del12.mp4</A>
+(09:49) Demo og tegning og forklaring: C-program med en 20K*20K matrise, ombytte av indeks gir stor forskjell i tidsbruk, perf
+
+<BR><A ID="tex2html363"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del13.mp4">os14del13.mp4</A>
+(02:38) Slide: Noen viktige minne-begreper
+
+<BR><A ID="tex2html364"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del14.mp4">os14del14.mp4</A>
+(03:02) Spørsmål: Hvorfor så mange som 204 context-switches ved den matrise-kjøringen som tok lengst tid? Trolig tilfeldig
+
+<BR><A ID="tex2html365"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os14del15.mp4">os14del15.mp4</A>
+(01:48) Spørsmål: Hva er filsystem-cache?
+
+<BR>
+<P>
+
+<H2><A ID="SECTION000152000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">2</SPAN> Dynamisk allokering</A>
+</H2>
+Et program kan be om at det settes av minnet til sine variabler før det starter, men 
+det kan også be om at minne allokeres dynamisk. F. eks. vil et Java-statement 
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+PCB = new process;
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<SPAN CLASS="SPAN"></SPAN>gjøre at denne plassen settes av i minnet først når programmet utfører det. Programmet 
+tildeles page for page med minne. I C++ må man eksplisitt delete objekter som ikke 
+er i bruk lenger for å frigjøre minne, JVM utfører dette automatisk (garbage collection). 
+Den delen av et programs minne som inneholder variabler og data og som dynamisk 
+kan øke og minke i størrelse, kalles ofte heap. Variabler i funskjoner/metoder som forsvinner og ikke
+kan brukes mer etter at kallet på funksjonen er ferdig, legges på stack. 
+
+<P>
+
+<H2><A ID="SECTION000153000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">3</SPAN> VIRT, RES og SHR i top</A>
+</H2>
+Hvis man kompilerer og kjører følgendeC- program på en Linux-maskin, vil man kunne observere hvordan størrelsene VIRT, RES og SHR endrer seg. 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+#define S 1024*1024
+
+int staticArr[S];
+int main()
+{
+   int i, size,d;
+
+   printf("\nStørrelse: ");
+   scanf("%d",&amp;size);
+   printf("Lager int  array med %d elementer\n",size);
+
+   int *array = malloc(size * sizeof(int));
+   
+   printf("\nKlar til å bruke arrayet:");
+   scanf("%d",&amp;d);
+
+   for(i=0;i &lt; size;i++)
+     {
+	array[i] = i;
+     }
+
+   printf("\nVenter på å avslutte: ");
+   scanf("%d",&amp;size);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Programmet starter med å definere et statisk array med 1 M elementer som hver er på 4 byte, altså 4MiB. Både
+et slikt statisk array og et dynamisk array som lages med malloc() vil legges på heap.
+
+<P>
+Størrelsen VIRT er beskrevet slik i manualsiden for top:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+VIRT  --  Virtual Memory Size (KiB)
+          The total amount of virtual memory used by the task.  It includes all code, data and shared libraries
+          plus pages that have been swapped out and pages that have been mapped but not used.
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+VIRT er altså all det internminnet som prosessen kan tenkes å bruke, men som ikke nødvendigvis ligger i RAM.
+Det som ikke ligger i RAM, ligger i SWAP-området på disken.
+
+<P>
+Hvis vi kjører programmet med bare ett element i arrayet, får vi
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                        
+19924 haugerud  20   0    4352    652    584 S   0,0  0,0   0:00.00 a.out
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+mens hvis vi øker størrelsen til 1024*1024 som vist i koden over, kompilerer og kjøre på nytt, viser top:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                        
+25448 haugerud  20   0    8448    640    572 S   0,0  0,0   0:00.00 a.out
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Og endringen i VIRT er 8448 - 4352 = 4096 og altså nøyaktig 4MiB = 4*1024*1024.
+Denne størrelsen er definert når programmet starter, men man kan dynamisk legge til mer internminnet som
+vist i koden over med funksjonen malloc. Hvis vi dynamisk legger til et nytt array med 1 M elementer 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/mem/a$ ./a.out 
+
+Størrelse: 1048576
+Lager int  array med 1048576 elementer
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+vil vi se på top at VIRT øker
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                        
+25448 haugerud  20   0   12548    640    572 S   0,0  0,0   0:00.00 a.out
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og økningen er 12548 - 8448 = 4100 KiB som er som forventet ganske nøyaktig 4MiB.
+
+<P>
+Men som vi ser endres ikke RES i det hele tatt av dette og det er fordi disse array-elementene bare er
+allokert i det virtuelle minnerommet og ikke fysisk lastet inn i RAM. RES er definert på
+følgende måte:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+ RES  --  Resident Memory Size (KiB)
+          The non-swapped physical memory a task is using.
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+RES er altså den delen av prosessens internminnet som akkurat nå ligger fysisk inne i RAM. Når vi lar programmet
+fortsette å kjøre og tilordne verdier til alle elementene i det dynamiske arrayet, gir top dette:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+  PID USER      PR  NI    VIRT    RES    SHR S  %CPU %MEM     TIME+ COMMAND                                        
+25448 haugerud  20   0   12548   5256   1276 S   0,0  0,0   0:00.00 a.out
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Vi ser at RES øker med litt over 4MiB som først og fremst skyldes at hele arrayet nå lastes inn i RAM.
+
+<P>
+Størrelsen SHR er i top definert som
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+SHR  --  Shared Memory Size (KiB)
+         The  amount  of shared memory available to a task, not all of which is typically resident.  It simply
+         reflects memory that could be potentially shared with other processes.
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+SHR er den mengden av internminnet som det kan være mulig å dele med andre prosesser; merk den ligger ikke
+nødvendigvis i RAM nå.
+
+<P>
+
+<H2><A ID="SECTION000154000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">4</SPAN> Noen minne-begreper</A>
+</H2>
+<DL>
+<DT><STRONG>Soft miss</STRONG></DT>
+<DD>page-referanse er ikke i TLB; må hentes fra internminnet
+</DD>
+<DT><STRONG>Hard miss</STRONG></DT>
+<DD>= page fault. En page mangler i minnet(og i TLB); må hentes fra disk
+</DD>
+<DT><STRONG>Major fault</STRONG></DT>
+<DD>= page fault. En page mangler i minnet(og i TLB); må hentes fra disk
+</DD>
+<DT><STRONG>Minor fault</STRONG></DT>
+<DD>= En page mangler i page-tabellen i RAM og må lages. Må IKKE hentes fra disk
+</DD>
+<DT><STRONG>Dirty page</STRONG></DT>
+<DD>En side som har blitt endret slik at den må skrives til disk om den må ut av minnet
+</DD>
+<DT><STRONG>working set</STRONG></DT>
+<DD>(Windows) Det sett av sider som en prosess har brukt nylig
+</DD>
+<DT><STRONG>RES</STRONG></DT>
+<DD>(Linux) De sider som nå er lastet inn (RESident) i fysisk RAM.
+</DD>
+<DT><STRONG>Segment</STRONG></DT>
+<DD>En logisk del av et programs minne, data, programtekst, stack-segmenter
+</DD>
+<DT><STRONG>buffer cache</STRONG></DT>
+<DD>Del av minnet som brukes som filsystem-cache 
+</DD>
+</DL>
+
+<P>
+
+<H2><A ID="SECTION000155000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">5</SPAN> RAM-test</A>
+</H2>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/mem/ramsmp-3.5.0$ ./ramsmp -b 1
+RAMspeed/SMP (GENERIC) v3.5.0 by Rhett M. Hollander and Paul V. Bolotoff, 2002-09
+
+8Gb per pass mode, 2 processes
+
+INTEGER &amp; WRITING         1 Kb block: 16376.46 MB/s
+INTEGER &amp; WRITING         2 Kb block: 17503.79 MB/s
+INTEGER &amp; WRITING         4 Kb block: 16018.84 MB/s
+INTEGER &amp; WRITING         8 Kb block: 17191.61 MB/s
+INTEGER &amp; WRITING        16 Kb block: 17629.32 MB/s
+INTEGER &amp; WRITING        32 Kb block: 17232.47 MB/s
+INTEGER &amp; WRITING        64 Kb block: 12087.30 MB/s
+INTEGER &amp; WRITING       128 Kb block: 10896.62 MB/s
+INTEGER &amp; WRITING       256 Kb block: 11532.74 MB/s
+INTEGER &amp; WRITING       512 Kb block: 11663.74 MB/s
+INTEGER &amp; WRITING      1024 Kb block: 12726.65 MB/s
+INTEGER &amp; WRITING      2048 Kb block: 6481.25 MB/s
+INTEGER &amp; WRITING      4096 Kb block: 2418.77 MB/s
+INTEGER &amp; WRITING      8192 Kb block: 2152.39 MB/s
+INTEGER &amp; WRITING     16384 Kb block: 2141.66 MB/s
+INTEGER &amp; WRITING     32768 Kb block: 2137.81 MB/s
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<A ID="tex2html366"
+  HREF="https://www.cpu-world.com/CPUs/Core_2/Intel-Core%202%20Duo%20E6600%20HH80557PH0564M%20%28BX80557E6600%29.html">Intel Core Duo 6600</A>
+<P>
+
+<H2><A ID="SECTION000156000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">6</SPAN> free</A>
+</H2>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+rex:~/www$ free -m
+             total       used       free     shared    buffers     cached
+Mem:          2011       1453        557          0         14        551
+-/+ buffers/cache:        887       1123
+Swap:         1937        683       1253
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000157000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">7</SPAN> top</A>
+</H2>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+top - 01:50:33 up 78 days, 11:02, 35 users,  load average: 0.19, 0.51, 0.61
+Tasks: 408 total,   1 running, 399 sleeping,   0 stopped,   8 zombie
+Cpu(s):  0.8%us,  0.7%sy,  0.0%ni, 98.5%id,  0.0%wa,  0.0%hi,  0.0%si,  0.0%st
+Mem:   2059344k total,  1501056k used,   558288k free,    14572k buffers
+Swap:  1983988k total,   700372k used,  1283616k free,   565164k cached
+
+  PID USER      PR  NI  VIRT  RES  SHR S %CPU %MEM    TIME+  COMMAND                                                  
+23123 haugerud  20   0  2676 1428  932 R    0  0.1   0:00.21 top                                                       
+    1 root      20   0  2932 1232  792 S    0  0.1   0:30.41 init                                                      
+    2 root      20   0     0    0    0 S    0  0.0   0:00.02 kthreadd                                                  
+    3 root      RT   0     0    0    0 S    0  0.0   0:32.07 migration/0                                               
+    4 root      20   0     0    0    0 S    0  0.0   0:35.21 ksoftirqd/0
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000158000000000000000">
+<SPAN CLASS="arabic">14</SPAN>.<SPAN CLASS="arabic">8</SPAN> Eksempler på minnebruk</A>
+</H2>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+#include &lt;stdio.h&gt;    
+
+int array[200000000];
+main(int argc, char *argv[]){
+   int i,j;
+   for(i = 0;i &lt; 2000000;i++){
+      j = i*100;
+      array[i] = i;
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+#include &lt;stdio.h&gt;    
+
+int array[10000][10000];
+main(int argc, char *argv[]){
+   int i,j;
+   for(i = 0;i &lt; 10000;i++){
+      for(j = 0;j &lt; 10000;j++){
+	 array[i][j] = 5;
+      }
+   }
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

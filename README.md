@@ -23,7 +23,7 @@ The OS chatbot consists of a few main components:
 - `/vectordb`: Docker compose file for setting up the vector databases used.
 - `/ingestion`: Scripts for processing and ingesting knowledge into vector databases.
   - `scrape_course_pages.py`: If necessary, can be used to scrape HTML files from the official course site (os.cs.oslomet.no/os).
-  - `preprocess_course_pages.py`: Takes HTML and TXT files from the knowledge directory and processes them into plaintext ready for ingestion. The outputs are saved both into a `knowledge_processed` directory for manual verification of results, and a `processed_chunks.jsonl` file for the ingestion step.
+  - `preprocess_course_pages.py`: Takes HTML and TXT files from the knowledge directory and processes them into plaintext ready for ingestion. The outputs are saved both into a `knowledge_processed` directory for manual verification of results, and a `chunks_course_pages.jsonl` file for the ingestion step.
   - `ingest.py`: Ingests the preprocessed knowledge into 2 different vector databases using 5 different embedding models, for a total of 10 configurations.
 - `/retrieval`: Backend server that receives user prompts, finds the closest embeddings in the chosen vector database and for the chosen embedding model, and passes the found knowledge to the LLM to augment the response generation.
 - `/frontend`: Lightweight, but extensible Streamlit-based frontend for the chatbot.

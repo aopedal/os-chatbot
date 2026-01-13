@@ -1,0 +1,870 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>3 Forelesning 29/1-26(2 timer). Variabler, omdirigering og pipes</TITLE>
+<META NAME="description" CONTENT="3 Forelesning 29/1-26(2 timer). Variabler, omdirigering og pipes">
+<META NAME="keywords" CONTENT="linux">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY >
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html525"
+  HREF="node4.html#SECTION00041000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html526"
+  HREF="node4.html#SECTION00042000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+<LI><A ID="tex2html527"
+  HREF="node4.html#SECTION00043000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">3</SPAN> Dagens faktum: UNIX' opprinnelse</A>
+<LI><A ID="tex2html528"
+  HREF="node4.html#SECTION00044000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">4</SPAN> Shell-variabler</A>
+<LI><A ID="tex2html529"
+  HREF="node4.html#SECTION00045000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">5</SPAN> Globale shell-variabler</A>
+<LI><A ID="tex2html530"
+  HREF="node4.html#SECTION00046000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">6</SPAN> Hvor ligger alle kommandoene egentlig? Svar: PATH</A>
+<LI><A ID="tex2html531"
+  HREF="node4.html#SECTION00047000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">7</SPAN> Prosesser</A>
+<LI><A ID="tex2html532"
+  HREF="node4.html#SECTION00048000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">8</SPAN> Apostrofer</A>
+<LI><A ID="tex2html533"
+  HREF="node4.html#SECTION00049000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">9</SPAN> Tilordne output fra kommando til en variabel</A>
+<LI><A ID="tex2html534"
+  HREF="node4.html#SECTION000410000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">10</SPAN> Omdirigering (viktig!)</A>
+<UL>
+<LI><A ID="tex2html535"
+  HREF="node4.html#SECTION000410100000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">1</SPAN> Omdirigering til og fra filer</A>
+</UL>
+<BR>
+<LI><A ID="tex2html536"
+  HREF="node4.html#SECTION000411000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">11</SPAN> Omdirigering til og fra kommandoer; pipes </A>
+<LI><A ID="tex2html537"
+  HREF="node4.html#SECTION000412000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">12</SPAN> Piping standard error</A>
+<LI><A ID="tex2html538"
+  HREF="node4.html#SECTION000413000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">13</SPAN> Sub-shell</A>
+<LI><A ID="tex2html539"
+  HREF="node4.html#SECTION000414000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">14</SPAN> source</A>
+<LI><A ID="tex2html540"
+  HREF="node4.html#SECTION000415000000000000000"><SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">15</SPAN> Kommandoer brukt under forelesningen</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00040000000000000000">
+<SPAN CLASS="arabic">3</SPAN> Forelesning 29/1-26(2 timer).   Variabler, omdirigering og pipes</A>
+</H1>
+
+<P>
+
+<H2><A ID="SECTION00041000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+Denne forelesningen ble ikke holdt live, men opptak av forelesningene er samlet her. 
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html31"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del1.mp4">linux3del1.mp4</A>
+(03:40) Demo: Shell-variabler
+
+<BR><A ID="tex2html32"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del2.mp4">linux3del2.mp4</A>
+(05:32) Demo: Globale shell-variabler
+
+<BR><A ID="tex2html33"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del3.mp4">linux3del3.mp4</A>
+(02:12) Demo: Hvor ligger alle kommandoene egentlig? Svar: PATH
+
+<BR><A ID="tex2html34"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del4.mp4">linux3del4.mp4</A>
+(05:11) Demo: Prosesser
+
+<BR><A ID="tex2html35"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del5.mp4">linux3del5.mp4</A>
+(08:05) Demo: Apostrofer og å tilordne output fra kommando til en variabel
+
+<BR><A ID="tex2html36"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del6.mp4">linux3del6.mp4</A>
+(04:22) Demo: Omdirigering 
+
+<BR><A ID="tex2html37"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del7.mp4">linux3del7.mp4</A>
+(10:37) Demo: Omdirigering til og fra filer
+
+<BR><A ID="tex2html38"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del8.mp4">linux3del8.mp4</A>
+(06:02) Demo: Omdirigering til og fra kommandoer; pipes 
+
+<BR><A ID="tex2html39"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del9.mp4">linux3del9.mp4</A>
+(1:07) Demo: Piping av standard error
+
+<BR><A ID="tex2html40"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del10.mp4">linux3del10.mp4</A>
+(04:03) Demo: Sub-shell
+
+<BR><A ID="tex2html41"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux3del11.mp4">linux3del11.mp4</A>
+(04:02) Demo: source
+
+<BR>
+<P>
+
+<H2><A ID="SECTION00042000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Sist</A>
+</H2>
+
+<UL>
+<LI>filbehandling
+</LI>
+<LI>Kommandoer: cp, mv, rm, grep
+</LI>
+<LI>Rettigheter
+</LI>
+<LI>chmod
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00043000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">3</SPAN> Dagens faktum: UNIX' opprinnelse</A>
+</H2>
+Linux er en åpen kildekode variant av operativsystemet UNIX
+som opprinnelig ble skrevet i PDP-7 assembler av Ken Thompson i 1969 ved AT&amp;T
+Bell Laboratories. Han gjorde det for å kunne kjøre spillet "space travel" på 
+minicomputeren PDP-7 (9 Kbyte internminne). Thompson lagde senere programmeringsspråket B og var
+også med å lage språket Go mens han jobbet hos Google.  Progrmmeringsspråket C ble laget av
+Dennis Ritchie rundt 1970 for å kunne skrive UNIX i et plattformuavhengig
+språk; noe som ble gjort i 1973. UNIX og C hadde stor betydning for utviklingen av dataindustrien.
+
+<P>
+
+<DIV class="CENTER"><A ID="429"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Ken Thompson(foran) og Dennis Ritchie ved en PDP-11.</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+  WIDTH="504" HEIGHT="454" STYLE=""
+ SRC="./Ken_Thompson_sitting_and_Dennis_Ritchie_at_PDP-11.jpg"
+ ALT="Image Ken_Thompson_sitting_and_Dennis_Ritchie_at_PDP-11"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H2><A ID="SECTION00044000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">4</SPAN> Shell-variabler</A>
+</H2>
+<EM>I et Linux-shell finnes det systemvariabler som $HOME, $PATH, $PS1, $CLASSPATH og mange
+andre som systemet og mange applikasjoner som f. eks. Jbuilder bruker. En bruker kan også definere
+sine egne lokale variabler med selvlagde variabelnavn.
+Det er vanlig, men ikke påkrevet å bruke små bokstaver i
+variabelnavnet til lokale variable. </EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ os=Linux
+$ dato='Thu Jan 25'
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Det må <EM>ikke</EM> være mellomrom før og etter =. Variabler refereres til med et
+$-tegn foran navnet:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ echo $os
+Linux
+$ echo $dato
+Thu Jan 25
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Navnet kan avgrenses med 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ echo $osfrelst
+
+$ echo ${os}frelst
+Linuxfrelst
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Kommandoer for å liste og fjerne variabler:</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ set         # Lister alle definerte variabler og funksjoner
+$ unset os    # Fjerner definisjonen av os
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00045000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">5</SPAN> Globale shell-variabler</A>
+</H2>
+I utgangspunktet er shell-variabler lokale og bare kjent i det shellet de har blitt definert. 
+Man kan gjøre variabler globale med kommandoen <code>export</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ date='30. januar'
+$ os=Linux
+$ export os
+$ export nyglobal='ny global verdi'
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Variabelene <code>$os</code> og <code>nyglobal</code> er nå globale og vil arves av nye shell som startes, men det vil 
+ikke <code>$date</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ bash
+$ echo $os
+Linux
+$ echo $nyglobal
+ny global verdi
+$ echo $date
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+men som vi ser kjenner det nye shellet ikke til variabelen <code>$date</code>, den er lokal og 
+bare kjent i shellet den ble definert i. 
+
+<UL>
+<LI>vanlig å skrive globale variabler med store bokstaver
+</LI>
+<LI>kalles ofte ENVIRONMENT varibler ($HOME, $PATH, $EDITOR, $CLASSPATH)
+</LI>
+<LI>leses av programmer som ønsker å vite default editor, classpath, etc
+</LI>
+<LI>Globale variabler kan listes med <code>export</code>
+</LI>
+<LI>Variabler kan defineres direkte som globale i bash: <code> $ export os=Linux</code>
+</LI>
+<LI>Kommandoen <code>$ env</code> lister alle definerte globale variabler
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00046000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">6</SPAN> Hvor ligger alle kommandoene egentlig? Svar: PATH</A>
+</H2>
+<EM><code>$PATH</code> er en global variabel som inneholder en streng med alle mapper 
+(separert med kolon) som shellet leter i for å finne kjørbare filer når et 
+  kommandonavn tastes inn til shellet</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+studssh$ echo $PATH
+/opt/bin:/local/iu/bin:/local/gnu/bin:/local/bin:/usr/X11R6/bin:/usr/bin:/bin:.:
+studssh$ type ls              # type gir hvilket program shellet starter
+ls is /bin/ls
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Når du taster inn</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ls
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>leter bash igjennom alle mappene i <code>$PATH</code> etter en fil med navn <code>ls</code> helt til 
+det finner en i den nest siste (<code>/bin</code>) og kjører den.</EM>
+Hvis du gjør PATH tom:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ PATH=""
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+vil shellet ikke finne vanlige kommandoer som <code>mv</code> og <code>ls</code> fordi mappen <code>/bin</code> ikke er med i <code>$PATH</code>.
+
+<P>
+
+<H2><A ID="SECTION00047000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">7</SPAN> Prosesser</A>
+</H2>
+
+<P>
+Hver gang vi starter et program lager Linux en uavhengig prosess: 
+<BR><SPAN  CLASS="texttt">$ emacs</SPAN>
+<BR>
+Starter vi fra et shell, venter shellet på at programmet skal bli ferdig.
+<BR><SPAN  CLASS="texttt">$emacs&amp;</SPAN>&nbsp;
+<BR><SPAN  CLASS="texttt">$</SPAN> 
+<BR>
+Dette starter emacs som en bakgrunnsprosess
+
+<P>
+<BR>
+<BR>
+<DIV class="CENTER"><TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">kommando</TD>
+<TD CLASS="LEFT">virkning</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ ps</SPAN></TD>
+<TD CLASS="LEFT">Lister shellets prosesser</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ ps aux (eller -Al)</SPAN></TD>
+<TD CLASS="LEFT">Alle prosesser</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ top</SPAN></TD>
+<TD CLASS="LEFT">Dynamisk ps -aux</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ kill 1872</SPAN></TD>
+<TD CLASS="LEFT">Drep prosess med PID 1872</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ kill -9 1872</SPAN></TD>
+<TD CLASS="LEFT">Forsert drap av 1872</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$ time mittScript.bash</SPAN></TD>
+<TD CLASS="LEFT">Måler tidsforbruket</TD>
+</TR>
+</TABLE></DIV>
+<P>
+<DIV class="CENTER"></DIV>
+<BR>
+<BR>
+
+<P>
+
+<H2><A ID="SECTION00048000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">8</SPAN> Apostrofer</A>
+</H2>
+<EM>I bash brukes 3 forskjellige typer apostrofer <code>', `</code> og <code>"</code> som alle 
+  har forskjellig betydning:</EM>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ dir=mappe
+
+$ echo 'ls $dir'      ' -&gt; Gir eksakt tekststreng
+ls $dir
+
+$ echo "ls $dir"      " -&gt; Variabler substitueres; verdien av $dir skrives ut.
+ls mappe
+
+$ echo `ls $dir`      ` -&gt; utfører kommando!
+fil1 fil2 fil.txt
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Huskeregel
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+'  -&gt;  /  -&gt; Linux    -&gt; vet hva man får
+`  -&gt;  \  -&gt; Windows -&gt; aner ikke hva man får
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Et mer robust alternativ når en kommando skal utføres:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+echo $(ls $dir)
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette gir også mer lesbar kode. I tillegg kan man ikke ha uttrykk med apostrofer inni hverandre:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+rex$ line=`grep `whoami` /etc/passwd`
+Usage: grep [OPTION]... PATTERN [FILE]...
+Try 'grep --help' for more information.
+bash: /etc/passwd: Permission denied
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Men dette går fint med <code>$()</code> syntaksen:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+rex$ line=$(grep $(whoami) /etc/passwd)
+rex$ echo $line
+haugerud:x:5999:9002:Hårek Haugerud,,,:/home/haugerud:/bin/bash
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Så generelt anbefales det å bruke denne. Om man prøver følgende uttrykk med apostrofer inni hverandre:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~/mappe$ var=`/bin/ls `pwd` `
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Det vil si, det ga ingen feilmeldinger. Men om man ser nøyere på hva resultatet ble
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~/mappe$ echo $var
+fil.txtpwd
+haugerud@studssh:~/mappe$ pwd
+/iu/nexus/ua/haugerud/mappe
+haugerud@studssh:~/mappe$ ls
+fil.txt
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+så ser vi at de ikke fungerte som ønsket. Igjen er det bedre å bruke <code>$()</code> konstruksjonen:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+haugerud@studssh:~/mappe$ var=$(/bin/ls $(pwd))
+haugerud@studssh:~/mappe$ echo $var
+fil.txt
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00049000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">9</SPAN> Tilordne output fra kommando til en variabel</A>
+</H2>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ mappe=`pwd`
+$echo $mappe
+/iu/nexus/ud/haugerud
+$ tall=`seq 5 10`
+$ echo $tall
+5 6 7 8 9 10
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Anbefalt alternativt:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ mappe=$(pwd)
+$ tall=$(seq 5 10)
+$ echo $tall
+5 6 7 8 9 10
+$ tall=$(echo {5..10})
+$ echo $tall
+5 6 7 8 9 10
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000410000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">10</SPAN> Omdirigering (viktig!)</A>
+</H2>
+<EM>Den store fleksibiliteten det gir å kunne dirigere datastrømmer til og 
+fra filer og programmer har alltid vært en sentral og nyttig egenskap ved Linux</EM>. 
+
+<P>
+De fleste Linux programmer og kommandoer har alltid tre åpne kanaler:
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="CENTER">nummer</TD>
+<TD CLASS="LEFT">navn</TD>
+<TD CLASS="LEFT">fullt navn</TD>
+<TD CLASS="LEFT">funksjon</TD>
+<TD CLASS="LEFT">default</TD>
+</TR>
+<TR><TD CLASS="CENTER">0</TD>
+<TD CLASS="LEFT">stdin</TD>
+<TD CLASS="LEFT">standard in</TD>
+<TD CLASS="LEFT">input kanal</TD>
+<TD CLASS="LEFT">fra tastatur</TD>
+</TR>
+<TR><TD CLASS="CENTER">1</TD>
+<TD CLASS="LEFT">stdout</TD>
+<TD CLASS="LEFT">standard out</TD>
+<TD CLASS="LEFT">output kanal</TD>
+<TD CLASS="LEFT">til skjerm</TD>
+</TR>
+<TR><TD CLASS="CENTER">2</TD>
+<TD CLASS="LEFT">stderr</TD>
+<TD CLASS="LEFT">standard error</TD>
+<TD CLASS="LEFT">kanal for feilmelding</TD>
+<TD CLASS="LEFT">til skjerm</TD>
+</TR>
+</TABLE>
+
+<P>
+Dataene som strømmer inn og ut av disse kanalene (streams) kan omdirigeres 
+til og fra filer og programmer. 
+ 
+<DIV class="CENTER"><A ID="508"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Linux datakanaler</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="542" HEIGHT="124" STYLE=""
+ SRC="img10.png"
+ ALT="\includegraphics[width=12cm]{unixFig/stdkanaler.pdf}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H3><A ID="SECTION000410100000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">10</SPAN>.<SPAN CLASS="arabic">1</SPAN> Omdirigering til og fra filer</A>
+</H3>
+Eks: stdout for echo er terminal.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ echo hei
+hei
+$ echo hei &gt; fil1
+$ cat fil1
+hei
+$ echo hei2 &gt;&gt; fil1
+$ cat fil1
+hei
+hei2
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">omdirigering</TD>
+<TD CLASS="LEFT">virkning</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> &gt; fil.txt</code></TD>
+<TD CLASS="LEFT">omdirigerer stdout til fil.txt. Overskriver</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> &gt;&gt; fil.txt</code></TD>
+<TD CLASS="LEFT">legger stdout etter siste linje i  fil.txt</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> &gt;&amp; fil.txt</code></TD>
+<TD CLASS="LEFT">sender også stderr til fil.txt</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> 2&gt; err.txt</code></TD>
+<TD CLASS="LEFT">sender stderr til err.txt</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> 2&gt; /dev/null</code></TD>
+<TD CLASS="LEFT">stderr sendes til et 'sort hull' og forsvinner</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> &gt; fil.txt 2&gt; err.txt</code></TD>
+<TD CLASS="LEFT">stdout -&gt; fil.txt stderr -&gt; err.txt</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> find / -name passwd 2&gt;&amp;1 | grep -v Permission</code></TD>
+<TD CLASS="LEFT">sender stderr til samme kanal som stdout</TD>
+</TR>
+<TR><TD CLASS="LEFT"><code> prog &lt; fil.txt</code></TD>
+<TD CLASS="LEFT">sender fil til stdin for program</TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+<BR>
+Flere eks:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ehco hei
+ehco: Command not found
+$ ehco hei &gt;&amp; fil1
+$ cat fil1
+ehco: Command not found
+$ echo hei &gt; fil1 2&gt; err.txt   # Sender error til err.txt
+$ mail haugerud &lt; fil1
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Konstruksjonen <code>2&gt;&amp;1</code> betyr: send stderr til samme kanal som stdout. Man limer da stderr-kanalen til
+kommandoen på samme linje inn i stdout-kanalen. I eksempelet over vil det føre til at man kan grep'e på
+både stdout og stdin fra find. Uten <code>2&gt;&amp;1</code> ville man bare kunne grep'e på stdout. Denne konstruksjonen kan også brukes som alternativ til <code>&gt;&amp;</code>, kommandoen
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+ls /tmp/finnesikke &gt; fil.txt 2&amp;&gt;1
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+vil sende stderr til fil.txt (men må stå etter <code>&gt;</code>).
+
+<P>
+Konstruksjonen <code>1&gt;&amp;2</code> betyr: send stdout til samme kanal som stderr. Inne i et script vil
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+echo "Error!" 1&gt;&amp;2
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+sende feilmeldinger til stderr, slik programmer vanligvis gjør. Vanligvis sender echo output til stdin,
+men <code>1&gt;&amp;2</code> gjør at stdout istedet sendes til stderr.
+
+<P>
+
+<H2><A ID="SECTION000411000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">11</SPAN> Omdirigering til og fra kommandoer; pipes </A>
+</H2>
+<EM>En pipe <SPAN CLASS="MATH"><IMG
+ STYLE="height: 2.38ex; vertical-align: -0.70ex; " SRC="img11.png"
+ ALT="$\vert$"></SPAN> er et data-rør som leder et programs stdout til et annent programs stdin. </EM> 
+<BR>
+Uten pipe:
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ps aux &gt; fil
+$ more fil
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<SPAN CLASS="SPAN"></SPAN>Med pipe:
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ps aux | more
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Dette gjør at man kan kombinere alle Linux-kommandoene på en rekke måter. Noen eksempler:</EM>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ps aux | grep haugerud | more
+$ cat /etc/passwd | sort &gt; fil.txt
+$ sort /etc/passwd &gt; fil.txt 
+$ ps aux | awk '{print $1}' | sort | uniq | wc -l
+$ ps -eo user | sort | uniq | wc -l
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+<EM>Forklaring til det siste eksempelet: <code>ps -eo user</code> gir bare brukernavnet i ps-listingen. <code>sort</code> sorterer listen med brukernavn alfabetisk. <code>uniq</code> fjerner 
+identiske linjer, men kun de som kommer etter hverandre, derfor sort først. 
+<code>wc -l</code> returnerer antall linjer. En slik 
+'pipeline' gir dermed antall brukere som kjører prosesser på maskinen.</EM>
+ 
+<DIV class="CENTER"><A ID="536"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Øverst: ps -aux | more. Nederst:  cat /etc/passwd | sort &gt; fil.txt.</SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="544" HEIGHT="432" STYLE=""
+ SRC="img12.png"
+ ALT="\includegraphics[width=12cm]{unixFig/pipe2.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H2><A ID="SECTION000412000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">12</SPAN> Piping standard error</A>
+</H2>
+ Når man setter en pipe etter en kommando, er det bare stdout som sendes dit. Men ved hjelp av
+ konstruksjonen <code>|&amp;</code> sender man også stderr videre:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ ehco hei | grep found
+No command 'ehco' found, did you mean:
+ Command 'echo' from package 'coreutils' (main)
+ehco: command not found
+$ ehco hei |&amp; grep found
+No command 'ehco' found, did you mean:
+ehco: command not found
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Finnes det en annen måte å gjøre det samme på?
+
+<H2><A ID="SECTION000413000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">13</SPAN> Sub-shell</A>
+</H2>
+Konstruksjonen <code>(kommando;kommando)</code> gir et såkalt subshell. Da startes et nytt shell og man mottar
+den samlede output til stdout og stderr i shellet som kjører kommandoen. Det kan f.eks. brukes til å slå sammen
+output fra to filer:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ cat &gt; fil1
+en
+to
+tre
+$ cat &gt; fil2
+tre
+to
+fire
+$ sort fil2
+fire
+to
+tre
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Hvis man ønsker å skrive ut de to filene med en kommando, kan man gjøre
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ cat fil2;cat fil1
+tre
+to
+fire
+en
+to
+tre
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Men anta at man ønsker å sortere output fra de to filene; da kan man prøve følgende:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+ cat fil1;cat fil2 | sort
+en
+to
+tre
+fire
+to
+tre
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Men det som skjer er at bare fil2 blir sortert. Om man lager et sub-shell
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ (cat fil1;cat fil2)
+en
+to
+tre
+tre
+to
+fire
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+vil output fra dette subshellet samlet sendes til sort:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ (cat fil1;cat fil2) | sort
+en
+fire
+to
+to
+tre
+tre
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og man oppnår det man ønsket.
+
+<P>
+
+<H2><A ID="SECTION000414000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">14</SPAN> source</A>
+</H2>
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT"><code>$ emacs change </code></TD>
+</TR>
+<TR><TD CLASS="LEFT"><code>#! /bin/bash</code></TD>
+</TR>
+<TR><TD CLASS="LEFT"><code>cd /usr/bin</code></TD>
+</TR>
+<TR><TD CLASS="LEFT"><code>pwd</code></TD>
+</TR>
+</TABLE>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ pwd
+/
+$ change
+/usr/bin
+$ pwd
+/
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Når scriptet change kjøres, starter en ny prosess; et nytt shell som 
+utfører
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+cd /usr/bin
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og avsluttes. All shell-info blir da borte (variabler og posisjon i filtreet).
+
+<P>
+
+<DIV class="CENTER"><A ID="source"></A><A ID="564"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Når et script kjøres startes et helt nytt shell. Alt som 
+har skjedd i dette shellet blir borte når scriptet avsluttes (exit utføres selvom det ikke 
+står eksplisitt på slutten av scriptet).</SPAN></CAPTION>
+<TR><TD><IMG
+  WIDTH="403" HEIGHT="184" STYLE=""
+ SRC="./source.png"
+ ALT="Image source"> 
+<DIV class="CENTER">
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+Kommandoen <code>source</code> utfører linje for linje i argumentfilen uten å starte noe annent shell.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ pwd
+/
+$ source change
+/usr/bin
+$ pwd
+/usr/bin
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+I Bash er <code>.</code> og <code>source</code> ekvivalent:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+$ . change   # samme som $ source change
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000415000000000000000">
+<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">15</SPAN> Kommandoer brukt under forelesningen</A>
+</H2>
+<A ID="tex2html46"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/forelesningsKommandoer/Fri07.02.2020.html">Kommandoer</A>
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

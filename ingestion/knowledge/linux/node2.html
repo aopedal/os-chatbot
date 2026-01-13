@@ -1,0 +1,500 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>1 Forelesning 16/1-26(2 timer). Linux-shell, Linux-filsystem</TITLE>
+<META NAME="description" CONTENT="1 Forelesning 16/1-26(2 timer). Linux-shell, Linux-filsystem">
+<META NAME="keywords" CONTENT="linux">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY >
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html483"
+  HREF="node2.html#SECTION00021000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html484"
+  HREF="node2.html#SECTION00022000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">2</SPAN> Hva er Linux?</A>
+<LI><A ID="tex2html485"
+  HREF="node2.html#SECTION00023000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">3</SPAN> Linux</A>
+<LI><A ID="tex2html486"
+  HREF="node2.html#SECTION00024000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">4</SPAN> Linux-fordeler</A>
+<LI><A ID="tex2html487"
+  HREF="node2.html#SECTION00025000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">5</SPAN> Hvor brukes Linux?</A>
+<LI><A ID="tex2html488"
+  HREF="node2.html#SECTION00026000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">6</SPAN> Hva er et shell?</A>
+<LI><A ID="tex2html489"
+  HREF="node2.html#SECTION00027000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">7</SPAN> Hvorfor shell/kommandolinje?</A>
+<LI><A ID="tex2html490"
+  HREF="node2.html#SECTION00028000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">8</SPAN> Innlogging</A>
+<LI><A ID="tex2html491"
+  HREF="node2.html#SECTION00029000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">9</SPAN> Linux filsystem</A>
+<LI><A ID="tex2html492"
+  HREF="node2.html#SECTION000210000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">10</SPAN> Hvordan man flytter seg i et Linux-filtre</A>
+<LI><A ID="tex2html493"
+  HREF="node2.html#SECTION000211000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">11</SPAN> Å lage et shell-script</A>
+<LI><A ID="tex2html494"
+  HREF="node2.html#SECTION000212000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">12</SPAN> Filbehandling (Viktig!)</A>
+<LI><A ID="tex2html495"
+  HREF="node2.html#SECTION000213000000000000000"><SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">13</SPAN> Spesielle mapper</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00020000000000000000">
+<SPAN CLASS="arabic">1</SPAN> Forelesning 16/1-26(2 timer).  Linux-shell, Linux-filsystem</A>
+</H1>
+<A ID="tex2html1"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/intro.pdf">Forelesning slides</A>.
+
+<P>
+
+<H2><A ID="SECTION00021000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+Denne forelesningen ble ikke holdt live, men opptak av forelesningene er samlet her. NB! Her omtales innlogging til studssh, se endringer på dette i starten av Uke 3-oppgavene. 
+I år skal vi istedet bruke data2500.cs.oslomet.no., men den er først i drift i starten av januar.
+
+<P>
+Samlet opptak av forelesningen:
+<BR><A ID="tex2html2"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1a.mp4">linux.mp4</A>
+(56:34) Samlet opptak av alle delene nedenfor.
+
+<P>
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html3"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del1.mp4">linux1del1.mp4</A>
+(06:10) Slides: Innledning, hva er Linux?
+
+<BR><A ID="tex2html4"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del2.mp4">linux1del2.mp4</A>
+(13:09) Slides: Linux-fordeler og bruksområder, kontainere, shell
+
+<BR><A ID="tex2html5"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del3.mp4">linux1del3.mp4</A>
+(04:55) Demo: Installere putty og logge inn til studssh fra Windows (bruk data2500.cs.oslomet.no istedet for studssh.cs.hioa.no)
+
+<BR><A ID="tex2html6"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del4.mp4">linux1del4.mp4</A>
+(02:10) Demo: Logge inn til studssh fra Mac og Linux-terminal  (bruk data2500.cs.oslomet.no istedet for studssh.cs.hioa.no)
+
+<BR><A ID="tex2html7"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del5.mp4">linux1del5.mp4</A>
+(05:08) Slides: Linux filsystem og hvordan man flytter seg i fil-treet
+
+<BR><A ID="tex2html8"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del6.mp4">linux1del6.mp4</A>
+(05:05) Demo: Hvordan man flytter seg i et Linux filsystem
+
+<BR><A ID="tex2html9"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del7.mp4">linux1del7.mp4</A>
+(07:27) Demo: Hvordan lage et shell-script
+
+<BR><A ID="tex2html10"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del8.mp4">linux1del8.mp4</A>
+(12:01) Demo: Filbehandling og spesielle mapper
+
+<BR><A ID="tex2html11"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/linux1del9.mp4">linux1del9.mp4</A>
+(03:47) Demo: Hvordan dokumentere oppgaver og hint til top og psuser-oppgavene i uke 3
+
+<BR>
+<H2><A ID="SECTION00022000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">2</SPAN> Hva er Linux?</A>
+</H2>
+
+<UL>
+<LI>Linux er et operativsystem = et stort og komplisert program som styrer en datamaskin
+</LI>
+<LI>Linux-kjernen laget av Linus Torvalds i 1991
+</LI>
+<LI>GNU/Linux er et mer korrekt navn  
+</LI>
+<LI>Mest brukt som server OS
+</LI>
+<LI>Linux er et Unix-OS, andre er Mac OS X, FreeBSD, BSD, Solaris, AIX
+</LI>
+<LI>Unix ble laget av  Ken Thompson og Dennis Ritchie i 1969
+</LI>
+<LI>Viktig del av Unix-filosofien: Sette sammen mange små programmer på mange måter
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00023000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">3</SPAN> Linux</A>
+</H2>
+  
+<UL>
+<LI>Åpen kildekode, Linux-kjernen er GPL    
+</LI>
+<LI>Det finnes mange distribusjoner av Linux, i alle størrelser. 
+</LI>
+<LI>Små: i IP-kameraer, Mobiltelefoner(Android), Routere, switcher
+</LI>
+<LI>Store: Ubuntu/Debian, Red Hat/Fedora/Centos, SUSE/openSUSE
+</LI>
+<LI>GUI med vinduer og pek-og-klikk (for de som trenger det)
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00024000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">4</SPAN> Linux-fordeler</A>
+</H2>
+
+<P>
+
+<UL>
+<LI>Gratis og åpen kildekode
+</LI>
+<LI>Naturlig del av åpen kildekode-prosjekter
+</LI>
+<LI>Sikkerhet
+</LI>
+<LI>Stabilitet
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00025000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">5</SPAN> Hvor brukes Linux?</A>
+</H2>
+
+<UL>
+<LI>Desktop/laptop: 1.5%
+</LI>
+<LI>Web servere: 70%
+</LI>
+<LI>Public Cloud: Amazon EC2 92% (Totalt: AWS 41%, Microsoft Azure 29%)
+</LI>
+<LI>Smartphone/nettbrett: Android 70%, iOS 24% (Unix basert)
+</LI>
+<LI>Supercomputere: 100% av de 500 største
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00026000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">6</SPAN> Hva er et shell?</A>
+</H2>
+
+<P>
+
+<UL>
+<LI>kommandobasert verktøy 
+</LI>
+<LI>tar imot kommandoer fra tastatur 
+</LI>
+<LI><EM>Grensesnitt mot Linux-kjernen </EM>
+
+<P>
+</LI>
+</UL>
+ 
+<DIV class="CENTER"><A ID="94"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Linux-kommandoene sendes til shellet som er et skall rundt Linux-kjernen. Shellet 
+sørger for at oppdraget det får blir utført ved å gjøre et sett av systemkall til kjernen. </SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+</DIV>
+<P>
+<DIV class="CENTER"><IMG
+ WIDTH="452" HEIGHT="365" STYLE=""
+ SRC="img1.png"
+ ALT="\includegraphics[width=10cm]{unixFig/shell.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+<span style="display:block; height: 400;"></span>
+<H2><A ID="SECTION00027000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">7</SPAN> Hvorfor shell/kommandolinje?</A>
+</H2>
+<EM>Tidligere gikk all kommunikasjon med et Linux-system gjennom et shell.</EM>
+<A ID="tex2html13"
+  HREF="footnode.html#foot98"><SUP><SPAN CLASS="arabic">1</SPAN></SUP></A>
+<P>
+
+<UL>
+<LI>Stor frihetsgrad; "Alt" er mulig å gjøre 
+</LI>
+<LI><B>Kompliserte oppgaver kan løses effektivt, ved å sette
+sammen mange små Linux-program; sort, grep, sed, cp, mv </B>
+</LI>
+<LI><EM>et programmeringsspråk: shell-script som kombinerer Linux-kommandoer; systemprogrammering</EM>
+</LI>
+<LI>Vanskelig å automatisere og replikere en lang sekvens av pek og klikk
+</LI>
+<LI>Mye brukt i Linux automatisering, Cloud, Docker, Kubernetes, Git, osv
+
+<P>
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION00028000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">8</SPAN> Innlogging</A>
+</H2>
+
+<P>
+Hver bruker på et Linux-system har
+
+<P>
+
+<UL>
+<LI>entydig brukernavn 
+</LI>
+<LI>passord 
+</LI>
+</UL>
+Oversikt over alle brukere på systemet ligger i filen
+
+<UL>
+<LI>/etc/passwd 
+</LI>
+</UL>
+og de krypterte passordene ligger i filen
+
+<UL>
+<LI>/etc/shadow 
+</LI>
+</UL>
+Kan ikke leses av vanlige brukere, kun av <EM>root</EM> (superuser)
+
+<P>
+Passordet settes/endres på OsloMet via web.
+
+<P>
+
+<H2><A ID="SECTION00029000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">9</SPAN> Linux filsystem</A>
+</H2>
+Filer er et helt sentralt Linux-begrep. <EM>Alle data lagres som filer og strømmer av 
+data fra tastatur og andre devicer blir behandlet som om de var filer.</EM>
+ 
+<DIV class="CENTER"><A ID="117"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">Et typisk Linux-filtre </SPAN></CAPTION>
+<TR><TD>
+<DIV class="CENTER">
+<IMG
+ WIDTH="544" HEIGHT="253" STYLE=""
+ SRC="img2.png"
+ ALT="\includegraphics[width=12cm]{unixFig/filstruktur.eps}"> 
+
+</DIV></TD></TR>
+</TABLE>
+</DIV>
+
+<P>
+
+<H2><A ID="SECTION000210000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">10</SPAN> Hvordan man flytter seg i et Linux-filtre</A>
+</H2>
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Linux-kommando</TD>
+<TD CLASS="LEFT">Virkning</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;pwd</SPAN></TD>
+<TD CLASS="LEFT">gir mappen/katalogen man står i (Print Working Directory)</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;home</SPAN></TD>
+<TD CLASS="LEFT">change directory til &ldquo;home&rdquo; (kun fra /)</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;/etc</SPAN></TD>
+<TD CLASS="LEFT">flytter til /etc</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;..</SPAN></TD>
+<TD CLASS="LEFT">flytter en mappe opp</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd&nbsp;../..</SPAN></TD>
+<TD CLASS="LEFT">flytter to mapper opp</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cd</SPAN></TD>
+<TD CLASS="LEFT">går til hjemmemappen</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;ls -l&nbsp;</SPAN></TD>
+<TD CLASS="LEFT">viser alt som finnes i mappen</TD>
+</TR>
+</TABLE>
+
+<P>
+
+<H2><A ID="SECTION000211000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">11</SPAN> Å lage et shell-script</A>
+</H2>
+<PRE>
+ $ jed script.sh
+</PRE> 
+
+<P>
+
+<DIV class="CENTER"><A ID="135"></A>
+<TABLE>
+<CAPTION class="BOTTOM"><STRONG>Figure:</STRONG>
+<SPAN CLASS="FOOTNOTESIZE">script.sh i jed</SPAN></CAPTION>
+<TR><TD><IMG
+  WIDTH="908" HEIGHT="485" STYLE=""
+ SRC="./jed.png"
+ ALT="Image jed"></TD></TR>
+</TABLE>
+</DIV>
+
+<UL>
+<LI><code>#!       --&gt; nå kommer et script</code>
+</LI>
+<LI><code>/bin/bash --&gt; skal tolkes av /bin/bash</code>
+</LI>
+<LI>Rettigheter må settes slik at filen er kjørbar (x)
+</LI>
+</UL>
+<PRE>
+[os]studssh:~$ script.sh
+-bash: ./script.sh: Permission denied
+
+[os]studssh:~$ ls -l script.sh
+-rw-r--r-- 1 os student 37 2010-01-06 20:23 script.sh
+
+ [os]studssh:~$ chmod 700 script.sh
+
+[os]studssh:~$ ls -l script.sh
+-rwx------ 1 os student 37 2010-01-06 20:23 script.sh
+
+ [os]studssh:~$ script.sh
+ Linux studssh 2.6.24-26-generic #1 SMP Tue Dec 1 18:37:31 UTC 2009 i686 GNU/Linux
+tmp
+/iu/cube/u4/os/mappe
+total 4
+drwxr-xr-x 2 os student 4096 2010-01-04 12:11 tmp
+
+ [os]studssh:~$
+</PRE>
+
+<P>
+
+<H2><A ID="SECTION000212000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">12</SPAN> Filbehandling (Viktig!)</A>
+</H2>
+<SPAN  CLASS="textit">"Alt"</SPAN> i Linux er filer; <EM>vanligvis ASCII-filer.</EM>
+<BR>
+<BR>
+<BR>
+<BR>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="LEFT">Linux-kommando</TD>
+<TD CLASS="LEFT">resultat</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;ls</SPAN></TD>
+<TD CLASS="LEFT">lister filer/mapper i mappen der du står</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;ls&nbsp;-l</SPAN></TD>
+<TD CLASS="LEFT">ekstra info</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;ls&nbsp;-a</SPAN></TD>
+<TD CLASS="LEFT">lister &ldquo;skjulte&rdquo; filer (.fil)</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;ls&nbsp;/etc</SPAN></TD>
+<TD CLASS="LEFT">lister alt i /etc</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;mkdir&nbsp;mappe</SPAN></TD>
+<TD CLASS="LEFT">lager en mappe</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cat&nbsp;fil1</SPAN></TD>
+<TD CLASS="LEFT">skriv innhold til skjermen</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;touch&nbsp;fil2</SPAN></TD>
+<TD CLASS="LEFT">lag en tom fil med navn &ldquo;fil2&rdquo;/oppdaterer tidsstempel hvis den fins</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;jed&nbsp;fil3.txt</SPAN></TD>
+<TD CLASS="LEFT">editer en fil med navn fil3.txt. Rask og effektiv editor som også kan brukes fra putty.</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;emacs&nbsp;fil4.txt</SPAN></TD>
+<TD CLASS="LEFT">editer en fil med navn fil4.txt. Mer omfattende GUI-editor.</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cp&nbsp;fil1&nbsp;fil2</SPAN></TD>
+<TD CLASS="LEFT">kopierer fil1 til fil2</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;cp&nbsp;-i&nbsp;fil1&nbsp;fil2</SPAN></TD>
+<TD CLASS="LEFT">Spørr om fil2 skal overskrives</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$</SPAN> <SPAN  CLASS="texttt">mv&nbsp;fil1&nbsp;fil2</SPAN></TD>
+<TD CLASS="LEFT">Endrer navn fra fil1 til fil2</TD>
+</TR>
+<TR><TD CLASS="LEFT"><SPAN  CLASS="texttt">$&nbsp;mv&nbsp;fil2&nbsp;/tmp</SPAN></TD>
+<TD CLASS="LEFT">Flytter fil2 til /tmp</TD>
+</TR>
+</TABLE>
+<BR>
+<P>
+
+<H2><A ID="SECTION000213000000000000000">
+<SPAN CLASS="arabic">1</SPAN>.<SPAN CLASS="arabic">13</SPAN> Spesielle mapper</A>
+</H2>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="CENTER">betegnelse</TD>
+<TD CLASS="LEFT">Mappe</TD>
+</TR>
+<TR><TD CLASS="CENTER">.</TD>
+<TD CLASS="LEFT">den du står i</TD>
+</TR>
+<TR><TD CLASS="CENTER">..</TD>
+<TD CLASS="LEFT">den over</TD>
+</TR>
+<TR><TD CLASS="CENTER">../..</TD>
+<TD CLASS="LEFT">den over den igjen</TD>
+</TR>
+<TR><TD CLASS="CENTER">~</TD>
+<TD CLASS="LEFT">Din hjemmemappe</TD>
+</TR>
+</TABLE>
+<BR>
+<BR>
+<P>
+Bruk av  ~: 
+
+<P>
+<PRE>
+$ echo ~
+/iu/nexus/ud/haugerud
+$ cat ~/.bashrc  (skriver din .bashrc til skjermen.)
+$ echo ~haugerud
+/iu/nexus/ud/haugerud
+$ cd ~/www       {# gå til din hjemmesidemappe.}
+</PRE>
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

@@ -1,0 +1,367 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>9 Forelesning 12/3-26(2 timer). Docker og Dockerhub, shell script ytelse</TITLE>
+<META NAME="description" CONTENT="9 Forelesning 12/3-26(2 timer). Docker og Dockerhub, shell script ytelse">
+<META NAME="keywords" CONTENT="linux">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY >
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html609"
+  HREF="node10.html#SECTION000101000000000000000"><SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">1</SPAN> Sist</A>
+<LI><A ID="tex2html610"
+  HREF="node10.html#SECTION000102000000000000000"><SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">2</SPAN> Dockerhub</A>
+<LI><A ID="tex2html611"
+  HREF="node10.html#SECTION000103000000000000000"><SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">3</SPAN> Shell-programmering, oppsummering</A>
+<LI><A ID="tex2html612"
+  HREF="node10.html#SECTION000104000000000000000"><SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">4</SPAN> Hastighet til programmer skrevet i  bash, python, perl, Java og C</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION000100000000000000000">
+<SPAN CLASS="arabic">9</SPAN> Forelesning 12/3-26(2 timer).   Docker og Dockerhub, shell script ytelse</A>
+</H1>
+
+<P>
+<A ID="tex2html124"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9.mp4">Uredigert opptak av hele forelesningen</A>
+Mangler litt av starten av 1. og 2. time, se slides og notater.
+
+<P>
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html125"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del1.mp4">linux9del1.mp4</A>
+9.4 Uke-oppgave 12.10, oppsett av programmerinsmiljø med Dockerfile
+
+<BR><A ID="tex2html126"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del2.mp4">linux9del2.mp4</A>
+9.4 Sammmenligning av programeringsspråk, hvilket er raskest?
+
+<BR><A ID="tex2html127"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del3.mp4">linux9del3.mp4</A>
+9.4 Resultater fra sammenligningen
+
+<BR><A ID="tex2html128"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del4.mp4">linux9del4.mp4</A>
+9.4 Fortsettelse av oppgave 12.10, docker-container ferdig bygget
+
+<BR><A ID="tex2html129"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del5.mp4">linux9del5.mp4</A>
+9.4 Script for å teste effektivitet i Dockerfile (problem ved 7-8 min: glemmer å bygge på nytt)
+
+<BR><A ID="tex2html130"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del6.mp4">linux9del6.mp4</A>
+9.4 Effektivitet ved å lese og skrive til fil
+
+<BR><A ID="tex2html131"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del7.mp4">linux9del7.mp4</A>
+9.5 Regulære uttrykk i bash (referansestoff, ikke pensum)
+
+<BR><A ID="tex2html132"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/linux9del8.mp4">linux9del8.mp4</A>
+9.5 Problem med mellomrom i regulært uttrykk, løsning: definer regexp som en variabel  (referansestoff, ikke pensum)
+
+<P>
+
+<H2><A ID="SECTION000101000000000000000">
+<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">1</SPAN> Sist</A>
+</H2>
+
+<P>
+
+<UL>
+<LI>Hvorfor docker
+</LI>
+<LI>Dockerfile
+</LI>
+<LI>docker build
+</LI>
+</UL>
+
+<P>
+
+<H2><A ID="SECTION000102000000000000000">
+<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">2</SPAN> Dockerhub</A>
+</H2>
+ Vanligvis laster man ned docker image fra <A ID="tex2html133"
+  HREF="https://hub.docker.com">Dockerhub</A>
+hvor det ligger tusensvis av ferdilagde image som man kan laste ned og bruke, som ubuntu og nginx. Men man kan også lage sitt eget repository og laste opp egne ferdiglagde image dit som andre så kan laste ned og bruke. Anta man vil lage en ubuntu container som har jed installert og bruker følgende Dockerfile:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os110:~/osbuntu# cat Dockerfile
+from ubuntu
+RUN apt-get -y update
+RUN apt install -y jed
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Deretter bygger man den og lager et image som man kaller for eksempel osbuntu: 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os110:~/osbuntu# docker build -t osbuntu .
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+I dette tilfellet har jeg en bruker på dockerhub som heter haugerud og jeg må derfor tagge imaget på riktig måte for å laste det opp dit:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os110:~/osbuntu# docker tag osbuntu haugerud/osbuntu:latest
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette kan også gjøres direkte når man bygger. Default versjon er 'latest', men man kan også lage 
+flere versjoner med egendefinerte versjonsnummer 
+som 1.0, 2.0, etc. 
+
+<P>
+For å kunne pushe et image til Docker Hub må man først logge inn:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os110:~# docker login
+Login with your Docker ID to push and pull images from Docker Hub. If you don't have a Docker ID, head over to https://hub.docker.com to create one.
+Username: haugerud
+Password: 
+WARNING! Your password will be stored unencrypted in /root/.docker/config.json.
+Configure a credential helper to remove this warning. See
+https://docs.docker.com/engine/reference/commandline/login/#credentials-store
+
+Login Succeeded
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og så kan man pushe et image:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os110:~# docker push haugerud/osubuntu:latest
+The push refers to repository [docker.io/haugerud/osubuntu]
+58657d799cb5: Pushed 
+d0729e7aec69: Pushed 
+8aaae71fccde: Pushed 
+03cb13a80250: Pushed 
+b93c1bd012ab: Mounted from library/ubuntu 
+1.0: digest: sha256:5d9e384a97484e2af982d940833102b14638b057a286b0ca950906903e4b0220 size: 1368
+root@os110:~#
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Deretter kan hvem som helst laste ned 
+dette imaget fra hvor som helst og sikre seg en fin Ubuntu-container med jed ferdig installert:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os800:~# docker pull haugerud/osbuntu
+Using default tag: latest
+latest: Pulling from haugerud/osbuntu
+Digest: sha256:55bd19eebe21a365b789dbf7930df2027e3c860f87b31d161f8b143be361bbab
+Status: Image is up to date for haugerud/osbuntu:latest
+docker.io/haugerud/osbuntu:latest
+
+root@os800:~# docker run -it haugerud/osbuntu /bin/bash
+root@601858e8cd75:/# type jed
+jed is /usr/bin/jed
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Hvis man ønsker å laste ned en annen versjon enn latest, for eksempel versjon 1.0, kan man gjøre det på følgende måte:
+<SPAN CLASS="SPAN"></SPAN><PRE>
+root@os800:~# docker pull haugerud/osbuntu:1.0
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION000103000000000000000">
+<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">3</SPAN> Shell-programmering, oppsummering</A>
+</H2>
+
+<P>
+<table width="90%"><tr><td align="right" valign="top">+</td><td valign="top">&nbsp;Fint til enkle oppgaver der Linux-kommandoer gjør jobben </td></tr>
+<tr><td align="right" valign="top">+</td><td valign="top">&nbsp;Slipper å kompilere</td></tr>
+<tr><td align="right" valign="top">+</td><td valign="top">&nbsp;Pipes, omdirigering: Kraftige verktøy </td></tr>
+<tr><td align="right" valign="top">+</td><td valign="top">&nbsp;bra til enkle systemscript </td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;dårlig programstruktur (variabel-typer, parameter-overføring, klasser, etc.) </td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;dårlige feilmeldinger/debugging vanskelig</td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;kryptisk syntaks </td></tr>
+<tr><td align="right" valign="top">-</td><td valign="top">&nbsp;Veldig langsom sammenlignet med kompilert kode 
+</td></tr></table>
+
+<P>
+
+<H2><A ID="SECTION000104000000000000000">
+<SPAN CLASS="arabic">9</SPAN>.<SPAN CLASS="arabic">4</SPAN> Hastighet til programmer skrevet i  bash, python, perl, Java og C</A>
+</H2>
+Vi skal nå sammenligne hastigheten til programmer skrevet i bash, python, perl, Java og C som utfører følgende kode:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+    for(j=0;j &lt; TIMES;j++)
+       {
+       sum = 0;
+       for(i=0;i &lt; 40000;i++)
+          {
+          tall = (i + 1)*(i + 1) - i*i;
+          sum = sum + tall;
+          }
+       }
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+I 2010 ble hastigheten til disse programmen testet på to av serverene ved oslomet
+og resultatene så da slik ut på cube (Linux) og nexus (Solaris): 
+<BR>
+<BR>
+<BR>
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="CENTER">Språk</TD>
+<TD CLASS="CENTER">CPU-tid i sekunder på cube</TD>
+<TD CLASS="CENTER">CPU-tid i sekunder på nexus</TD>
+<TD CLASS="CENTER">TIMES</TD>
+</TR>
+<TR><TD CLASS="CENTER">sh</TD>
+<TD CLASS="CENTER">248</TD>
+<TD CLASS="CENTER">-</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="CENTER">bash</TD>
+<TD CLASS="CENTER">5.7</TD>
+<TD CLASS="CENTER">11.8</TD>
+<TD CLASS="CENTER">1</TD>
+</TR>
+<TR><TD CLASS="CENTER">php</TD>
+<TD CLASS="CENTER">5.6</TD>
+<TD CLASS="CENTER">13.3</TD>
+<TD CLASS="CENTER">21</TD>
+</TR>
+<TR><TD CLASS="CENTER">perl</TD>
+<TD CLASS="CENTER">5.6</TD>
+<TD CLASS="CENTER">16.4</TD>
+<TD CLASS="CENTER">75</TD>
+</TR>
+<TR><TD CLASS="CENTER">Java</TD>
+<TD CLASS="CENTER">5.6</TD>
+<TD CLASS="CENTER">-</TD>
+<TD CLASS="CENTER">13500</TD>
+</TR>
+<TR><TD CLASS="CENTER">C/C++</TD>
+<TD CLASS="CENTER">5.6</TD>
+<TD CLASS="CENTER">4.3</TD>
+<TD CLASS="CENTER">63000</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<BR>
+<P>
+Det viste altså at C-programmet var 63000 ganger raskere enn et bash-script. 
+
+<P>
+På forelesningen i 2019 ble dette resultatene
+med 500.000 runder i innerste løkke (12 ganger mer enn i 2010):
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+sum.bash:  TIMES = 1;
+sum.perl:  TIMES = 36;
+sum.py:    TIMES = 44
+sum.php:   TIMES = 400;
+sum.c:     TIMES = 4100;
+Sum.java:  TIMES = 20000;
+sumO.c:    TIMES = 28000;
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+på en Linux PC med en Intel Core i7-3770 CPU med klokkefrekvens på 3.40GHz.
+Det er overraskende at forskjellene er så store. Og at Java er så nær C i effektivitet. Det siste skyldes at
+java bruker en såkalt JIT(Just-In-Time) kompilator, som kan kompilere hele eller deler av bytekoden om
+til maskinkode, tilsvarende som når C kompileres, rett før programmet kjøres.
+Forøvrig bruker java for å gjøre dette delvis to CPUer. Om java-programmet tvinges til å kjøre
+på en CPU, reduseres TIMES til 17000.
+
+<P>
+Forøvrig er resultatet for sum.c om man kompilerer med gcc uten å bruke opsjonen <code>-O</code>. Da kompileres
+programmet hurtig, men ikke med fokus på at det skal kjøre raskt. Programmet sumO.c er kompilert med <code>-O</code> og
+da går C-programmet mye raskere.
+
+<P>
+Å finne ut om forskjellen på Linux-VM'ene er den samme er en av ukens øvingsoppgaver.
+
+<P>
+Men det er viktig å teste på nøyaktig det man er ute etter. Følgende kode leser 
+en fil og skriver den til en annen fil med linjenummer:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><PRE>
+#! /bin/bash
+
+echo "" &gt; /tmp/ny.fil
+nr=0
+while read line
+do
+    (( nr++ ))
+    echo "$nr: $line" &gt;&gt; /tmp/ny.fil
+done &lt; /tmp/stor
+echo "Read $nr lines"
+</PRE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Testes dette på å lese en 13 Mbyte tekstfil på studssh gir det:
+<BR>
+<BR><TABLE class="PAD  BORDER" style="">
+<TR><TD CLASS="CENTER">Språk</TD>
+<TD CLASS="CENTER">CPU-tid i sekunder</TD>
+</TR>
+<TR><TD CLASS="CENTER">bash</TD>
+<TD CLASS="CENTER">68.57</TD>
+</TR>
+<TR><TD CLASS="CENTER">Java</TD>
+<TD CLASS="CENTER">17.04</TD>
+</TR>
+<TR><TD CLASS="CENTER">php</TD>
+<TD CLASS="CENTER">9.3</TD>
+</TR>
+<TR><TD CLASS="CENTER">perl</TD>
+<TD CLASS="CENTER">2.18</TD>
+</TR>
+<TR><TD CLASS="CENTER">C++</TD>
+<TD CLASS="CENTER">2.00</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<BR>
+Og som man ser er forskjellene mye mindre.
+
+<P>
+Følgende avsnitt om regulære uttrykk betegnes i dette kurset som "referansestoff". Dette er stoff som det er interessant og viktig å vite om 
+og som kan være nyttig å bruke i praksis, men dette stoffet vil det ikke bli spurt om til eksamen og er slik sett ikke en del av pensum. 
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>

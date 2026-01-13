@@ -1,0 +1,649 @@
+<!DOCTYPE HTML>
+
+<!--Converted with LaTeX2HTML 2021 (Released January 1, 2021) -->
+<HTML lang="en">
+<HEAD>
+<TITLE>4 Forelesning 5/2-26(2 timer). C, maskinkode og assembly</TITLE>
+<META NAME="description" CONTENT="4 Forelesning 5/2-26(2 timer). C, maskinkode og assembly">
+<META NAME="keywords" CONTENT="os">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
+<META NAME="viewport" CONTENT="width=device-width, initial-scale=1.0">
+<META NAME="Generator" CONTENT="LaTeX2HTML v2021">
+
+<LINK REL="STYLESHEET" HREF="../../../os.css">
+
+</HEAD>
+
+<BODY  bgcolor="#ffffff">
+<!--Table of Child-Links-->
+<A ID="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A ID="tex2html956"
+  HREF="node5.html#SECTION00051000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+<LI><A ID="tex2html957"
+  HREF="node5.html#SECTION00052000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">2</SPAN> Simulerings-CPU og RAM</A>
+<LI><A ID="tex2html958"
+  HREF="node5.html#SECTION00053000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> C-programmering</A>
+<UL>
+<LI><A ID="tex2html959"
+  HREF="node5.html#SECTION00053100000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> hello.c</A>
+<LI><A ID="tex2html960"
+  HREF="node5.html#SECTION00053200000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Et C-program som summerer</A>
+<LI><A ID="tex2html961"
+  HREF="node5.html#SECTION00053300000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">3</SPAN> Kompilering av C-funksjoner</A>
+</UL>
+<BR>
+<LI><A ID="tex2html962"
+  HREF="node5.html#SECTION00054000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN> Assembly</A>
+<UL>
+<LI><A ID="tex2html963"
+  HREF="node5.html#SECTION00054100000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Summerings-funksjonen skrevet i Assembly</A>
+</UL>
+<BR>
+<LI><A ID="tex2html964"
+  HREF="node5.html#SECTION00055000000000000000"><SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">5</SPAN> Assembly-kode generert av en kompilator</A>
+</UL>
+<!--End of Table of Child-Links-->
+<HR>
+
+<H1><A ID="SECTION00050000000000000000">
+<SPAN CLASS="arabic">4</SPAN> Forelesning 5/2-26(2 timer).   C, maskinkode og assembly</A>
+</H1>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+Avsnitt fra Tanenbaum: 1.3.1
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<H2><A ID="SECTION00051000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Forelesningsvideoer</A>
+</H2>
+Opptak av forelesningen:
+
+<P>
+<A ID="tex2html108"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4time1.mp4">os4del1.mp4</A>
+(35:42) Uredigert opptak av første time av forelesningen. 
+<BR><A ID="tex2html109"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4time2.mp4">os4del1.mp4</A>
+(52:37) Uredigert opptak av andre time av forelesningen. 
+<BR>
+<P>
+Opptak av forelesningen inndelt etter temaer:
+
+<P>
+<A ID="tex2html110"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del1.mp4">os4del1.mp4</A>
+(1:27) Intro om oppgaver, oblig-innlevering, os-grupper
+
+<BR><A ID="tex2html111"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del2.mp4">os4del2.mp4</A>
+(2:10) Dagens tema; om maskinarkikturer, x86 og ARM
+
+<BR><A ID="tex2html112"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del3.mp4">os4del3.mp4</A>
+(03:47) Demo: Mer om CPU-simuleringen, instruksjonsdekoderen (Night King som gjesteforeleser; litt feil på chroma key instillingene :)
+
+<BR><A ID="tex2html113"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del4.mp4">os4del4.mp4</A>
+(02:45) Spørsmål: Kan man legge inn tallet 4 i et register?
+
+<BR><A ID="tex2html114"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del5.mp4">os4del5.mp4</A>
+(00:58) Spørsmål: Er ledningene som går mellom boksene data-bussen?
+
+<BR><A ID="tex2html115"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del6.mp4">os4del6.mp4</A>
+(01:42) Spørsmål: Er dette Harvard CPU-arkitektur?
+
+<BR><A ID="tex2html116"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del7.mp4">os4del7.mp4</A>
+(02:40) Demo: CPU-simuleringen: visualisering av branch-control
+
+<BR><A ID="tex2html117"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del8.mp4">os4del8.mp4</A>
+(13:09) Demo: Innlegging av en Load-innstruksjon som lagrer et resultat fra et register i RAM
+
+<BR><A ID="tex2html118"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del9.mp4">os4del9.mp4</A>
+(02:49) Demo: Kompilering av C-versjonen av "Hello World!" med gcc
+
+<BR><A ID="tex2html119"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del10.mp4">os4del10.mp4</A>
+(01:40) Spørsmål i pausen: Hvorfor ligger RAM inne i CPU?
+
+<BR><A ID="tex2html120"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del11.mp4">os4del11.mp4</A>
+(01:10) Spørsmål i pausen: Hva er forskjellen på Adress Out og Data Out som går inn til RAM?
+
+<BR><A ID="tex2html121"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del12.mp4">os4del12.mp4</A>
+(02:03) Spørsmål i pausen: Tvilsvarer branch-control i simuleringen Control Unit i Figuren i avsnitt 3.6?
+
+<BR><A ID="tex2html122"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del13.mp4">os4del13.mp4</A>
+(07:05) Demo: C-programmering og hex-dump av maskinkoden a.out
+
+<BR><A ID="tex2html123"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del14.mp4">os4del14.mp4</A>
+(05:10) Demo: C-program som summerer opp til S = 6 i en for-løkke. Variabler og kompilering med gcc
+
+<BR><A ID="tex2html124"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del15.mp4">os4del15.mp4</A>
+(05:16) Demo: Oppslitting av sum.c i to deler, sumMain.c og sumFunksjon.c. Kompilering av hver del og linking
+
+<BR><A ID="tex2html125"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del16.mp4">os4del16.mp4</A>
+(10:15) Demo: Hvordan be gcc-kompilatoren om å lage Assembly-kode? Innledning om assembly.
+
+<BR><A ID="tex2html126"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del17.mp4">os4del17.mp4</A>
+(05:49) Demo: Kompilering og kjøring av Assembly-programmet as.s
+
+<BR><A ID="tex2html127"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del18.mp4">os4del18.mp4</A>
+(04:57) Demo: Forklaring av Assembly-programmet as.s
+
+<BR><A ID="tex2html128"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del19.mp4">os4del19.mp4</A>
+(02:31) Spørsmål: Hvordan vet vi at registere og data i RAM ikke blir overskrevet av andre prosesser?
+
+<BR><A ID="tex2html129"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del20.mp4">os4del20.mp4</A>
+(01:41) Spørsmål: Hvordan vet man hva som returneres når man avslutter et Assembly-program med ret?
+
+<BR><A ID="tex2html130"
+  HREF="https://www.cs.oslomet.no/~haugerud/os/Forelesning/video/2021/os4del21.mp4">os4del21.mp4</A>
+(01:18) Forskjellen på kompilator og assembler
+
+<BR>
+<P>
+
+<H2><A ID="SECTION00052000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">2</SPAN> Simulerings-CPU og RAM</A>
+</H2>
+I maskinkoden som summerer opp summen S = 1 + 2 + 3 ved hjelp av en løkke som er mulig å få til på grunn av branch-kontrollen, foregår alle beregninger inne i CPU-en. Det vil si at alle tallene først legges inn i registerne og at alle resultatene fra mellomregninger før man kommer frem til den endelige summen ligger i registerne lokalt i CPU. Slik er det for virkelige CPU-er laget av Intel og AMD også. Registerne er meget hurtige, men det er et begreneset antall man kan ha inne i en CPU. En alternativ lagringsplass for beregningsdata er internminne eller RAM. Her er det plass til Milliarder av bytes (8 bit) med data, men det tar omtrent ti ganger så lang tid å lagre noe i RAM. Det optimale er derfor å alltid bruke registre for å lagre midlertidige data, slik som den stadig økende summen i eksempelet vi ser på. Men hvordan høynivåkoden oversettes til maskinkode avgjøres av kompilatoren. Dette er et program som systematisk kan oversette alle mulige varianter av høynivåkode til maskinkode som utfører det som høynivåkoden ber om når det kompilerte programmet kjøres i en datamaskin. Detaljer som om beregningsdata skal lagres i registere eller i RAM, avgjøres av kompilatoren. Men som vi skal se senere er det mulig å be kompilatoren om å lage maskinkode som skal gå hurtigst mulig. Og hvis man gjør det når man kompilerer vil kompilatoren lage kode som lagrer alle mellomregninger i registerne og først skriver resultatene til variabler i RAM når beregningene er fullført.     
+
+<P>
+Når man deklarerer variabler som for eksempel i et C-program på følgende måte 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+int sum=0;
+int i;
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+vil det settes av 4 byte i RAM til denne variabelen og der initialiseres den til å ha verdien 0. RAM er ganske enkelt et enormt array av bytes som ligger etterhverandre. Den minste lagerenheten er en byte som består av 8 bit. At en integer skal være 32 bit er en konvensjon for programmeringsspråket C, men disse konvensjonene kan variere mellom forskjellige språk og også mellom forskjellige implementasjoner av C. Andre konvensjoner er at en long long int bruker 8 byte og at flytt-tall lagringsenhetene float og double er henholdsvis 32 og 64 bit lange.  
+
+<P>
+
+<H2><A ID="SECTION00053000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN> C-programmering</A>
+</H2>
+Siden Dennis Ritchie på starten av 70-tallet laget programmeringsspråket C, har det vært tett knyttet til
+Unix-operativsystemer. De fleste Unix-programmer er skrevet i C og de fleste systemkall har korresponderende C-funksjoner med samme navn. Vi skal her bruke C-program som eksempler på høynivåkode og se hvordan de må kompileres til maskinkode for å kunne kjøres av en datamaskin. 
+
+<H3><A ID="SECTION00053100000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">1</SPAN> hello.c</A>
+</H3>
+Et <code>Hello World</code> C-program ser slik ut:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+/* filnavn: hello.c */
+
+#include &lt;stdio.h&gt;
+
+int main()
+{
+   printf("Hello world!\n");
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Den første linjen inkluderer standard-biblioteket <code>stdio.h</code> som blant annet inneholder funksjoner for
+å kunne skrive til et terminal-vindu. Alle C-program har en main-funksjon. Den kan inneholde all koden eller
+inneholde kall til andre funksjoner. For å kunne kjøre et C-program, må det først kompileres til maskinkode og
+det kan man i et Linux-shell gjøre slik:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc hello.c
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Det lages da maskinkode som lagres i en fil ved navn <code>a.out</code>. Den kan kjøres med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ ./a.out
+Hello world!
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Filen <code>a.out</code> inneholder maskinkode i form av maskin-instruksjoner for en prosessor med såkalt
+x86-arkitektur som ble introdusert av Intel i 1978. Det finnes mange forskjellige CPU-arkitekturer, som 
+ARM, SPARC og PowerPC, men x86 er den som nå brukes i nesten alle PCer og servere. Andre arkitekturer har
+andre maskin-instruksjoner og de kan derfor ikke kjøre maskinkode for x86, slik som innholdet i <code>a.out</code>.
+Maskinkode for Hello World er på mange tusen byte og den inneholder blant annet kode for å kommunisere med
+operativsystemet. Dette er nødvendig for eksempel for å kunne skrive ut noe. Man kan se på direkte på koden
+og følgende er deler av innholdet:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ xxd a.out 
+00000000: 7f45 4c46 0201 0100 0000 0000 0000 0000  .ELF............
+00000010: 0200 3e00 0100 0000 3004 4000 0000 0000  ..&gt;.....0.@.....
+00000020: 4000 0000 0000 0000 d819 0000 0000 0000  @...............
+00000030: 0000 0000 4000 3800 0900 4000 1f00 1c00  ....@.8...@.....
+
+00000230: 0100 0000 0000 0000 2f6c 6962 3634 2f6c  ......../lib64/l
+00000240: 642d 6c69 6e75 782d 7838 362d 3634 2e73  d-linux-x86-64.s
+00000250: 6f2e 3200 0400 0000 1000 0000 0100 0000  o.2.............
+00000260: 474e 5500 0000 0000 0200 0000 0600 0000  GNU.............
+
+000005b0: f3c3 0000 4883 ec08 4883 c408 c300 0000  ....H...H.......
+000005c0: 0100 0200 4865 6c6c 6f20 776f 726c 6421  ....Hello world!
+000005d0: 0000 0000 011b 033b 3000 0000 0500 0000  .......;0.......
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Deler av programmet inneholder data, som strengen <code>Hello world!</code> og andre deler inneholder
+maskin-instruksjoner. Disse tilsvarer på alle måter maskin-instruksjonene i den simulerte maskinen vi har
+sett på. Den hadde kun 8-bits instruksjoner, x86-instruksjoner er av variabel lengde mellom 8 og 48 bit.
+Etterhvert skal vi se på Assembly-kode og der korresponderer hver x86 assembly-instruksjon som ADD, MOV, CMP,
+JNE osv. til en bestem maskin-instruksjon. Dette er også helt tilsvarende som i CPU-simuleringen.
+
+<H3><A ID="SECTION00053200000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">2</SPAN> Et C-program som summerer</A>
+</H3>
+Tidligere oversatte vi høynivåkode, en for-løkke med summering, til maskinkode for den simulerte CPUen. Den
+prosessen vi da gjennomførte, er det samme som gcc-kompilatoren gjorde for C-programmet over. Følgende er
+et C-program vi kaller <code>sum.c</code> som utfører den samme beregningen.
+Vi kunne skrevet all koden i main-funksjonen, men lager
+en egen funksjon som vi kaller <code>sum()</code> for enklere å kunne analysere hva som skjer i denne
+spesielle kode-biten:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+/* filnavn: sum.c */
+
+#include &lt;stdio.h&gt;
+
+int sum()
+{
+   int S=0,i;
+   for(i=0;i&lt;4;i++)
+   {
+      S = S + i;
+   }
+   return(S);
+}
+
+int main()
+{
+   int Sum;
+   Sum = sum();
+   printf("Sum = %d \n",Sum);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Variabler må deklareres i C. Hvis man ikke definerer funksjonen før main(), kan man få en warning fra
+gcc. Man kan kompilere og kjøre programmet med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc sum.c -o sum
+$ ./sum
+Sum = 6
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Opsjonen <code>-o</code> brukes til å gi det kjørbare programmet et annet navn enn default verdi <code>a.out</code>.
+
+<P>
+
+<H3><A ID="SECTION00053300000000000000"></A> <A ID="kompavCfunk"></A>
+<BR>
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">3</SPAN>.<SPAN CLASS="arabic">3</SPAN> Kompilering av C-funksjoner
+</H3>
+Når programmet over kompileres, lages det først maskinkode av C-koden i <code>sum.c</code> og så linkes denne
+koden sammen med kode fra standard-biblioteket <code>stdio.h</code> til ferdig maskinkode som er klar til
+å lastes inn i RAM og kjøres. 
+Det er også mulig å legge en C-funksjon i en egen fil og så kompilere den til en egen maskinkode-fil.
+Hvis vi kaller følgende fil <code>sumFunksjon.c</code>
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+/* filnavn: sumFunksjon.c */
+
+int sum()
+{
+   int S=0,i;
+   for(i=0;i&lt;4;i++)
+   {
+      S = S + i;
+   }
+   return(S);
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+kan vi kompilere den med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc -c sumFunksjon.c -o funksjon
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Opsjonen <code>-c</code> gir kompilatoren <code>gcc</code> beskjed om å ikke linke programmet, men bare kompilere det
+og legge maskinkoden i filen <code>funksjon</code>. Deretter kan vi lage en fil til som vi kan kalle
+<code>sumMain.c</code> 
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+/* filnavn: sumMain.c */
+
+#include &lt;stdio.h&gt;
+
+extern int sum();
+
+int main(void)
+{
+   int summ;
+   summ = sum();
+   printf("Sum = %d \n",summ);
+   
+}
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+så kan vi kompilere den med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc -c sumMain.c -o main
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+og lage en maskinkode-fil med navn <code>main</code>. Til slutt kan vi skjøte sammen og be kompilatoren om
+å linke disse to filene sammen til et kjørbart sum-program og kjøre det:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc funksjon main -o sum
+$ ./sum
+Sum = 6
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Vi kunne gjort disse tre operasjonene, kompilering av de to programmen og linking, i en operasjon med
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc sumFunksjon.c sumMain.c -o sum
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+men vi velger å gjøre det slik for å kunne erstatte beregningene i <code>funksjon</code> med Assembly-kode.
+Maskinkoden i <code>funksjon</code> tilsvarer den maskinkoden vi la inn i CPU-simuleringen, dermed kan vi i detalj
+sammenligne x86-Assembly med vårt eget assembly-språk for den simulerte CPUen.
+
+<P>
+
+<H2><A ID="SECTION00054000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN> Assembly</A>
+</H2>
+
+<P>
+<A ID="tex2html131"
+  HREF="https://www.uio.no/studier/emner/matnat/ifi/INF2270/v16/pensumliste/kompendium-inf2270.pdf">Kompendiet i INF2270 datamaskinarkitektur på UiO</A>
+inneholder nyttig informasjon, blan annet alle X86 instruksjonene.
+Forelesningsnotatene til Erik Hjelmås, OS-kompendium2018.pdf, som ligger under filer i Canvas, inneholder noen avsnitt om Assembly.
+
+<P>
+Det finnes mange andre gode kilder på nettet, blant annet denne <A ID="tex2html132"
+  HREF="https://www.cs.oberlin.edu/~bob/cs331/Notes%20on%20x86-64%20Assembly%20Language.pdf">introduksjonen til Assembly.</A>
+<P>
+Vi skal ikke gå veldig dypt inn i x86-assembly, men ved hjelp av noen få av de tilgjengelige
+Assembly-instruksjonene skrive kode som tilsvarer noen enkel eksempler på høynivåkode.
+
+<P>
+Idag trenger vi bare å kjenne noen få assembly-instruksjoner som ligner på dem vi lagde for simulerings-CPU-en:
+
+<P>
+<TABLE class="PAD  BORDER" style="">
+<TR><TH CLASS="LEFT">Instruksjon</TH>
+<TH CLASS="LEFT">source</TH>
+<TH CLASS="LEFT">destination</TH>
+<TH CLASS="LEFT">resultat</TH>
+</TR>
+<TR><TD CLASS="LEFT">mov</TD>
+<TD CLASS="LEFT">s</TD>
+<TD CLASS="LEFT">d</TD>
+<TD CLASS="LEFT">verdien av s legges i d</TD>
+</TR>
+<TR><TD CLASS="LEFT">add</TD>
+<TD CLASS="LEFT">s</TD>
+<TD CLASS="LEFT">d</TD>
+<TD CLASS="LEFT">d = d + s</TD>
+</TR>
+<TR><TD CLASS="LEFT">cmp</TD>
+<TD CLASS="LEFT">s</TD>
+<TD CLASS="LEFT">d</TD>
+<TD CLASS="LEFT">sammenlign (compare) s og d</TD>
+</TR>
+<TR><TD CLASS="LEFT">jne</TD>
+<TD CLASS="LEFT">label</TD>
+<TD CLASS="LEFT">&nbsp;</TD>
+<TD CLASS="LEFT">Jump Not Equal, hvis s ulik d i forrige linje, hopp til label</TD>
+</TR>
+</TABLE> 
+<BR>
+<BR>
+<P>
+Her kan s være en konstant (et tall skrevet som $34 for tallet 34), et register (<code>%rax, %rbx, %rcx, %rdx</code>) eller en referanse til et sted i RAM. Det siste kan være definert som et variabelnavn eller på formen <code>-4(%rbp)</code>, som betyr fire byte fra starten av stack for programmet. Stack er et område i RAM der variabler for metoder lagres og rbp står for Register Base Pointer og peker på starten av stacken.  
+
+<H3><A ID="SECTION00054100000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">1</SPAN> Summerings-funksjonen skrevet i Assembly</A>
+</H3>
+Følgende x86-Assembly kode utfører nøyaktig det samme som maskinkoden i filen <code>funksjon</code> i avsnittet
+over. Assemblerkode ligger svært tett opp til den maskinkoden som kjører i CPU-en man programmerer for og
+koden kan kun kjøre på CPUer som har nøyaktig den arkitekturen og dermed de maskininstruksjonene som
+koden inneholder. Nesten alle data som instruksjonene i maskinkode virker på er lagret i selve CPU-en og
+lagringsenhetene for disse dataene er registre. I vår simulerte CPU kalte vi registrene
+R0, R1, R2 og R3. I x86-arkitekturen finnes det fire generelle registre som er svært mye brukt i all
+Assembly-programmering og de kalles ax, bx, cx og dx. Opprinnelig ble disse betegnelsene brukt om
+16-bits registre på den tiden dette var den vanlige størrelsen for en x86-CPU. Ganske snart økte størrelsen
+til 32-bit og disse registrene ble da betegnet eax, ebx, etc. En moderne 64-bits prosessor har
+64-bits registre og de kalles rax, rbx, rcx og rdx og det er disse vi bruker i koden nedenfor. Når denne
+koden assembles til maskinkode, vil maskinkoden utføre den samme beregningen som maskinkoden i filen
+<code>funksjon</code> i forrige avsnitt som regner ut summen S.
+
+<P>
+Følgende kode utgjør Assembly-programmet <code>as.s</code>:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+# filnavn: as.s
+
+.globl sum 
+# C-signatur:int sum ()
+
+# 64 bit assembly
+
+# b = byte (8 bit)
+# w = word (16 bit, 2 bytes)
+# l = long (32 bit, 4 bytes)
+# q = quad (64 bit, 8 bytes)
+
+
+# Opprinnelige 16bits registre: ax, bx, cx, dx
+# ah, al 8 bit
+# ax 16 bit
+# eax 32 bit
+# rax 64 bit
+
+sum:                 # Standard
+
+mov   $3, %rcx       # 3 -&gt; rcx, maks i løkke
+mov   $1, %rdx       # 1 -&gt; rdx, tallet i økes med for hver runde
+mov   $0, %rbx       # 0 -&gt; rbx, variabelen i lagres i rbx
+mov   $0, %rax       # 0 -&gt; rax, summen = S 
+
+# løkke
+start: # label
+add  %rdx, %rbx # rbx = rbx + rdx (i++) 
+add  %rbx, %rax # rax = rax + rbx (S = S + i)
+cmp  %rcx, %rbx # compare, er i = 3?
+jne  start      # Jump Not Equal til start:
+
+ret  # Verdien i rax returneres
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Assembly-programmet <code>as.s</code> utfører nøyaktig det samme som
+C-programmet <code>sumFunksjon.c</code> listet øverst i avsnitt <A HREF="#kompavCfunk">4.3.3</A>. 
+
+<P>
+Om vi sammenligner med summerings-koden for den simulerte CPU-en i avsnitt 3.7, vil man se at de åtte
+Assembly-linjene etter <code>sum:</code> tilsvarer linje for linje koden der (om man ser bort ifra linjen
+som inneholder <code>start:</code>. Registeret <code>%rcx</code> tilsvarer R0, <code>%rdx</code> tilsvarer R1, <code>%rbx</code>
+tilsvarer R2 og <code>%rax</code> tilsvarer R3. Vi har skrevet programmet slik at summen S lagres i nettopp
+registeret <code>%rax</code> fordi verdien som ligger i nettopp <code>%rax</code> er den verdien som returneres
+til main-funksjonen som utfører kallet på funksjonen <code>sum()</code>.
+
+<P>
+For å kunne kjøre funksjonen vi har skrevet i Assembly-programmet <code>as.s</code> må man be gcc-kompilatoren om
+å assemble den. Det kan man gjøre slik:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc -c as.s -o as
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Dette gjør at gcc oversetter Assembly-koden til maskinkode og lagrer denne maskinkoden i filen <code>as</code>.
+Prosessen med å assemble Assembly-kode til maskinkode er mye enklere enn kompilering fordi det er en
+ganske enkel oversettelse som stort sett skjer linje for linje. For eksempel vil en linje som inneholder
+instruksjonen ADD ganske enkelt oversettes til oppcode som inneholder hvilket nummer instruksjonen ADD har
+i x86-arkitekturen etterfulgt av rett rekkefølge på registrene som er involvert. Helt på samme måte som
+vi gjorde med koden for den simulerte CPUen.
+
+<P>
+Til slutt kan man så linke maskinkoden i filen <code>as</code> sammen med main-maskinkoden for å få et kjørbart
+program:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc main as -o sum
+$ ./sum
+Sum = 6
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+på samme måte som med C-programmene, kunne man også gjort disse tre operasjonene, kompilering av
+main, assembly av <code>as.s</code> og linking av de to, i en operasjon:
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc sumMain.c as.s -o sum
+$ ./sum
+Sum = 6
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+Man kunne også skrive hele hovedprogrammet i Assembly, men for å forenkle kodingen, har vi konsentrert
+oss om kun den koden som utføres av sum-funksjonen.
+
+<P>
+Et viktig poeng er at maskinkoden <code>as</code> laget fra Assembly funksjonelt sett utfører den samme
+beregningen som maskinkoden <code>funksjon</code> som kompilatoren lagde. Men det finnes mange mulige
+varianter av både Assembly-kode og maskinkode som utfører nøyaktig det som høynivåkoden sier skal gjøres.
+Men hva som er den optimale maskinkoden som både er raskest og tar minst plass, er langt fra opplagt.
+Veldig mye forsking og utvikling er blitt brukt på å lage kompilatorer som genererer best mulig
+maskinkode. Likevel kan gode Assembly-programmerer i noen tilfeller lage enda bedre kode enn
+en kompilator, spesielt om de har innsikt i nøyaktig hva som er hensikten med programmet.
+
+<P>
+
+<H2><A ID="SECTION00055000000000000000">
+<SPAN CLASS="arabic">4</SPAN>.<SPAN CLASS="arabic">5</SPAN> Assembly-kode generert av en kompilator</A>
+</H2>
+Man kan også be en kompilator om å stoppe kompileringen før den assembler koden til maskinkode. Det kan man
+med gcc få til med opsjonen -S og den lager da en fil med filendelse s som innholder Assembly-kode
+som tilsvarer den maskinkoden den ville laget om man bare kompilerte med opsjonen -c.
+
+<P>
+<SPAN CLASS="SPAN"></SPAN><TABLE><TR><TD><PRE >
+
+$ gcc -S sumFunksjon.c
+$ cat sumFunksjon.s
+	.file	"sumFunksjon.c"
+	.text
+	.globl	sum
+	.type	sum, @function
+sum:
+.LFB0:
+	.cfi_startproc
+	pushq	%rbp
+	.cfi_def_cfa_offset 16
+	.cfi_offset 6, -16
+	movq	%rsp, %rbp
+	.cfi_def_cfa_register 6
+	movl	$0, -8(%rbp)
+	movl	$0, -4(%rbp)
+	jmp	.L2
+.L3:
+	movl	-4(%rbp), %eax
+	addl	%eax, -8(%rbp)
+	addl	$1, -4(%rbp)
+.L2:
+	cmpl	$3, -4(%rbp)
+	jle	.L3
+	movl	-8(%rbp), %eax
+	popq	%rbp
+	.cfi_def_cfa 7, 8
+	ret
+	.cfi_endproc
+.LFE0:
+	.size	sum, .-sum
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.5) 5.4.0 20160609"
+	.section	.note.GNU-stack,"",@progbits
+$
+</PRE></TD></TR></TABLE><SPAN CLASS="SPAN">
+</SPAN>
+<P>
+
+<P>
+<BR><HR>
+<ADDRESS>
+H&aring;rek Haugerud 2026-01-13
+</ADDRESS>
+</BODY>
+</HTML>
