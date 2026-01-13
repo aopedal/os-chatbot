@@ -24,24 +24,12 @@ def get_config():
 config = get_config()
 
 # ------------------------------
-# Sidebar configuration
+# Configuration
 # ------------------------------
-st.sidebar.header("⚙️ Configuration")
-inference_model = st.sidebar.selectbox(
-    "Inference Model",
-    options=[m["id"] for m in config["inference_model"]],
-    format_func=lambda x: next(m["name"] for m in config["inference_model"] if m["id"] == x),
-)
-embedding_model = st.sidebar.selectbox(
-    "Embedding Model",
-    options=[m["id"] for m in config["embedding_model"]],
-    format_func=lambda x: next(m["name"] for m in config["embedding_model"] if m["id"] == x),
-)
-vector_db = st.sidebar.selectbox(
-    "Vector Database",
-    options=[m["id"] for m in config["vector_db"]],
-    format_func=lambda x: next(m["name"] for m in config["vector_db"] if m["id"] == x),
-)
+
+inference_model = 'gpt-oss-20b'
+embedding_model = 'Alibaba-NLP/gte-multilingual-base'
+vector_db = 'weaviate'
 
 # ------------------------------
 # Chat messages in session
