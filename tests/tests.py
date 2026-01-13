@@ -15,6 +15,8 @@ default_inference_model = "gpt-oss-20b"
 
 # Function to send a POST request
 def send_request(user_id, message, inference_model, embedding_model, vector_db, endpoint):
+
+    print(f"Sending request for user_id: {user_id}")
     response_string = ""
 
     with httpx.stream(
@@ -106,6 +108,9 @@ def main():
     
     # Write results to output file
     with open(output_filename, 'w') as output_file:
+        output_file.write(f"Inference Model: {args.inference_model}\n")
+        output_file.write(f"Embedding Model: {args.embedding_model}\n")
+        output_file.write(f"Vector DB: {args.vector_db}\n")
         output_file.write(f"Message Prompt: {message}\n")
         output_file.write(f"Number of Requests: {args.num_requests}\n")
         output_file.write(f"Delay: {args.delay} seconds\n")
