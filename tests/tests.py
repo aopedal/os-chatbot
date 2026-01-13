@@ -22,7 +22,7 @@ def send_request(user_id, message, inference_model, embedding_model, vector_db, 
             "POST",
             f"{app_config.RETRIEVAL_URL}{endpoint}",
             json={
-                "user_id": user_id,
+                "user_id": str(user_id),
                 "message": message,
                 "inference_model": inference_model,
                 "embedding_model": embedding_model,
@@ -70,7 +70,7 @@ def main():
     # Send requests
     start_time = time.time()
     for i in range(args.num_requests):
-        response = send_request(user_id, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint)
+        response = send_request(i, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint)
         results.append(response)
 
         # Delay between requests
@@ -89,7 +89,7 @@ def main():
     # Write results to output file
     with open(output_filename, 'w') as output_file:
         output_file.write(f"Message Prompt: {message}\n")
-        output_file.write(f"Responses: {response}\n")
+        output_file.write(f"Responses: \n\n{'\n\n--------------------\n\n'.join(results)}\n")
         output_file.write(f"Number of Requests: {args.num_requests}\n")
         output_file.write(f"Delay: {args.delay} seconds\n")
         output_file.write(f"Total Time: {total_duration:.2f} seconds\n")
