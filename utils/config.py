@@ -28,8 +28,6 @@ EMBEDDING_MODELS = [
     {"id": "Alibaba-NLP/gte-multilingual-base", "name": "GTE Multilingual Base"},
     {"id": "intfloat/multilingual-e5-large", "name": "Multilingual E5 Large"},
     {"id": "BAAI/bge-m3", "name": "BGE-M3"},
-    {"id": "ltg/norbert3-base", "name": "Norbert3 Base"},
-    {"id": "NbAiLab/nb-sbert-base", "name": "NB-SBERT Base"},
 ]
 
 # Chatbot config
