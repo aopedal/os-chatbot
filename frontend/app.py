@@ -101,7 +101,7 @@ for msg in st.session_state.messages:
 # Chat input
 # ------------------------------
 
-with st._bottom:
+with st.bottom:
     st.caption(f"{app_config.CHATBOT_NAME} er en språkmodell og kan gjøre feil. Dobbeltsjekk svarene du får.")
 
 if prompt := st.chat_input("Skriv en melding …"):
