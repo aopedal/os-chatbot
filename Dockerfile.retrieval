@@ -11,6 +11,10 @@ COPY retrieval/requirements.txt ./retrieval/requirements.txt
 # Install dependencies (cached as long as requirements.txt doesn't change)
 RUN pip install --no-cache-dir -r retrieval/requirements.txt
 
+
+COPY retrieval/requirements-extra.txt ./retrieval/requirements-extra.txt
+RUN pip install --no-cache-dir -r retrieval/requirements-extra.txt
+
 # Install locales
 RUN apt-get update && \
     apt-get install -y --no-install-recommends locales && \
@@ -28,9 +32,6 @@ ENV LC_ALL=nb_NO.UTF-8
 COPY utils utils
 COPY retrieval retrieval
 COPY ingestion/knowledge ingestion/knowledge
-
-# TODO: move into requirements.txt
-RUN pip install --no-cache-dir tiktoken
 
 # Now switch to retrieval dir for running
 WORKDIR /app/retrieval
