@@ -1,0 +1,64 @@
+Hva er en prosess?
+Hva er en tråd?
+Hva er forskjellen mellom en prosess og en tråd?
+Hva er MMU?
+Hva er cache?
+Hva er virtuelt minne?
+Hva gjør kommandoen mv?
+Hva gjør kommandoen cp?
+Hva gjør kommandoen chmod?
+Hva er en kontekstbytte?
+Hva er en deadlock?
+Hva er en semafor?
+Hva er en mutex?
+Hva er round-robin scheduling?
+Hva er forskjellen mellom preemptiv og ikke-preemptiv scheduling?
+Hva er en systemkall?
+Hva er forskjellen mellom brukerrom og kjernerom?
+Hva er en filsystemjournal?
+Hva er en inode?
+Hva er paging?
+Hva er segmentering?
+Hva er en page fault?
+Hva er thrashing?
+Hva er en bootloader?
+Hva er BIOS?
+Hva er UEFI?
+Hva er en kjerne i et operativsystem?
+Hva er forskjellen mellom monolittisk kjerne og mikrokjerne?
+Hva er en enhetdriver?
+Hva gjør kommandoen ps?
+Hva gjør kommandoen kill?
+Hva gjør kommandoen grep?
+Hva gjør kommandoen ls?
+Hva gjør kommandoen cat?
+Hva er en pipe i Unix?
+Hva er en socket?
+Hva er et filsystem?
+Hva er forskjellen mellom ext4 og NTFS?
+Hva er RAID?
+Hva er swap-minne?
+Hva er en fork i Unix?
+Hva er en zombie-prosess?
+Hva er en orphan-prosess?
+Hva er et interrupt?
+Hva er DMA?
+Hva er en TLB?
+Hva er belady-anomalien?
+Hva er LRU-algoritmen?
+Hva er FIFO-sideutbyttingsalgoritmen?
+Hva er producer-consumer-problemet?
+Hva er readers-writers-problemet?
+Hva er dining philosophers-problemet?
+Hva er en spinlock?
+Hva er prioritetsinversjon?
+Hva er en cron-jobb?
+Hva gjør kommandoen df?
+Hva gjør kommandoen top?
+Hva er en symbolic link?
+Hva er forskjellen mellom hard link og symbolic link?
+Hva er en daemon?
+Hva er et signal i Unix?
+Hva er shared memory?
+Hva er memory-mapped I/O?
+Hva er forskjellen mellom 32-bit og 64-bit operativsystemer?

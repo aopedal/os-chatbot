@@ -52,82 +52,71 @@ def send_request(user_id, message, inference_model, embedding_model, vector_db, 
 
 # Main function
 def main():
-    # Argument parser for command line arguments
     parser = argparse.ArgumentParser(description='Test locally run LLM')
-    parser.add_argument('--message_file', type=str, required=True, help='Path to the message text file')
+    parser.add_argument('--message_file', type=str, required=True, help='Path to the message text file (one prompt per line)')
     parser.add_argument('--inference_model', type=str, default=default_inference_model, help='Inference model name')
     parser.add_argument('--embedding_model', type=str, required=True, help='Embedding model name')
     parser.add_argument('--vector_db', type=str, required=True, help='Vector database name')
-    parser.add_argument('--num_requests', type=int, default=1, help='Number of requests to send (default: 1)')
-    parser.add_argument('--delay', type=float, default=0, help='Delay between requests in seconds (default: 0)')
     parser.add_argument('--endpoint', type=str, required=True, help='API endpoint URL')
-    parser.add_argument('--parallel', action='store_true', help='Send requests in parallel')
 
     args = parser.parse_args()
 
-    # Read message from file
+    # Read prompts from file — each line is a separate prompt
     with open(args.message_file, 'r') as file:
-        message = file.read().strip()
+        prompts = [line.strip() for line in file.readlines() if line.strip()]
 
-    # User ID placeholder (you can assign it dynamically)
-    user_id = "sample_user_id"  # Replace with appropriate user ID from session state
+    num_prompts = len(prompts)
+    print(f"Loaded {num_prompts} prompts from {args.message_file}")
 
-    results = []
-    response_times = []
+    user_id = "sample_user_id"
 
-    # Send requests
+    results = [None] * num_prompts
+    response_times = [None] * num_prompts
+
+    # Send all prompts in parallel — one job per line
     start_time = time.time()
 
-    if args.parallel:
-        with ThreadPoolExecutor(max_workers=args.num_requests) as executor:
-            futures = {
-                executor.submit(send_request, i, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint): i for i in range(args.num_requests)
-            }
+    with ThreadPoolExecutor(max_workers=num_prompts) as executor:
+        futures = {
+            executor.submit(send_request, user_id, prompt, args.inference_model, args.embedding_model, args.vector_db, args.endpoint): i
+            for i, prompt in enumerate(prompts)
+        }
 
-            # Print statement for each request submitted
-            print(f"Sent {args.num_requests} requests in parallel.")
+        print(f"Sent {num_prompts} requests in parallel.")
 
-            for future in as_completed(futures):
-                response, response_time = future.result()
-                results.append(response)
-                response_times.append(response_time)
-
-                # Print statement for each response received
-                print(f"Response received for request ID: {futures[future]}")
-
-    else:
-        for i in range(args.num_requests):
-            response, response_time = send_request(i, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint)
-            results.append(response)
-            response_times.append(response_time)
-
-            # Delay between requests
-            if i < args.num_requests - 1:
-                time.sleep(args.delay)
+        for future in as_completed(futures):
+            idx = futures[future]
+            response, response_time = future.result()
+            results[idx] = response
+            response_times[idx] = response_time
+            print(f"Response received for prompt {idx}: \"{prompts[idx][:50]}...\" ({response_time:.2f}s)")
 
     total_duration = time.time() - start_time
 
-    # Prepare the output file name
+    # Write results to output file
     time_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
     os.makedirs('test_results', exist_ok=True)
-    output_filename = f'test_{time_stamp}.txt'
-    output_filename = os.path.join('test_results', output_filename)
-    
-    # Write results to output file
+    output_filename = os.path.join('test_results', f'test_{time_stamp}.txt')
+
     with open(output_filename, 'w') as output_file:
         output_file.write(f"Inference Model: {args.inference_model}\n")
         output_file.write(f"Embedding Model: {args.embedding_model}\n")
         output_file.write(f"Vector DB: {args.vector_db}\n")
-        output_file.write(f"Message Prompt: {message}\n")
-        output_file.write(f"Number of Requests: {args.num_requests}\n")
-        # output_file.write(f"Delay: {args.delay} seconds\n")
+        output_file.write(f"Number of Prompts: {num_prompts}\n")
         output_file.write(f"Total Time: {total_duration:.2f} seconds\n\n")
         output_file.write("Response Times (in seconds):\n")
         for i, response_time in enumerate(response_times):
-            output_file.write(f"Request ID {i}: {response_time:.2f} seconds\n")
-        output_file.write(f"\n\nResponses: \n\n--------------------\n\n{'\n\n--------------------\n\n'.join(results)}\n")
-        
-    print(f"Results written to {output_filename}")
+            output_file.write(f"Prompt {i}: {response_time:.2f} seconds\n")
+        output_file.write("\n")
+
+        for i, (prompt, response) in enumerate(zip(prompts, results)):
+            output_file.write(f"\n{'='*60}\n")
+            output_file.write(f"Prompt {i}: {prompt}\n")
+            output_file.write(f"Response Time: {response_times[i]:.2f} seconds\n")
+            output_file.write(f"{'='*60}\n\n")
+            output_file.write(f"{response}\n")
+
+    print(f"\nResults written to {output_filename}")
 
 if __name__ == "__main__":
     main()

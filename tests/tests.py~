@@ -11,7 +11,7 @@ from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # Config
-default_inference_model = "gpt-oss-20b"
+default_inference_model = "gpt-oss-20b" 
 
 # Function to send a POST request
 def send_request(user_id, message, inference_model, embedding_model, vector_db, endpoint):
@@ -79,7 +79,7 @@ def main():
     start_time = time.time()
 
     if args.parallel:
-        with ThreadPoolExecutor(max_workers=args.num_requests) as executor:
+        with ThreadPoolExecutor() as executor:
             futures = {
                 executor.submit(send_request, i, message, args.inference_model, args.embedding_model, args.vector_db, args.endpoint): i for i in range(args.num_requests)
             }
