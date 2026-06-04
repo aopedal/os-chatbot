@@ -8,3 +8,7 @@
     
 * Bør kanskje kunne gå inn og se samtalene studentene har med systemet, for å avdekke hva det brukes til og mulige forbedringsområdet
   * Må selvsagt informere tydelig om at samtalene kan bli lest av andre mennesker
+
+* Caching av spørsmål som allerede er stilt, gjenbruk av svar for å spare ressurser
+  * Kan en LLM eller embedding-modell raskt avgjøre om essensen i et spørsmål tilsvarer et som allerede er stilt?
+  * Tommel opp / tommel ned på svar, kan regenereres hvis det blir gitt tommel ned

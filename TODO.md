@@ -1,37 +1,40 @@
 * Nok dokumentasjon til at OS-bot kan vedlikeholdes og oppdateres etter at vi er ferdige
   * Dokumentere prosess for å oppdatere vektordatabaser basert på oppdaterte pensumsider og nye videoer osv.
-  * Stramme opp pipeline for videotranskribering, chunking og ingestion, så det blir enkelt å gjenbruke og oppdatere materiale.
+  * "Big picture"-forklaring av prosjektet, skal være forståelig for studentassistent
+  * Forklare kort valg av embedding-modell, språkmodell, inferensmotor osv.
+  * Dokumentere hvordan vi kjører tester, stress-testing, simulere mange samtidige spørringer
+
+* Stramme opp pipeline for videotranskribering, chunking og ingestion, så det blir enkelt å gjenbruke og oppdatere materiale.
+  
+* Debug view i frontend for å se endelig prompt som sendes til LLM
+
+* Bedre logging/innsyn - f.eks eit enkelt Grafana-dashbord som viser trafikk (t.d. spørringar per time) og andre nøkkelmetrikkar. Antall tokens per spørring
 
 * Pedagogisk modus, kanskje kjøre det i starten av semesteret, hvor man ikke "bare" gir lange detaljerte og presise svar, men heller hint om hvordan man kan gå fram for å løse et problem eller forstå noe, eventuelt en slags dialog-metode "Er det ikke noe helt i starten av feilmeldingen du får som kan sette deg på rett spor?"
   * "Socratic tutor"-modus
   * Skal det være opp til brukeren å slå dette av/på, eller er det en innstilling som emneansvarlig skal styre? Begge deler?
+  * Legge inn eksempler på hvordan modellen skal svare. oneshot/fewshot
 
 * Inkludere eksamen, jeg har gjennomgang av en del eksamner som kan transkriberes og jeg har testet å fore Claude med PDFer med eksamner og den klarer å tyde det meste.
   * Bør kanskje ikke være del av default kontekst, men kan legges til hvis brukeren spør spesifikt om oppgaver/eksamener?
   * Vi har eksamener helt tilbake til 1998, men det er kanskje mest hensiktsmessig å kun inkludere eksamener fra 2017 og senere?
   * "Har dette vært på en tidligere eksamen?"
-  * "Hvilke spørsmål kommer ofte på eksamen?" <- Vanskelig for RAG å svare på, kanskje CAG er bedre egnet
+  * "Hvilke spørsmål kommer ofte på eksamen?" <- Vanskelig for RAG å svare på
+  
+* Intro til os-bot - hvilke spørsmål fungerer bra, hvilke spørsmål fungerer ikke
   
 * Inkludere oppgaver?
   * Pass på å utelukke oppgaver som ikke er publisert ennå
-  * Egen collection med alle oppgaver i oppgavesett, kan brukes for å sjekke om brukeren vil ha hjelp med en oppgave og kanskje peile prompten mer inn mot å hjelpe med å løse oppgaven uten å bare gi svaret
-
-* Bedre logging/innsyn - f.eks eit enkelt Grafana-dashbord som viser trafikk (t.d. spørringar per time) og andre nøkkelmetrikkar.
+  * Egen collection med alle oppgaver i oppgavesett, ((kan brukes for å sjekke om brukeren vil ha hjelp med en oppgave og kanskje peile prompten mer inn mot å hjelpe med å løse oppgaven uten å bare gi svaret))
 
 * Forelesningsvideoer som kontekst
   * Kan video embeddes direkte i chatten?
-  * Finne ut hvordan vi kan sørge for at chatbot alltid finner en videoreferanse der det er mulig.
   
 * Samtalekontekst (la boten huske hva vi nettopp snakket om)
   * Kan kontekst caches, eller sender vi bare samtalehistorikken sammen med hver nye prompt?
   
 * Husk tidligere samtaletråder, slik de fleste offentlige LLM-er gjør
-
-* Caching av spørsmål som allerede er stilt, gjenbruk av svar for å spare ressurser
-  * Kan en LLM eller embedding-modell raskt avgjøre om essensen i et spørsmål tilsvarer et som allerede er stilt?
-  * Tommel opp / tommel ned på svar, kan regenereres hvis det blir gitt tommel ned
-  
-* Debug view i frontend for å se endelig prompt som sendes til LLM
+  * Bruk av cookies krever samtykke (GDPR)
 
 * Load-balansering til eksternt API
 
@@ -42,3 +45,7 @@
   
 * Eksperimenter med kontekstvindu, token limits for minne osv.
 * Bedre navngiving av referanser
+
+* GraphRAG
+
+* Tekst til tale og omvendt
