@@ -24,7 +24,7 @@ The project has five main components orchestrated via Docker Compose:
   - `process_video_transcripts.py` → processes transcripts → `chunks_video_transcripts.jsonl`
   - `ingest.py` → embeds and ingests chunks into both Qdrant and Weaviate for each of the configured embedding models (10 total configurations)
 - **`/server`** — FastAPI backend (port 8080). Split into focused modules; `server.py` is a thin entry point that wires them together.
-- **`/frontend`** — Streamlit app (`app.py`) that streams from the server and renders markdown with LaTeX and `{ref:ID}` citation placeholders replaced by links.
+- **`/frontend`** — Streamlit app split into focused modules; `app.py` is the entry point.
 
 ### Server module layout
 
@@ -52,6 +52,33 @@ server/
 
 - The `db/` package is named to avoid collision with Python's stdlib `collections` module, which is why collection types live in `collection_types.py` rather than `collections.py`.
 
+### Frontend module layout
+
+```
+frontend/
+├── app.py       # Entry point: page config, init_state, fetch backend config, wire components
+├── state.py     # init_state() — single place for all st.session_state defaults
+├── chat.py      # render_chat(), streaming logic, text postprocessing helpers
+├── sidebar.py   # Socratic mode toggle, debug toggle, collection checkboxes, conversation history
+└── debug.py     # render_debug_panel() — shows request payload, retrieved sources, server debug events
+```
+
+**Design rationale:**
+
+- Streamlit reruns the entire script on every interaction. With multiple stateful UI sections (sidebar controls, conversation history, debug panel), a single file becomes hard to follow. Splitting by UI concern means each file has a clear responsibility and reruns can be traced to the right component.
+
+- `state.py` exists solely to centralize `st.session_state` initialization. Without it, defaults scatter across files with `if "x" not in st.session_state` guards. Call `init_state()` once at the top of `app.py` before any component renders.
+
+- Sidebar controls (`socratic_mode`, `debug_mode`) use Streamlit's `key=` parameter so the widget value and session state stay in sync automatically — no manual assignment needed.
+
+- `active_collections` in session state is `None` when all collections are enabled (the default), and an explicit list only when the user has deselected something. This avoids sending a redundant full list on every request and makes the "all enabled" case the natural default when the field is absent on the server side.
+
+- The debug panel is forward-compatible: it renders `server_debug` if the server sends a `{"type": "debug", ...}` event in the stream, and shows a placeholder caption if not. No frontend change is needed when that server-side event is added — just implement the event and it will appear. Debug mode can also be activated via `?debug=1` in the URL, useful for bookmarking a debug session.
+
+- Conversation history is within-session only for now (stored in `st.session_state.conversations`). Each saved conversation stores its `user_id` so that if server-side memory is still alive, loading a conversation restores the correct memory context. Full cross-session persistence requires backend work (see persistent memory in the TODO analysis).
+
+- Streamlit's `pages/` multi-page feature was deliberately not used — conversation history fits naturally as a sidebar list that loads into the main chat view, so there is no benefit to navigating away from the chat page.
+
 ### Shared utilities
 
 `/utils/config.py` — all environment-variable-driven config (LLM, vector DB hosts/ports, embedding model list, system prompt). Both server and frontend import from here.
@@ -60,12 +87,26 @@ server/
 
 ### Data flow
 
-1. User message → frontend → `POST /chat/stream`
+1. User message → frontend → `POST /chat/stream` (with `socratic_mode`, `active_collections`, and model/db selections)
 2. Server embeds the query using the selected embedding model (cached via `lru_cache`)
 3. Server queries all registered `COLLECTION_TYPES` (currently `course_page`, `video_transcript`) in the selected vector DB
 4. Retrieved chunks + conversation memory are assembled into a prompt and streamed to vLLM
 5. LLM response streams back to the frontend as SSE-style newline-delimited JSON
 6. Frontend postprocesses: LaTeX normalization, `{ref:ID}` → Markdown links
+
+### Stream event protocol
+
+The `/chat/stream` endpoint emits newline-delimited JSON events in this order:
+
+| Event | When emitted | Purpose |
+|---|---|---|
+| `{"type": "debug", "step": "retrieval", "data": [...payloads...]}` | If `req.debug`, before sources | Raw DB payloads grouped by collection type |
+| `{"type": "debug", "step": "memory", "data": [...messages...]}` | If `req.debug`, before sources | Conversation memory turns injected into the prompt |
+| `{"type": "sources", "sources": [...]}` | Always, before first delta | Processed sources for `{ref:ID}` citation link rendering |
+| `{"type": "delta", "text": "..."}` | Per LLM token | Streamed response content |
+| `{"type": "done"}` | After last delta | Signals end of stream |
+
+**Convention for new debug steps:** whenever a new building block is added to the prompt (e.g. intent classification result, exam context, Socratic mode instructions), add a corresponding `{"type": "debug", "step": "<name>", "data": ...}` event emitted in `event_stream()` in `server.py` when `req.debug` is true. The frontend's `debug.py` will fall back to `st.json(data)` for unknown step names, so the panel will show the data immediately. Add a dedicated `_render_<step>()` function to `debug.py` once the data shape is stable.
 
 ### Conversation memory
 
