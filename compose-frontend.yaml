@@ -9,5 +9,5 @@ services:
     restart: unless-stopped
 
     environment:
-      RETRIEVAL_HOST: retrieval
-      RETRIEVAL_PORT: 8080
+      SERVER_HOST: server
+      SERVER_PORT: 8080

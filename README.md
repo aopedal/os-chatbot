@@ -25,9 +25,9 @@ The OS chatbot consists of a few main components:
   - `scrape_course_pages.py`: If necessary, can be used to scrape HTML files from the official course site (os.cs.oslomet.no/os).
   - `preprocess_course_pages.py`: Takes HTML and TXT files from the knowledge directory and processes them into plaintext ready for ingestion. The outputs are saved both into a `knowledge_processed` directory for manual verification of results, and a `chunks_course_pages.jsonl` file for the ingestion step.
   - `ingest.py`: Ingests the preprocessed knowledge into 2 different vector databases using 5 different embedding models, for a total of 10 configurations.
-- `/retrieval`: Backend server that receives user prompts, finds the closest embeddings in the chosen vector database and for the chosen embedding model, and passes the found knowledge to the LLM to augment the response generation.
+- `/server`: Backend server that receives user prompts, finds the closest embeddings in the chosen vector database and for the chosen embedding model, and passes the found knowledge to the LLM to augment the response generation.
 - `/frontend`: Lightweight, but extensible Streamlit-based frontend for the chatbot.
-- `/utils`: Config and other files that are used by multiple components (mainly retrieval and frontend).
+- `/utils`: Config and other files that are used by multiple components (mainly server and frontend).
 
 ### Instructions
 
@@ -71,15 +71,15 @@ cd ..
 # Install dependencies in virtual environment
 python3 -m venv .venv
 source .venv/bin/activate
-for dir in ingestion retrieval frontend; do
+for dir in ingestion server frontend; do
     pip install -r "$dir/requirements.txt"
 done
 
-# Run retrieval server
-cd retrieval
+# Run server
+cd server
 uvicorn server:app --host 0.0.0.0 --port 8080
 cd ..
-# or use start.sh script in retrieval folder
+# or use start.sh script in server folder
 
 # Run Streamlit frontend
 streamlit run frontend/app.py

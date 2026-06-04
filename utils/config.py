@@ -16,10 +16,10 @@ WEAVIATE_HOST = os.getenv("WEAVIATE_HOST", "localhost")
 WEAVIATE_PORT = int(os.getenv("WEAVIATE_PORT", 6444))
 WEAVIATE_PORT_GRPC = int(os.getenv("WEAVIATE_PORT_GRPC", 50051))
 
-# Retrieval server config
-RETRIEVAL_HOST = os.getenv("RETRIEVAL_HOST", "localhost")
-RETRIEVAL_PORT = int(os.getenv("RETRIEVAL_PORT", 8080))
-RETRIEVAL_URL = f"http://{RETRIEVAL_HOST}:{RETRIEVAL_PORT}"
+# Server config
+SERVER_HOST = os.getenv("SERVER_HOST", "localhost")
+SERVER_PORT = int(os.getenv("SERVER_PORT", 8080))
+SERVER_URL = f"http://{SERVER_HOST}:{SERVER_PORT}"
 STATIC_FILES_URI_PATH = "https://os.cs.oslomet.no/ose/Forelesning"
 STATIC_VIDEOS_URI_PATH = f"{STATIC_FILES_URI_PATH}/video/2021"
 

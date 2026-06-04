@@ -32,7 +32,7 @@ from memory import ConversationMemoryStore, ConversationMemoryManager
 locale.setlocale(locale.LC_TIME, 'nb_NO.UTF-8')
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s [%(levelname)s] %(message)s")
-logger = logging.getLogger("retrieval")
+logger = logging.getLogger("server")
 
 
 # ============================================================

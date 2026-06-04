@@ -17,7 +17,7 @@ st.title(f"💬 Spør {app_config.CHATBOT_NAME}")
 # ------------------------------
 @st.cache_data
 def get_config():
-    res = httpx.get(f"{app_config.RETRIEVAL_URL}/config", timeout=10)
+    res = httpx.get(f"{app_config.SERVER_URL}/config", timeout=10)
     res.raise_for_status()
     return res.json()
 
@@ -117,7 +117,7 @@ if prompt := st.chat_input("Skriv en melding …"):
     try:
         with httpx.stream(
             "POST",
-            f"{app_config.RETRIEVAL_URL}/chat/stream",
+            f"{app_config.SERVER_URL}/chat/stream",
             json={
                 "user_id": st.session_state.user_id,
                 "message": prompt,
