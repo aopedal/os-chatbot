@@ -21,7 +21,7 @@ RETRIEVAL_HOST = os.getenv("RETRIEVAL_HOST", "localhost")
 RETRIEVAL_PORT = int(os.getenv("RETRIEVAL_PORT", 8080))
 RETRIEVAL_URL = f"http://{RETRIEVAL_HOST}:{RETRIEVAL_PORT}"
 STATIC_FILES_URI_PATH = "https://os.cs.oslomet.no/ose/Forelesning"
-STATIC_VIDEOS_URI_PATH = f"{STATIC_FILES_URI_PATH}/video/2021/"
+STATIC_VIDEOS_URI_PATH = f"{STATIC_FILES_URI_PATH}/video/2021"
 
 # Embedding models
 EMBEDDING_MODELS = [

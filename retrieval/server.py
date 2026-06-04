@@ -181,7 +181,7 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
         type = payload.get("type") or ""
         if type == 'course_page':
             identifier = payload.get("identifier") or str(uuid.uuid4())
-            source = f"{config.STATIC_FILES_URI_PATH}{payload['source']}"
+            source = f"{config.STATIC_FILES_URI_PATH}/{payload['source']}"
             text = payload.get("text") or ""
             
             anchor = payload.get("anchor") or ""
@@ -189,7 +189,7 @@ def build_context_docs(payloads: List[Dict[str, Any]]) -> tuple[List[Dict[str, A
             
         elif type == 'video_transcript':
             identifier = payload.get("chunk_id") or str(uuid.uuid4())
-            source = f"{config.STATIC_VIDEOS_URI_PATH}{payload['lecture_id']}.mp4"
+            source = f"{config.STATIC_VIDEOS_URI_PATH}/{payload['lecture_id']}.mp4"
             text = payload.get("text") or ""
             
             start = payload.get("start")
