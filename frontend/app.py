@@ -19,7 +19,14 @@ def fetch_backend_config():
     return res.json()
 
 
-backend_config = fetch_backend_config()
+try:
+    backend_config = fetch_backend_config()
+except (httpx.ConnectError, httpx.TimeoutException):
+    st.info("Venter på at backend-serveren skal bli klar. Siden lastes automatisk på nytt …")
+    st.stop()
+except Exception as e:
+    st.error(f"Klarte ikke å koble til backend: {e}")
+    st.stop()
 
 # Hard-coded for now; could be moved to the sidebar when model selection is needed
 inference_model = "gpt-oss-20b"

@@ -2,6 +2,6 @@ fastapi
 fastapi[all]
 uvicorn
 httpx
-qdrant-client
+qdrant-client>=1.15.0,<1.17.0
 weaviate-client
 tiktoken

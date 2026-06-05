@@ -1,3 +1,4 @@
+import asyncio
 from typing import Any
 
 import utils.config as config
@@ -8,7 +9,8 @@ from embedder import load_embedder
 
 async def retrieve_context(db: VectorDB, embed_text: str, embedding_model_id: str) -> list[dict[str, Any]]:
     embedder = load_embedder(embedding_model_id)
-    vector = embedder.encode(embed_text, normalize_embeddings=True).tolist()
+    result = await asyncio.to_thread(embedder.encode, embed_text, normalize_embeddings=True)
+    vector = result.tolist()
     embedding_model_name = next(opt["name"] for opt in config.EMBEDDING_MODELS if opt["id"] == embedding_model_id)
 
     all_payloads = []
