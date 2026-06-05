@@ -118,6 +118,29 @@ Collections are named `<embedding_model_name>_<collection_type.plural>` and norm
 - Qdrant: lowercase, only `a-z0-9-_` (`to_qdrant_name`)
 - Weaviate: CamelCase, letters and digits only (`to_weaviate_class`)
 
+## Dependency management
+
+Dependencies are managed with [uv](https://docs.astral.sh/uv/). Each deployable component has its own manifest:
+
+- `server/pyproject.toml` + `server/uv.lock`
+- `frontend/pyproject.toml` + `frontend/uv.lock`
+
+Both lockfiles must be committed. The Dockerfiles install from them with `uv sync --frozen`, which will fail if the lockfile is absent or out of sync with `pyproject.toml`.
+
+**Adding or updating a dependency:**
+```
+cd server   # or frontend
+uv add <package>        # adds and re-locks in one step
+# or: edit pyproject.toml manually, then:
+uv lock
+```
+
+**Coupled versions — qdrant-client and weaviate-client:** The version constraints in `server/pyproject.toml` are intentionally tied to the server image tags in `vectordb/compose.yaml`. When upgrading either vector DB, update the image tag in `compose.yaml` and the corresponding client constraint in `pyproject.toml` together, then re-run `uv lock`. The current pairing is:
+- `qdrant-client~=1.18.0` ↔ `qdrant/qdrant:v1.18.2`
+- `weaviate-client>=4.21.2,<5` ↔ `semitechnologies/weaviate:1.37.7`
+
+**Docker venv:** `uv sync` creates a `.venv` inside the component directory (`/app/server/.venv`, `/app/frontend/.venv`). The Dockerfiles add this to `PATH` so `uvicorn` and `streamlit` are available without activating the venv explicitly.
+
 ## Key environment variables
 
 | Variable | Default | Purpose |

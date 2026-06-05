@@ -1,6 +1,6 @@
 services:
   qdrant:
-    image: qdrant/qdrant:latest
+    image: qdrant/qdrant:v1.18.2
     container_name: qdrant
     restart: unless-stopped
     ports:
@@ -10,7 +10,7 @@ services:
       - qdrant:/qdrant/storage
 
   weaviate:
-    image: semitechnologies/weaviate:latest
+    image: semitechnologies/weaviate:1.37.7
     container_name: weaviate
     restart: unless-stopped
     ports:

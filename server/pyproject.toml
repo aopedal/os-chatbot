@@ -1,0 +1,15 @@
+[project]
+name = "server"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "fastapi[all]",
+    "httpx",
+    "qdrant-client~=1.18.0",
+    "weaviate-client>=4.21.2,<5",
+    "tiktoken",
+    "sentence-transformers",
+]
+
+[tool.uv]
+package = false

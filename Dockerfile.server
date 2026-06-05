@@ -1,19 +1,10 @@
 FROM python:3.11-slim
-RUN pip install --upgrade pip
 
-# Set environment
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+
 ENV PYTHONPATH=/app
+
 WORKDIR /app
-
-# Copy only requirements first
-COPY server/requirements.txt ./server/requirements.txt
-
-# Install dependencies (cached as long as requirements.txt doesn't change)
-RUN pip install --no-cache-dir -r server/requirements.txt
-
-
-COPY server/requirements-extra.txt ./server/requirements-extra.txt
-RUN pip install --no-cache-dir -r server/requirements-extra.txt
 
 # Install locales
 RUN apt-get update && \
@@ -28,12 +19,19 @@ ENV LANG=nb_NO.UTF-8
 ENV LANGUAGE=nb_NO.UTF-8
 ENV LC_ALL=nb_NO.UTF-8
 
-# Copy app code after dependencies
-COPY utils utils
-COPY server server
-COPY ingestion/knowledge ingestion/knowledge
+# Copy dependency manifests first
+COPY server/pyproject.toml server/uv.lock server/
 
-# Now switch to server dir for running
+# Install all dependencies into a venv at /app/server/.venv
+RUN uv sync --project server --frozen --no-install-project
+
+ENV PATH="/app/server/.venv/bin:$PATH"
+
+# Copy app code - this layer only invalidates on code changes
+COPY utils utils/
+COPY server server/
+COPY ingestion/knowledge ingestion/knowledge/
+
 WORKDIR /app/server
 EXPOSE 8080
 RUN chmod +x start.sh
