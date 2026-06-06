@@ -100,13 +100,13 @@ The `/chat/stream` endpoint emits newline-delimited JSON events in this order:
 
 | Event | When emitted | Purpose |
 |---|---|---|
-| `{"type": "debug", "step": "retrieval", "data": [...payloads...]}` | If `req.debug`, before sources | Raw DB payloads grouped by collection type |
-| `{"type": "debug", "step": "memory", "data": [...messages...]}` | If `req.debug`, before sources | Conversation memory turns injected into the prompt |
+| `{"type": "debug", "step": "retrieval", "data": [...payloads...]}` | Always, before sources | Raw DB payloads grouped by collection type |
+| `{"type": "debug", "step": "memory", "data": [...messages...]}` | Always, before sources | Conversation memory turns injected into the prompt |
 | `{"type": "sources", "sources": [...]}` | Always, before first delta | Processed sources for `{ref:ID}` citation link rendering |
 | `{"type": "delta", "text": "..."}` | Per LLM token | Streamed response content |
 | `{"type": "done"}` | After last delta | Signals end of stream |
 
-**Convention for new debug steps:** whenever a new building block is added to the prompt (e.g. intent classification result, exam context, Socratic mode instructions), add a corresponding `{"type": "debug", "step": "<name>", "data": ...}` event emitted in `event_stream()` in `server.py` when `req.debug` is true. The frontend's `debug.py` will fall back to `st.json(data)` for unknown step names, so the panel will show the data immediately. Add a dedicated `_render_<step>()` function to `debug.py` once the data shape is stable.
+**Convention for new debug steps:** whenever a new building block is added to the prompt (e.g. intent classification result, exam context, Socratic mode instructions), add a corresponding `{"type": "debug", "step": "<name>", "data": ...}` event emitted unconditionally in `event_stream()` in `server.py`. Debug events are always sent; the frontend decides whether to display them based on the client-side `debug_mode` toggle. The frontend's `debug.py` will fall back to `st.json(data)` for unknown step names, so the panel will show the data immediately. Add a dedicated `_render_<step>()` function to `debug.py` once the data shape is stable.
 
 ### Conversation memory
 

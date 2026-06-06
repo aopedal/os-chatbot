@@ -7,13 +7,6 @@ def render_debug_panel(debug_data: dict):
             st.subheader("Request")
             st.json(request)
 
-        if sources := debug_data.get("sources"):
-            st.subheader("Context sources")
-            for src in sources:
-                with st.expander(f"{src['identifier']} ({src['type']})"):
-                    st.markdown(f"**URL:** {src['url']}")
-                    st.text(src.get("text", ""))
-
         steps = debug_data.get("server_debug", [])
         if steps:
             for step in steps:
@@ -31,7 +24,7 @@ def _render_step(step: dict):
     data = step.get("data")
 
     if name == "retrieval":
-        st.subheader("Retrieved chunks")
+        st.subheader("Context sources")
         _render_retrieval(data or [])
 
     elif name == "memory":
@@ -57,6 +50,8 @@ def _render_retrieval(payloads: list[dict]):
         for chunk in chunks:
             identifier = chunk.get("identifier") or chunk.get("chunk_id") or "—"
             with st.expander(identifier):
+                if url := chunk.get("url"):
+                    st.markdown(f"**URL:** {url}")
                 st.text(chunk.get("text", ""))
 
 

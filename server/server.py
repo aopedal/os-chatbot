@@ -95,7 +95,6 @@ class ChatRequest(BaseModel):
     vector_db: Optional[str] = None
     socratic_mode: bool = False
     active_collections: Optional[list[str]] = None
-    debug: bool = False
 
 
 @app.get("/config")
@@ -166,9 +165,8 @@ async def chat_stream(req: ChatRequest):
 
     # ---------------- STREAMING RESPONSE ----------------
     async def event_stream():
-        if req.debug:
-            yield json.dumps({"type": "debug", "step": "retrieval", "data": payloads}) + "\n\n"
-            yield json.dumps({"type": "debug", "step": "memory", "data": memory_messages}) + "\n\n"
+        yield json.dumps({"type": "debug", "step": "retrieval", "data": payloads}) + "\n\n"
+        yield json.dumps({"type": "debug", "step": "memory", "data": memory_messages}) + "\n\n"
 
         yield json.dumps({"type": "sources", "sources": sources}) + "\n\n"
         full_response = ""

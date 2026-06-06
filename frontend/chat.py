@@ -58,6 +58,8 @@ def render_chat(inference_model: str, embedding_model: str, vector_db: str):
             st.chat_message("user").write(msg["content"])
         else:
             st.chat_message("assistant").markdown(msg["content"])
+            if st.session_state.debug_mode and msg.get("debug_data"):
+                render_debug_panel(msg["debug_data"])
 
     with st.bottom:
         st.caption(
@@ -74,6 +76,7 @@ def _handle_input(prompt: str, inference_model: str, embedding_model: str, vecto
     st.chat_message("user").write(prompt)
 
     message_area = st.chat_message("assistant").container().empty()
+    debug_placeholder = st.empty()
     raw_buffer = ""
     sources: dict[str, str] = {}
     debug_data: dict = {"request": None, "sources": [], "server_debug": []}
@@ -86,7 +89,6 @@ def _handle_input(prompt: str, inference_model: str, embedding_model: str, vecto
         "vector_db": vector_db,
         "socratic_mode": st.session_state.socratic_mode,
         "active_collections": st.session_state.active_collections,
-        "debug": st.session_state.debug_mode,
     }
     debug_data["request"] = request_payload
 
@@ -113,6 +115,9 @@ def _handle_input(prompt: str, inference_model: str, embedding_model: str, vecto
 
                 elif chunk["type"] == "debug":
                     debug_data["server_debug"].append(chunk)
+                    if st.session_state.debug_mode:
+                        with debug_placeholder.container():
+                            render_debug_panel(debug_data)
 
                 elif chunk["type"] == "done":
                     break
@@ -122,8 +127,13 @@ def _handle_input(prompt: str, inference_model: str, embedding_model: str, vecto
 
     final_message = postprocess_text(raw_buffer, sources)
     message_area.markdown(final_message)
-    st.session_state.messages.append({"role": "assistant", "content": final_message})
-    st.session_state.last_debug_data = debug_data
 
     if st.session_state.debug_mode:
-        render_debug_panel(debug_data)
+        with debug_placeholder.container():
+            render_debug_panel(debug_data)
+
+    st.session_state.messages.append({
+        "role": "assistant",
+        "content": final_message,
+        "debug_data": debug_data,
+    })
