@@ -62,9 +62,14 @@ def _render_retrieval(payloads: list[dict]):
 def _render_intent(data: dict):
     category = data.get("category", "—")
     wants_direct = data.get("wants_direct_answer", False)
-    col1, col2 = st.columns(2)
+    active = data.get("socratic_mode_active", False)
+    fallback = data.get("fallback", False)
+    if fallback:
+        st.warning("Classification failed — defaults used, check server logs.", icon="⚠️")
+    col1, col2, col3 = st.columns(3)
     col1.metric("Category", category)
     col2.metric("Wants direct answer", "Yes" if wants_direct else "No")
+    col3.metric("Socratic mode", "Active" if active else "Inactive")
 
 
 def _render_memory(messages: list[dict]):

@@ -17,7 +17,7 @@ from db import QdrantVectorDB, WeaviateVectorDB, VectorDB
 from embedder import load_embedder
 from memory import ConversationMemoryStore, ConversationMemoryManager
 from intent import classify_intent
-from prompt import build_context_docs, build_system_prompt
+from prompt import build_context_docs, build_system_prompt, socratic_mode_active
 from retrieval import retrieve_context
 
 # ============================================================
@@ -171,7 +171,10 @@ async def chat_stream(req: ChatRequest):
         yield json.dumps({"type": "debug", "step": "retrieval", "data": payloads}) + "\n\n"
         yield json.dumps({"type": "debug", "step": "memory", "data": memory_messages}) + "\n\n"
         if intent_result is not None:
-            yield json.dumps({"type": "debug", "step": "intent", "data": intent_result}) + "\n\n"
+            yield json.dumps({"type": "debug", "step": "intent", "data": {
+                **intent_result,
+                "socratic_mode_active": socratic_mode_active(intent_result, req.socratic_mode),
+            }}) + "\n\n"
 
         yield json.dumps({"type": "sources", "sources": sources}) + "\n\n"
         full_response = ""

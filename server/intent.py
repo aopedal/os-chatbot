@@ -22,9 +22,10 @@ class IntentCategory(StrEnum):
 class IntentResult(TypedDict):
     category: str
     wants_direct_answer: bool
+    fallback: bool  # True when classification failed and defaults were used
 
 
-_FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False}
+_FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False, "fallback": True}
 
 _CLASSIFIER_PROMPT = (
     "Classify the following student question into exactly one of these categories:\n\n"
@@ -45,6 +46,36 @@ _CLASSIFIER_PROMPT = (
 )
 
 
+def _parse_response(raw: str) -> tuple[str, bool] | None:
+    """Try JSON first, then scan for a bare category label. Returns (category, wants_direct) or None."""
+    # Strip markdown code fences
+    if raw.startswith("```"):
+        raw = raw.split("```")[1]
+        if raw.startswith("json"):
+            raw = raw[4:]
+    raw = raw.strip()
+
+    # Strict JSON parse
+    try:
+        parsed = json.loads(raw)
+        category = str(parsed.get("category", "")).upper()
+        wants_direct = bool(parsed.get("wants_direct_answer", False))
+        if category in IntentCategory.__members__:
+            return category, wants_direct
+        logger.warning(f"JSON parsed but unknown category {category!r}")
+    except json.JSONDecodeError:
+        logger.warning(f"Intent classifier returned non-JSON: {raw!r}, scanning for label")
+
+    # Scan the raw text for any known label
+    upper = raw.upper()
+    for label in IntentCategory.__members__:
+        if label in upper:
+            wants_direct = "TRUE" in upper
+            return label, wants_direct
+
+    return None
+
+
 async def classify_intent(message: str, model: str, llm_base: str) -> IntentResult:
     prompt = _CLASSIFIER_PROMPT.format(question=json.dumps(message))
     try:
@@ -54,29 +85,19 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                 json={
                     "model": model,
                     "messages": [{"role": "user", "content": prompt}],
-                    "max_tokens": 50,
+                    "max_tokens": 100,
                     "temperature": 0.0,
                 },
             )
             response.raise_for_status()
             raw = response.json()["choices"][0]["message"]["content"].strip()
 
-            # Strip markdown code fences if the model wraps the JSON
-            if raw.startswith("```"):
-                raw = raw.split("```")[1]
-                if raw.startswith("json"):
-                    raw = raw[4:]
-            raw = raw.strip()
-
-            parsed = json.loads(raw)
-            category = str(parsed.get("category", "")).upper()
-            if category not in IntentCategory.__members__:
-                logger.warning(f"Unknown intent category {category!r} from classifier, falling back")
-                return _FALLBACK
-            return {
-                "category": category,
-                "wants_direct_answer": bool(parsed.get("wants_direct_answer", False)),
-            }
+        result = _parse_response(raw)
+        if result is None:
+            logger.warning(f"Could not extract intent from response: {raw!r}, falling back")
+            return _FALLBACK
+        category, wants_direct = result
+        return {"category": category, "wants_direct_answer": wants_direct, "fallback": False}
 
     except Exception as e:
         logger.warning(f"Intent classification failed ({type(e).__name__}: {e}), falling back to direct mode")

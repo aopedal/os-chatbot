@@ -78,14 +78,17 @@ _SYSTEM_PROMPT_FOOTER = (
 )
 
 
-def build_system_prompt(context: str, now: str, intent: dict | None, socratic_mode: bool) -> str:
-    use_socratic = (
+def socratic_mode_active(intent: dict | None, socratic_mode: bool) -> bool:
+    return (
         socratic_mode
         and intent is not None
         and not intent.get("wants_direct_answer", False)
         and intent.get("category") in SOCRATIC_CATEGORIES
     )
-    base = SOCRATIC_PROMPT if use_socratic else DIRECT_PROMPT
+
+
+def build_system_prompt(context: str, now: str, intent: dict | None, socratic_mode: bool) -> str:
+    base = SOCRATIC_PROMPT if socratic_mode_active(intent, socratic_mode) else DIRECT_PROMPT
     return base + "\n\n" + _SYSTEM_PROMPT_FOOTER.format(now=now, context=context)
 
 
