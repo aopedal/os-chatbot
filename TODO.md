@@ -5,8 +5,6 @@
   * Dokumentere hvordan vi kjører tester, stress-testing, simulere mange samtidige spørringer
 
 * Stramme opp pipeline for videotranskribering, chunking og ingestion, så det blir enkelt å gjenbruke og oppdatere materiale.
-  
-* Debug view i frontend for å se endelig prompt som sendes til LLM
 
 * Bedre logging/innsyn - f.eks eit enkelt Grafana-dashbord som viser trafikk (t.d. spørringar per time) og andre nøkkelmetrikkar. Antall tokens per spørring
 

@@ -2,7 +2,7 @@ import streamlit as st
 
 
 def render_debug_panel(debug_data: dict):
-    with st.expander("Debug", expanded=True):
+    with st.expander("Debug", expanded=False):
         if request := debug_data.get("request"):
             st.subheader("Request")
             st.json(request)
