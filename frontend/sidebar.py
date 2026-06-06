@@ -7,7 +7,7 @@ def render_sidebar(available_collections: list[dict]):
         st.header("Innstillinger")
 
         st.toggle(
-            "Sokratisk modus", key="socratic_mode",
+            "Pedagogisk modus", key="socratic_mode",
             help="Gir hint og veiledning i stedet for direkte svar.",
         )
         st.toggle(

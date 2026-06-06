@@ -31,6 +31,10 @@ def _render_step(step: dict):
         st.subheader("Conversation memory")
         _render_memory(data or [])
 
+    elif name == "intent":
+        st.subheader("Intent classification")
+        _render_intent(data or {})
+
     else:
         st.subheader(f"Debug: {name}")
         st.json(data)
@@ -53,6 +57,14 @@ def _render_retrieval(payloads: list[dict]):
                 if url := chunk.get("url"):
                     st.markdown(f"**URL:** {url}")
                 st.text(chunk.get("text", ""))
+
+
+def _render_intent(data: dict):
+    category = data.get("category", "—")
+    wants_direct = data.get("wants_direct_answer", False)
+    col1, col2 = st.columns(2)
+    col1.metric("Category", category)
+    col2.metric("Wants direct answer", "Yes" if wants_direct else "No")
 
 
 def _render_memory(messages: list[dict]):

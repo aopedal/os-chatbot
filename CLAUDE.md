@@ -8,6 +8,10 @@ When the user reveals new information about how the project works or how it shou
 
 The user values modularity and clean separation of concerns. Proactively flag situations where a file is growing large enough to split, where a new abstraction would make future changes easier, or where repeated patterns suggest a missing layer. Raise it as a suggestion before acting.
 
+## Language
+
+All user-facing text — system prompts, UI strings, chat copy — must be written in **Norwegian (Bokmål)**. Debug panel labels, log messages, code comments, and this file are in English.
+
 ## Project overview
 
 OS-bot is a RAG chatbot for the DATA2500 Operating Systems course at Oslo Metropolitan University, designed to run locally on university-owned hardware. The inference stack is vLLM + gpt-oss-20b.
@@ -33,7 +37,8 @@ server/
 ├── server.py            # FastAPI app, lifespan, DB_REGISTRY, /chat/stream endpoint
 ├── embedder.py          # load_embedder() with lru_cache — shared by retrieval and lifespan preload
 ├── retrieval.py         # retrieve_context() — iterates COLLECTION_TYPES, delegates to VectorDB
-├── prompt.py            # build_context_docs() — maps payloads to sources list + context string
+├── intent.py            # classify_intent() — LLM-based intent classification for Socratic routing
+├── prompt.py            # build_context_docs(), build_system_prompt(), SOCRATIC_CATEGORIES, system prompt constants
 ├── collection_types.py  # CollectionType ABC, concrete types, COLLECTION_TYPES + COLLECTION_TYPE_MAP
 ├── memory.py            # ConversationMemoryStore + ConversationMemoryManager
 └── db/
@@ -88,8 +93,8 @@ frontend/
 ### Data flow
 
 1. User message → frontend → `POST /chat/stream` (with `socratic_mode`, `active_collections`, and model/db selections)
-2. Server embeds the query using the selected embedding model (cached via `lru_cache`)
-3. Server queries all registered `COLLECTION_TYPES` (currently `course_page`, `video_transcript`) in the selected vector DB
+2. If `socratic_mode`: retrieval and intent classification run in **parallel** via `asyncio.gather`; otherwise only retrieval runs
+3. Intent result routes to the correct system prompt (see Socratic mode section below)
 4. Retrieved chunks + conversation memory are assembled into a prompt and streamed to vLLM
 5. LLM response streams back to the frontend as SSE-style newline-delimited JSON
 6. Frontend postprocesses: LaTeX normalization, `{ref:ID}` → Markdown links
@@ -102,11 +107,31 @@ The `/chat/stream` endpoint emits newline-delimited JSON events in this order:
 |---|---|---|
 | `{"type": "debug", "step": "retrieval", "data": [...payloads...]}` | Always, before sources | Raw DB payloads grouped by collection type |
 | `{"type": "debug", "step": "memory", "data": [...messages...]}` | Always, before sources | Conversation memory turns injected into the prompt |
+| `{"type": "debug", "step": "intent", "data": {"category": "...", "wants_direct_answer": ...}}` | When `socratic_mode`, before sources | Intent classification result used for prompt routing |
 | `{"type": "sources", "sources": [...]}` | Always, before first delta | Processed sources for `{ref:ID}` citation link rendering |
 | `{"type": "delta", "text": "..."}` | Per LLM token | Streamed response content |
 | `{"type": "done"}` | After last delta | Signals end of stream |
 
 **Convention for new debug steps:** whenever a new building block is added to the prompt (e.g. intent classification result, exam context, Socratic mode instructions), add a corresponding `{"type": "debug", "step": "<name>", "data": ...}` event emitted unconditionally in `event_stream()` in `server.py`. Debug events are always sent; the frontend decides whether to display them based on the client-side `debug_mode` toggle. The frontend's `debug.py` will fall back to `st.json(data)` for unknown step names, so the panel will show the data immediately. Add a dedicated `_render_<step>()` function to `debug.py` once the data shape is stable.
+
+### Socratic mode
+
+When `socratic_mode` is enabled, a lightweight classification call runs in parallel with retrieval to determine the nature of the question. The result routes to one of two system prompts:
+
+| Intent category | Socratic prompt? |
+|---|---|
+| CONCEPTUAL, COMPARISON, SYNTHESIS, DEBUGGING | Yes — guide with questions |
+| RECALL, PROCEDURE, VERIFICATION, NAVIGATIONAL | No — answer directly |
+
+Two additional overrides take precedence over the category:
+- `wants_direct_answer: true` (student explicitly asks for a direct answer) → always direct
+- Classification error/timeout → falls back to direct mode silently
+
+**`server/intent.py`** owns the classifier. It returns `IntentResult` (`category` + `wants_direct_answer`). On any failure it returns `{"category": "RECALL", "wants_direct_answer": false}` so the request always completes.
+
+**`server/prompt.py`** owns the routing. `SOCRATIC_CATEGORIES` is the authoritative set of categories that trigger the Socratic prompt. `build_system_prompt(context, now, intent, socratic_mode)` applies the routing logic and returns the complete assembled system message (base prompt + conversation history note + timestamp + retrieved context). Both system prompt strings live here as module-level constants.
+
+The intent classification result is always emitted as a `{"type": "debug", "step": "intent", ...}` event when `socratic_mode` is on, so it appears in the debug panel.
 
 ### Conversation memory
 

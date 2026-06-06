@@ -16,7 +16,8 @@ import utils.config as config
 from db import QdrantVectorDB, WeaviateVectorDB, VectorDB
 from embedder import load_embedder
 from memory import ConversationMemoryStore, ConversationMemoryManager
-from prompt import build_context_docs
+from intent import classify_intent
+from prompt import build_context_docs, build_system_prompt
 from retrieval import retrieve_context
 
 # ============================================================
@@ -130,22 +131,24 @@ async def chat_stream(req: ChatRequest):
     logger.info(f"\n\n\n{'=' * 50}\nIncoming message: {req.message}")
     logger.info(f"Using model={req.inference_model}, embedder={req.embedding_model}, db={req.vector_db}")
 
-    # ---------------- RAG RETRIEVAL ----------------
+    # ---------------- RAG RETRIEVAL + INTENT CLASSIFICATION ----------------
     db = DB_REGISTRY[req.vector_db]
-    payloads = await retrieve_context(db, req.message, req.embedding_model)
+    if req.socratic_mode:
+        payloads, intent_result = await asyncio.gather(
+            retrieve_context(db, req.message, req.embedding_model),
+            classify_intent(req.message, req.inference_model, config.LLM_BASE),
+        )
+    else:
+        payloads = await retrieve_context(db, req.message, req.embedding_model)
+        intent_result = None
     logger.info(f"Retrieval completed in {time.time() - start_time:.2f}s")
+    if intent_result:
+        logger.info(f"Intent: {intent_result}")
     sources, context = build_context_docs(payloads)
 
     # ---------------- PROMPT BUILDER ----------------
     now = datetime.now().strftime("%A %d. %B %Y kl. %H:%M")
-    system_prompt = (
-        f"{config.SYSTEM_PROMPT}\n\n"
-        f"Du har en pågående samtale med brukeren. Samtalehistorikk er vedlagt og skal brukes hvis relevant.\n"
-        f"Nåværende tidspunkt: {now}\n\n"
-        f"---\n\n"
-        f"RELEVANT PENSUMMATERIALE:\n\n"
-        f"{context}"
-    )
+    system_prompt = build_system_prompt(context, now, intent_result, req.socratic_mode)
 
     memory_messages = await memory_manager.build_messages(user_id)
     messages = [
@@ -167,6 +170,8 @@ async def chat_stream(req: ChatRequest):
     async def event_stream():
         yield json.dumps({"type": "debug", "step": "retrieval", "data": payloads}) + "\n\n"
         yield json.dumps({"type": "debug", "step": "memory", "data": memory_messages}) + "\n\n"
+        if intent_result is not None:
+            yield json.dumps({"type": "debug", "step": "intent", "data": intent_result}) + "\n\n"
 
         yield json.dumps({"type": "sources", "sources": sources}) + "\n\n"
         full_response = ""
