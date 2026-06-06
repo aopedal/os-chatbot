@@ -86,11 +86,11 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                     "model": model,
                     "messages": [{"role": "user", "content": prompt}],
                     "max_tokens": 100,
-                    "temperature": 0.0,
+                    "temperature": 0.1,
                 },
             )
             response.raise_for_status()
-            raw = response.json()["choices"][0]["message"]["content"].strip()
+            raw = (response.json()["choices"][0]["message"]["content"] or "").strip()
 
         result = _parse_response(raw)
         if result is None:
