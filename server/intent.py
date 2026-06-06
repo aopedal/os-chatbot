@@ -40,7 +40,7 @@ _CLASSIFIER_PROMPT = (
     "frustration with guided responses "
     '(e.g. "just give me the answer", "stop with the hints", "tell me directly").\n\n'
     "Respond with only JSON in this exact format, no explanation:\n"
-    '{"category": "<LABEL>", "wants_direct_answer": <true|false>}\n\n'
+    '{{"category": "<LABEL>", "wants_direct_answer": <true|false>}}\n\n'
     "Question: {question}"
 )
 
