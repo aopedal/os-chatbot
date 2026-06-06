@@ -12,7 +12,7 @@ def render_sidebar(available_collections: list[dict]):
         )
         st.toggle(
             "Debug-modus", key="debug_mode",
-            help="Vis forespørsel, hentede kilder og andre mellomtrinn. Kan også aktiveres via ?debug=1 i URL-en.",
+            help="Vis forespørsel, hentede kilder og andre mellomtrinn.",
         )
 
         st.divider()
@@ -20,6 +20,8 @@ def render_sidebar(available_collections: list[dict]):
 
         st.divider()
         _render_conversation_history()
+
+    _sync_prefs_to_url()
 
 
 def _render_collection_toggles(available_collections: list[dict]):
@@ -30,12 +32,35 @@ def _render_collection_toggles(available_collections: list[dict]):
 
     active = []
     for col in available_collections:
-        # value=True is only used on first render; widget state persists via key after that
-        if st.checkbox(col["name"], value=True, key=f"col_{col['id']}"):
+        key = f"col_{col['id']}"
+        # On first render, derive the checkbox initial value from active_collections
+        # (which may have been restored from URL params in init_state).
+        if key not in st.session_state:
+            saved = st.session_state.active_collections
+            st.session_state[key] = (saved is None) or (col["id"] in saved)
+        if st.checkbox(col["name"], key=key):
             active.append(col["id"])
 
     all_ids = {c["id"] for c in available_collections}
     st.session_state.active_collections = None if set(active) == all_ids else active
+
+
+def _sync_prefs_to_url():
+    """Mirror current preferences into URL query params so they survive a page refresh."""
+    if st.session_state.debug_mode:
+        st.query_params["debug"] = "1"
+    elif "debug" in st.query_params:
+        del st.query_params["debug"]
+
+    if st.session_state.socratic_mode:
+        st.query_params["socratic"] = "1"
+    elif "socratic" in st.query_params:
+        del st.query_params["socratic"]
+
+    if st.session_state.active_collections is not None:
+        st.query_params["collections"] = ",".join(st.session_state.active_collections)
+    elif "collections" in st.query_params:
+        del st.query_params["collections"]
 
 
 def _render_conversation_history():
