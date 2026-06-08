@@ -1211,6 +1211,11 @@ wheels = [
 ]
 
 [[package]]
+name = "os-chatbot-utils"
+version = "0.1.0"
+source = { directory = "../utils" }
+
+[[package]]
 name = "packaging"
 version = "26.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2031,9 +2036,11 @@ source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["all"] },
     { name = "httpx" },
+    { name = "os-chatbot-utils" },
     { name = "qdrant-client" },
     { name = "sentence-transformers" },
     { name = "tiktoken" },
+    { name = "torch" },
     { name = "weaviate-client" },
 ]
 
@@ -2041,9 +2048,11 @@ dependencies = [
 requires-dist = [
     { name = "fastapi", extras = ["all"] },
     { name = "httpx" },
+    { name = "os-chatbot-utils", directory = "../utils" },
     { name = "qdrant-client", specifier = "~=1.18.0" },
     { name = "sentence-transformers" },
     { name = "tiktoken" },
+    { name = "torch" },
     { name = "weaviate-client", specifier = ">=4.21.2,<5" },
 ]
 

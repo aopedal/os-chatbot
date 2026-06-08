@@ -9,7 +9,15 @@ dependencies = [
     "weaviate-client>=4.21.2,<5",
     "tiktoken",
     "sentence-transformers",
+    "torch",
+    "os-chatbot-utils",
 ]
 
 [tool.uv]
 package = false
+
+[tool.uv.sources]
+os-chatbot-utils = { path = "../utils" }
+
+[tool.ty.environment]
+python = ".venv"

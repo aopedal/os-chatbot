@@ -1,5 +1,18 @@
 [project]
 name = "os-chatbot"
 version = "0.1.0"
-requires-python = ">=3.14"
+requires-python = ">=3.11"
 dependencies = []
+
+[dependency-groups]
+dev = [
+    "ty>=0.0.44",
+    "ruff>=0.15.16",
+]
+
+[tool.ruff]
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I"]
