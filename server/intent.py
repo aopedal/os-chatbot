@@ -28,22 +28,22 @@ class IntentResult(TypedDict):
 
 _FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False, "fallback": True}
 
-_CLASSIFIER_PROMPT = (
-    "Classify the following student question into exactly one of these categories:\n\n"
-    "- RECALL: asks for a definition or fact\n"
-    "- CONCEPTUAL: asks why or how something works\n"
-    "- COMPARISON: asks about differences or tradeoffs between two or more things\n"
-    "- SYNTHESIS: an exercise, task, or design challenge\n"
-    "- DEBUGGING: diagnosing a specific broken thing\n"
-    "- PROCEDURE: asks for step-by-step instructions\n"
-    "- VERIFICATION: asks whether something they have done is correct\n"
-    "- NAVIGATIONAL: asks about the curriculum or where to find something\n\n"
-    "Also detect whether the student is explicitly requesting a direct answer or expressing "
-    "frustration with guided responses "
-    '(e.g. "just give me the answer", "stop with the hints", "tell me directly").\n\n'
-    "Respond with only JSON in this exact format, no explanation:\n"
-    '{{"category": "<LABEL>", "wants_direct_answer": <true|false>}}\n\n'
-    "Question: {question}"
+_CLASSIFIER_SYSTEM = (
+    "You are a question classifier for a university operating systems course. "
+    "Classify the student message into exactly one category:\n\n"
+    "RECALL – asks for a definition or fact\n"
+    "CONCEPTUAL – asks why or how something works\n"
+    "COMPARISON – asks about differences or tradeoffs between things\n"
+    "SYNTHESIS – an exercise, task, or design challenge\n"
+    "DEBUGGING – diagnosing a specific broken thing\n"
+    "PROCEDURE – asks for step-by-step instructions\n"
+    "VERIFICATION – asks whether something they did is correct\n"
+    "NAVIGATIONAL – asks about the curriculum or where to find something\n\n"
+    "Also set wants_direct_answer=true if the student is explicitly asking for a direct answer "
+    'rather than hints or guidance (e.g. "just tell me", "stop hinting", "give me the answer", '
+    '"bare gi meg svaret", "fortell meg direkte").\n\n'
+    'Respond with ONLY valid JSON, no other text:\n'
+    '{"category": "LABEL", "wants_direct_answer": true}'
 )
 
 
@@ -78,7 +78,6 @@ def _parse_response(raw: str) -> tuple[str, bool] | None:
 
 
 async def classify_intent(message: str, model: str, llm_base: str) -> IntentResult:
-    prompt = _CLASSIFIER_PROMPT.format(question=json.dumps(message))
     raw = ""
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
@@ -86,7 +85,10 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                 f"{llm_base}/chat/completions",
                 json={
                     "model": model,
-                    "messages": [{"role": "user", "content": prompt}],
+                    "messages": [
+                        {"role": "system", "content": _CLASSIFIER_SYSTEM},
+                        {"role": "user", "content": message},
+                    ],
                     "max_tokens": 100,
                     "temperature": 0.1,
                 },

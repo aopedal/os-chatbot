@@ -42,7 +42,6 @@ Oppgi kun kildereferanser der det er naturlig å be studenten lese selv.
 '''
 
 shared_instructions = '''
-
 Husk følgende om Markdown-syntaks:
 - Hvis du har kodeblokker inni tabeller, må pipe-tegn (|)
   escapes med backslash (\) for at tabellen skal vises på riktig måte.
