@@ -23,6 +23,7 @@ class IntentResult(TypedDict):
     category: str
     wants_direct_answer: bool
     fallback: bool  # True when classification failed and defaults were used
+    raw_response: str
 
 
 _FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False, "fallback": True}
@@ -78,6 +79,7 @@ def _parse_response(raw: str) -> tuple[str, bool] | None:
 
 async def classify_intent(message: str, model: str, llm_base: str) -> IntentResult:
     prompt = _CLASSIFIER_PROMPT.format(question=json.dumps(message))
+    raw = ""
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
@@ -95,10 +97,10 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
         result = _parse_response(raw)
         if result is None:
             logger.warning(f"Could not extract intent from response: {raw!r}, falling back")
-            return _FALLBACK
+            return {**_FALLBACK, "raw_response": raw}
         category, wants_direct = result
-        return {"category": category, "wants_direct_answer": wants_direct, "fallback": False}
+        return {"category": category, "wants_direct_answer": wants_direct, "fallback": False, "raw_response": raw}
 
     except Exception as e:
         logger.warning(f"Intent classification failed ({type(e).__name__}: {e}), falling back to direct mode")
-        return _FALLBACK
+        return {**_FALLBACK, "raw_response": raw}

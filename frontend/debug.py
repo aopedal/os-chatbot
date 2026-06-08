@@ -70,6 +70,9 @@ def _render_intent(data: dict):
     col1.metric("Category", category)
     col2.metric("Wants direct answer", "Yes" if wants_direct else "No")
     col3.metric("Socratic mode", "Active" if active else "Inactive")
+    if raw := data.get("raw_response"):
+        with st.expander("Raw response"):
+            st.code(raw, language="json")
 
 
 def _render_memory(messages: list[dict]):

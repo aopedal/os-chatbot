@@ -35,10 +35,11 @@ The project has five main components orchestrated via Docker Compose:
 ```
 server/
 ├── server.py            # FastAPI app, lifespan, DB_REGISTRY, /chat/stream endpoint
+├── settings.py          # load(), get(), mtime() — TOML config with 10s TTL cache; reads settings.toml
 ├── embedder.py          # load_embedder() with lru_cache — shared by retrieval and lifespan preload
 ├── retrieval.py         # retrieve_context() — iterates COLLECTION_TYPES, delegates to VectorDB
 ├── intent.py            # classify_intent() — LLM-based intent classification for Socratic routing
-├── prompt.py            # build_context_docs(), build_system_prompt(), SOCRATIC_CATEGORIES, system prompt constants
+├── prompt.py            # build_context_docs(), build_system_prompt() — assembles prompts from settings
 ├── collection_types.py  # CollectionType ABC, concrete types, COLLECTION_TYPES + COLLECTION_TYPE_MAP
 ├── memory.py            # ConversationMemoryStore + ConversationMemoryManager
 └── db/
@@ -56,6 +57,24 @@ server/
 - Collection names passed to `VectorDB.query()` follow the pattern `<embedding_model_name>_<collection_type.plural>` (e.g. `GTE Multilingual Base_course_pages`). Each DB class normalizes this to its required format.
 
 - The `db/` package is named to avoid collision with Python's stdlib `collections` module, which is why collection types live in `collection_types.py` rather than `collections.py`.
+
+### Runtime configuration
+
+`server/settings.toml` is the single source of truth for all runtime-tunable parameters. It is committed to the repository and bind-mounted into the server container by `compose-server.yaml`, so edits to the local file are picked up without rebuilding.
+
+| Key | Type | Purpose |
+|---|---|---|
+| `temperature` | float | LLM sampling temperature |
+| `repetition_penalty` | float | LLM repetition penalty |
+| `max_tokens` | int | Maximum tokens per response |
+| `direct_intro` | string | Mode-specific opening for the direct-answer system prompt |
+| `socratic_intro` | string | Mode-specific opening for the Socratic system prompt |
+| `shared_instructions` | string | Closing instructions appended to both prompts (Markdown rules, off-topic handling, time context) |
+| `socratic_categories` | array | Intent categories that trigger Socratic mode |
+
+`prompt.py` assembles the full system prompt as `direct_intro + shared_instructions` or `socratic_intro + shared_instructions` depending on intent routing.
+
+`settings.py` caches the parsed TOML for 10 seconds, then re-reads on the next request. In debug mode the frontend automatically inserts a chat notice when it detects a changed `loaded_at` timestamp, so it is always clear which messages used which config version. The server logs an error at startup if any required key is missing.
 
 ### Frontend module layout
 
@@ -86,7 +105,7 @@ frontend/
 
 ### Shared utilities
 
-`/utils/config.py` — all environment-variable-driven config (LLM, vector DB hosts/ports, embedding model list, system prompt). Both server and frontend import from here.
+`/utils/config.py` — all environment-variable-driven config (LLM, vector DB hosts/ports, embedding model list). Both server and frontend import from here. Runtime-tunable parameters (prompts, LLM sampling settings) live in `server/settings.toml`, not here.
 
 `/utils/naming.py` — converts embedding model names to valid Qdrant collection names (`to_qdrant_name`) and Weaviate class names (`to_weaviate_class`).
 
@@ -105,9 +124,10 @@ The `/chat/stream` endpoint emits newline-delimited JSON events in this order:
 
 | Event | When emitted | Purpose |
 |---|---|---|
+| `{"type": "debug", "step": "config", "data": {"loaded_at": "..."}}` | Always, first event | Timestamp of the `settings.toml` currently loaded; frontend uses this to detect config changes in debug mode |
 | `{"type": "debug", "step": "retrieval", "data": [...payloads...]}` | Always, before sources | Raw DB payloads grouped by collection type |
 | `{"type": "debug", "step": "memory", "data": [...messages...]}` | Always, before sources | Conversation memory turns injected into the prompt |
-| `{"type": "debug", "step": "intent", "data": {"category": "...", "wants_direct_answer": ...}}` | When `socratic_mode`, before sources | Intent classification result used for prompt routing |
+| `{"type": "debug", "step": "intent", "data": {"category": "...", "wants_direct_answer": ..., "raw_response": "..."}}` | When `socratic_mode`, before sources | Intent classification result used for prompt routing, including the raw LLM response string |
 | `{"type": "sources", "sources": [...]}` | Always, before first delta | Processed sources for `{ref:ID}` citation link rendering |
 | `{"type": "delta", "text": "..."}` | Per LLM token | Streamed response content |
 | `{"type": "done"}` | After last delta | Signals end of stream |
@@ -127,9 +147,9 @@ Two additional overrides take precedence over the category:
 - `wants_direct_answer: true` (student explicitly asks for a direct answer) → always direct
 - Classification error/timeout → falls back to direct mode silently
 
-**`server/intent.py`** owns the classifier. It returns `IntentResult` (`category` + `wants_direct_answer`). On any failure it returns `{"category": "RECALL", "wants_direct_answer": false}` so the request always completes.
+**`server/intent.py`** owns the classifier. It returns `IntentResult` (`category`, `wants_direct_answer`, `fallback`, `raw_response`). `raw_response` is the raw string returned by the LLM before parsing — useful for debugging classification failures. On any failure it returns the RECALL fallback with `fallback: true` so the request always completes.
 
-**`server/prompt.py`** owns the routing. `SOCRATIC_CATEGORIES` is the authoritative set of categories that trigger the Socratic prompt. `build_system_prompt(context, now, intent, socratic_mode)` applies the routing logic and returns the complete assembled system message (base prompt + conversation history note + timestamp + retrieved context). Both system prompt strings live here as module-level constants.
+**`server/prompt.py`** owns the routing. `build_system_prompt(context, now, intent, socratic_mode)` reads `socratic_categories` from `settings.toml` to decide which intro to use, then assembles the full system message from `direct_intro`/`socratic_intro` + `shared_instructions` + the footer. There are no prompt constants in this file — all editable text lives in `settings.toml`.
 
 The intent classification result is always emitted as a `{"type": "debug", "step": "intent", ...}` event when `socratic_mode` is on, so it appears in the debug panel.
 
@@ -175,5 +195,6 @@ uv lock
 | `WEAVIATE_HOST` / `WEAVIATE_PORT` | `localhost:6444` | Weaviate HTTP |
 | `WEAVIATE_PORT_GRPC` | `50051` | Weaviate gRPC |
 | `SERVER_HOST` / `SERVER_PORT` | `localhost:8080` | FastAPI backend |
+| `SETTINGS_PATH` | `./settings.toml` | Path to the runtime config file, resolved relative to the server working directory |
 
 In Docker Compose the service names (`vllm`, `qdrant`, `weaviate`, `server`) are used as hostnames.
