@@ -7,11 +7,19 @@ from db.base import VectorDB
 from embedder import load_embedder
 
 
-async def retrieve_context(db: VectorDB, embed_text: str, embedding_model_id: str) -> list[dict[str, Any]]:
+async def retrieve_context(
+    db: VectorDB, embed_text: str, embedding_model_id: str
+) -> list[dict[str, Any]]:
     embedder = load_embedder(embedding_model_id)
-    result = await asyncio.to_thread(embedder.encode, embed_text, normalize_embeddings=True)
+    result = await asyncio.to_thread(
+        embedder.encode, embed_text, normalize_embeddings=True
+    )
     vector = result.tolist()
-    embedding_model_name = next(opt["name"] for opt in config.EMBEDDING_MODELS if opt["id"] == embedding_model_id)
+    embedding_model_name = next(
+        opt["name"]
+        for opt in config.EMBEDDING_MODELS
+        if opt["id"] == embedding_model_id
+    )
 
     all_payloads = []
     for collection_type in COLLECTION_TYPES:

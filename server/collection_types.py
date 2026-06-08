@@ -5,7 +5,7 @@ import utils.config as config
 
 
 class CollectionType(ABC):
-    id: str      # type tag stored in payloads, e.g. "course_page"
+    id: str  # type tag stored in payloads, e.g. "course_page"
     plural: str  # collection name suffix, e.g. "course_pages"
 
     @abstractmethod

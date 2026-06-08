@@ -25,7 +25,12 @@ class IntentResult(TypedDict):
     raw_response: str
 
 
-_FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False, "fallback": True, "raw_response": ""}
+_FALLBACK: IntentResult = {
+    "category": "RECALL",
+    "wants_direct_answer": False,
+    "fallback": True,
+    "raw_response": "",
+}
 
 _CLASSIFIER_PROMPT = """\
 Classify the student question below into exactly one category.
@@ -70,7 +75,10 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                 json={
                     "model": model,
                     "messages": [
-                        {"role": "user", "content": _CLASSIFIER_PROMPT.format(question=message)},
+                        {
+                            "role": "user",
+                            "content": _CLASSIFIER_PROMPT.format(question=message),
+                        }
                     ],
                     "max_tokens": 500,
                     "temperature": 0.1,
@@ -81,11 +89,20 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
 
         result = _parse_response(raw)
         if result is None:
-            logger.warning(f"Could not extract intent from response: {raw!r}, falling back")
+            logger.warning(
+                f"Could not extract intent from response: {raw!r}, falling back"
+            )
             return {**_FALLBACK, "raw_response": raw}
         category, wants_direct = result
-        return {"category": category, "wants_direct_answer": wants_direct, "fallback": False, "raw_response": raw}
+        return {
+            "category": category,
+            "wants_direct_answer": wants_direct,
+            "fallback": False,
+            "raw_response": raw,
+        }
 
     except Exception as e:
-        logger.warning(f"Intent classification failed ({type(e).__name__}: {e}), falling back to direct mode")
+        logger.warning(
+            f"Intent classification failed ({type(e).__name__}: {e}), falling back to direct mode"
+        )
         return {**_FALLBACK, "raw_response": raw}

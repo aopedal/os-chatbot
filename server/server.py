@@ -24,8 +24,10 @@ from retrieval import retrieve_context
 # ============================================================
 #  LOCALE / LOGGING
 # ============================================================
-locale.setlocale(locale.LC_TIME, 'nb_NO.UTF-8')
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(name)s [%(levelname)s] %(message)s")
+locale.setlocale(locale.LC_TIME, "nb_NO.UTF-8")
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s %(name)s [%(levelname)s] %(message)s"
+)
 logger = logging.getLogger("server")
 
 # ============================================================
@@ -49,7 +51,9 @@ AVAILABLE_OPTIONS = {
 #  MEMORY
 # ============================================================
 memory_store = ConversationMemoryStore()
-memory_manager = ConversationMemoryManager(memory_store, recent_turns=3, memory_max_tokens=6000)
+memory_manager = ConversationMemoryManager(
+    memory_store, recent_turns=3, memory_max_tokens=6000
+)
 
 # ============================================================
 #  DB REGISTRY
@@ -62,7 +66,15 @@ DB_REGISTRY: dict[str, VectorDB] = {
 # ============================================================
 #  FASTAPI APP
 # ============================================================
-_REQUIRED_SETTINGS_KEYS = ["temperature", "repetition_penalty", "max_tokens", "direct_intro", "socratic_intro", "shared_instructions", "socratic_categories"]
+_REQUIRED_SETTINGS_KEYS = [
+    "temperature",
+    "repetition_penalty",
+    "max_tokens",
+    "direct_intro",
+    "socratic_intro",
+    "shared_instructions",
+    "socratic_categories",
+]
 
 
 @asynccontextmanager
@@ -94,7 +106,9 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.warning(f"{db_id} close error: {e}")
 
+
 app = FastAPI(lifespan=lifespan)
+
 
 # ============================================================
 #  REQUEST SCHEMA
@@ -140,7 +154,9 @@ async def chat_stream(req: ChatRequest):
 
     start_time = time.time()
     logger.info(f"\n\n\n{'=' * 50}\nIncoming message: {req.message}")
-    logger.info(f"Using model={req.inference_model}, embedder={req.embedding_model}, db={req.vector_db}")
+    logger.info(
+        f"Using model={req.inference_model}, embedder={req.embedding_model}, db={req.vector_db}"
+    )
 
     # ---------------- RAG RETRIEVAL + INTENT CLASSIFICATION ----------------
     db = DB_REGISTRY[req.vector_db]
@@ -171,8 +187,8 @@ async def chat_stream(req: ChatRequest):
     logger.info(f"Memory:\n{memory_messages}")
     sources_log = "\n".join(
         f"{s['identifier']}: {s['url']}\n{s['text']}"
-        if s["type"] == "video_transcript" else
-        f"{s['identifier']}: {s['url']}"
+        if s["type"] == "video_transcript"
+        else f"{s['identifier']}: {s['url']}"
         for s in sources
     )
     logger.info(f"Sources:\n{sources_log}")
@@ -180,14 +196,36 @@ async def chat_stream(req: ChatRequest):
     # ---------------- STREAMING RESPONSE ----------------
     async def event_stream():
         cfg = settings.load()
-        yield json.dumps({"type": "debug", "step": "config", "data": {"loaded_at": settings.mtime()}}) + "\n\n"
-        yield json.dumps({"type": "debug", "step": "retrieval", "data": payloads}) + "\n\n"
-        yield json.dumps({"type": "debug", "step": "memory", "data": memory_messages}) + "\n\n"
+        yield (
+            json.dumps({
+                "type": "debug",
+                "step": "config",
+                "data": {"loaded_at": settings.mtime()},
+            })
+            + "\n\n"
+        )
+        yield (
+            json.dumps({"type": "debug", "step": "retrieval", "data": payloads})
+            + "\n\n"
+        )
+        yield (
+            json.dumps({"type": "debug", "step": "memory", "data": memory_messages})
+            + "\n\n"
+        )
         if intent_result is not None:
-            yield json.dumps({"type": "debug", "step": "intent", "data": {
-                **intent_result,
-                "socratic_mode_active": socratic_mode_active(intent_result, req.socratic_mode),
-            }}) + "\n\n"
+            yield (
+                json.dumps({
+                    "type": "debug",
+                    "step": "intent",
+                    "data": {
+                        **intent_result,
+                        "socratic_mode_active": socratic_mode_active(
+                            intent_result, req.socratic_mode
+                        ),
+                    },
+                })
+                + "\n\n"
+            )
 
         yield json.dumps({"type": "sources", "sources": sources}) + "\n\n"
         full_response = ""
@@ -209,12 +247,14 @@ async def chat_stream(req: ChatRequest):
                     if not line or line.startswith("data: [DONE]"):
                         continue
                     if line.startswith("data: "):
-                        data = json.loads(line[len("data: "):])
+                        data = json.loads(line[len("data: ") :])
                         delta = data.get("choices", [{}])[0].get("delta", {})
                         content = delta.get("content")
                         if content:
                             full_response += content
-                            yield json.dumps({"type": "delta", "text": content}) + "\n\n"
+                            yield (
+                                json.dumps({"type": "delta", "text": content}) + "\n\n"
+                            )
 
         logger.info(f"LLM full response:\n{full_response}")
         logger.info(f"Time elapsed: {time.time() - start_time:.2f}s")

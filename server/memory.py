@@ -4,6 +4,7 @@ import tiktoken
 
 ENC = tiktoken.encoding_for_model("gpt-4o")
 
+
 def count_tokens(text: str) -> int:
     return len(ENC.encode(text))
 
@@ -18,7 +19,7 @@ class ConversationMemoryStore:
         self.messages[user_id].append({
             "role": role,
             "content": content,
-            "time": datetime.utcnow().isoformat()
+            "time": datetime.utcnow().isoformat(),
         })
 
     async def get_recent_messages(self, user_id: str, limit: int):
@@ -33,7 +34,12 @@ class ConversationMemoryStore:
 
 
 class ConversationMemoryManager:
-    def __init__(self, store: ConversationMemoryStore, recent_turns: int = 3, memory_max_tokens: int = 6000):
+    def __init__(
+        self,
+        store: ConversationMemoryStore,
+        recent_turns: int = 3,
+        memory_max_tokens: int = 6000,
+    ):
         self.store = store
         self.recent_turns = recent_turns
         self.memory_max_tokens = memory_max_tokens
@@ -52,7 +58,7 @@ class ConversationMemoryManager:
                 block += f"{m['role'].capitalize()}: {m['content']}\n"
 
         return block
-    
+
     async def build_messages(self, user_id: str) -> List[Dict[str, str]]:
         """
         Build structured chat messages for the LLM:
@@ -65,15 +71,12 @@ class ConversationMemoryManager:
         if summary:
             messages.append({
                 "role": "system",
-                "content": f"Conversation summary:\n{summary}"
+                "content": f"Conversation summary:\n{summary}",
             })
 
         recent = await self.store.get_recent_messages(user_id, self.recent_turns)
         for m in recent:
-            messages.append({
-                "role": m["role"],
-                "content": m["content"]
-            })
+            messages.append({"role": m["role"], "content": m["content"]})
 
         return messages
 

@@ -7,11 +7,13 @@ def render_sidebar(available_collections: list[dict]):
         st.header("Innstillinger")
 
         st.toggle(
-            "Pedagogisk modus", key="socratic_mode",
+            "Pedagogisk modus",
+            key="socratic_mode",
             help="Gir hint og veiledning i stedet for direkte svar.",
         )
         st.toggle(
-            "Debug-modus", key="debug_mode",
+            "Debug-modus",
+            key="debug_mode",
             help="Vis forespørsel, hentede kilder og andre mellomtrinn.",
         )
 

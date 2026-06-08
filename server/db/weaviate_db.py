@@ -26,7 +26,9 @@ class WeaviateVectorDB(VectorDB):
             f"on {config.WEAVIATE_HOST}:{config.WEAVIATE_PORT}"
         )
 
-    def query(self, collection_name: str, vector: list[float], limit: int) -> list[dict]:
+    def query(
+        self, collection_name: str, vector: list[float], limit: int
+    ) -> list[dict]:
         class_name = to_weaviate_class(collection_name)
         collection = self.client.collections.get(class_name)
         res = collection.query.near_vector(

@@ -6,7 +6,7 @@ def init_state():
     defaults = {
         "user_id": str(uuid.uuid4()),
         "messages": [],
-        "conversations": [],    # list of {id, title, messages, user_id}
+        "conversations": [],  # list of {id, title, messages, user_id}
         "socratic_mode": False,
         "active_collections": None,  # None means all enabled
         "debug_mode": False,

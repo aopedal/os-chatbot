@@ -10,6 +10,7 @@ from debug import render_debug_panel
 
 # ---- Text postprocessing ----
 
+
 def _fix_latex(text: str) -> str:
     def repl(m):
         indent = m.group("indent") or ""
@@ -18,12 +19,15 @@ def _fix_latex(text: str) -> str:
 
     text = re.sub(
         r"(?:\n(?P<indent>[ \t]*))*\\\[(?P<content>.*?)\\\](?:\n[ \t]*)*",
-        repl, text, flags=re.S,
+        repl,
+        text,
+        flags=re.S,
     )
     text = re.sub(
         r"\\\(\s*(.*?)\s*\\\)",
         lambda m: f"${m.group(1).strip()}$",
-        text, flags=re.S,
+        text,
+        flags=re.S,
     )
     return text
 
@@ -32,13 +36,18 @@ def _fix_katex_special_chars(text: str) -> str:
     def repl(m):
         content = m.group(1).replace("#", r"\#")
         return f"\\text{{{content}}}"
+
     return re.sub(r"\\text\{(.*?)\}", repl, text, flags=re.S)
 
 
 def _replace_placeholders(text: str, sources: dict) -> str:
     return re.sub(
         r"\{ref:(.*?)\}",
-        lambda m: f"[{m.group(1)}]({sources[m.group(1)]})" if m.group(1) in sources else m.group(1),
+        lambda m: (
+            f"[{m.group(1)}]({sources[m.group(1)]})"
+            if m.group(1) in sources
+            else m.group(1)
+        ),
         text,
     )
 
@@ -51,6 +60,7 @@ def postprocess_text(text: str, sources: dict) -> str:
 
 
 # ---- Chat UI ----
+
 
 def render_chat(inference_model: str, embedding_model: str, vector_db: str):
     for msg in st.session_state.messages:
@@ -77,7 +87,9 @@ def render_chat(inference_model: str, embedding_model: str, vector_db: str):
         _handle_input(prompt, inference_model, embedding_model, vector_db)
 
 
-def _handle_input(prompt: str, inference_model: str, embedding_model: str, vector_db: str):
+def _handle_input(
+    prompt: str, inference_model: str, embedding_model: str, vector_db: str
+):
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
@@ -85,7 +97,12 @@ def _handle_input(prompt: str, inference_model: str, embedding_model: str, vecto
     debug_placeholder = st.empty()
     raw_buffer = ""
     sources: dict[str, str] = {}
-    debug_data: dict = {"request": None, "sources": [], "server_debug": [], "config_mtime": None}
+    debug_data: dict = {
+        "request": None,
+        "sources": [],
+        "server_debug": [],
+        "config_mtime": None,
+    }
 
     request_payload = {
         "user_id": st.session_state.user_id,

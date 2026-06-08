@@ -6,7 +6,9 @@ from chat import render_chat
 from sidebar import render_sidebar
 from state import init_state
 
-st.set_page_config(page_title=app_config.CHATBOT_NAME, page_icon="💬", layout="centered")
+st.set_page_config(
+    page_title=app_config.CHATBOT_NAME, page_icon="💬", layout="centered"
+)
 st.title(f"💬 Spør {app_config.CHATBOT_NAME}")
 
 init_state()
@@ -22,7 +24,9 @@ def fetch_backend_config():
 try:
     backend_config = fetch_backend_config()
 except (httpx.ConnectError, httpx.TimeoutException):
-    st.info("Venter på at backend-serveren skal bli klar. Siden lastes automatisk på nytt …")
+    st.info(
+        "Venter på at backend-serveren skal bli klar. Siden lastes automatisk på nytt …"
+    )
     st.stop()
 except Exception as e:
     st.error(f"Klarte ikke å koble til backend: {e}")

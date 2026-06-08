@@ -14,7 +14,7 @@ def render_debug_panel(debug_data: dict):
         else:
             st.caption(
                 "Server-side debug steps will appear here when debug mode is active. "
-                "Add new steps by yielding `{\"type\": \"debug\", \"step\": \"<name>\", \"data\": ...}` "
+                'Add new steps by yielding `{"type": "debug", "step": "<name>", "data": ...}` '
                 "events in `server.py`'s `event_stream()` before the `done` event."
             )
 
@@ -65,7 +65,9 @@ def _render_intent(data: dict):
     active = data.get("socratic_mode_active", False)
     fallback = data.get("fallback", False)
     if fallback:
-        st.warning("Classification failed — defaults used, check server logs.", icon="⚠️")
+        st.warning(
+            "Classification failed — defaults used, check server logs.", icon="⚠️"
+        )
     col1, col2, col3 = st.columns(3)
     col1.metric("Category", category)
     col2.metric("Wants direct answer", "Yes" if wants_direct else "No")

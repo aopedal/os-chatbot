@@ -18,9 +18,13 @@ class QdrantVectorDB(VectorDB):
             f"on {config.QDRANT_HOST}:{config.QDRANT_PORT}"
         )
 
-    def query(self, collection_name: str, vector: list[float], limit: int) -> list[dict]:
+    def query(
+        self, collection_name: str, vector: list[float], limit: int
+    ) -> list[dict]:
         normalized = to_qdrant_name(collection_name)
-        res = self.client.query_points(collection_name=normalized, query=vector, limit=limit)
+        res = self.client.query_points(
+            collection_name=normalized, query=vector, limit=limit
+        )
         return [point.payload for point in res.points]
 
     def close(self):

@@ -22,16 +22,26 @@ def socratic_mode_active(intent: dict | None, socratic_mode: bool) -> bool:
     )
 
 
-def build_system_prompt(context: str, now: str, intent: dict | None, socratic_mode: bool) -> str:
-    intro_key = "socratic_intro" if socratic_mode_active(intent, socratic_mode) else "direct_intro"
+def build_system_prompt(
+    context: str, now: str, intent: dict | None, socratic_mode: bool
+) -> str:
+    intro_key = (
+        "socratic_intro"
+        if socratic_mode_active(intent, socratic_mode)
+        else "direct_intro"
+    )
     return (
-        settings.get(intro_key, "") + "\n\n" +
-        settings.get("shared_instructions", "") + "\n\n" +
-        _SYSTEM_PROMPT_FOOTER.format(now=now, context=context)
+        settings.get(intro_key, "")
+        + "\n\n"
+        + settings.get("shared_instructions", "")
+        + "\n\n"
+        + _SYSTEM_PROMPT_FOOTER.format(now=now, context=context)
     )
 
 
-def build_context_docs(payloads: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], str]:
+def build_context_docs(
+    payloads: list[dict[str, Any]],
+) -> tuple[list[dict[str, Any]], str]:
     sources = []
     context_blocks = []
 
@@ -43,7 +53,14 @@ def build_context_docs(payloads: list[dict[str, Any]]) -> tuple[list[dict[str, A
 
         identifier, url, text = collection_type.extract_source(payload)
 
-        sources.append({"type": type_id, "identifier": identifier, "url": url, "text": text})
-        context_blocks.append(f"Kildereferanse: {identifier}\nURL: {url}\nTekst:\n{text}")
+        sources.append({
+            "type": type_id,
+            "identifier": identifier,
+            "url": url,
+            "text": text,
+        })
+        context_blocks.append(
+            f"Kildereferanse: {identifier}\nURL: {url}\nTekst:\n{text}"
+        )
 
     return sources, "\n\n---\n\n".join(context_blocks)
