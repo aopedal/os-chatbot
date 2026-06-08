@@ -2036,7 +2036,6 @@ source = { virtual = "." }
 dependencies = [
     { name = "fastapi", extra = ["all"] },
     { name = "httpx" },
-    { name = "os-chatbot-utils" },
     { name = "qdrant-client" },
     { name = "sentence-transformers" },
     { name = "tiktoken" },
@@ -2044,17 +2043,24 @@ dependencies = [
     { name = "weaviate-client" },
 ]
 
+[package.dev-dependencies]
+local = [
+    { name = "os-chatbot-utils" },
+]
+
 [package.metadata]
 requires-dist = [
     { name = "fastapi", extras = ["all"] },
     { name = "httpx" },
-    { name = "os-chatbot-utils", directory = "../utils" },
     { name = "qdrant-client", specifier = "~=1.18.0" },
     { name = "sentence-transformers" },
     { name = "tiktoken" },
     { name = "torch" },
     { name = "weaviate-client", specifier = ">=4.21.2,<5" },
 ]
+
+[package.metadata.requires-dev]
+local = [{ name = "os-chatbot-utils", directory = "../utils" }]
 
 [[package]]
 name = "setuptools"

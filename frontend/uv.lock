@@ -191,16 +191,22 @@ version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
     { name = "httpx" },
-    { name = "os-chatbot-utils" },
     { name = "streamlit" },
+]
+
+[package.dev-dependencies]
+local = [
+    { name = "os-chatbot-utils" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "httpx" },
-    { name = "os-chatbot-utils", directory = "../utils" },
     { name = "streamlit" },
 ]
+
+[package.metadata.requires-dev]
+local = [{ name = "os-chatbot-utils", directory = "../utils" }]
 
 [[package]]
 name = "gitdb"

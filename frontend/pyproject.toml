@@ -5,11 +5,14 @@ requires-python = ">=3.11"
 dependencies = [
     "streamlit",
     "httpx",
-    "os-chatbot-utils",
 ]
+
+[dependency-groups]
+local = ["os-chatbot-utils"]
 
 [tool.uv]
 package = false
+default-groups = ["local"]
 
 [tool.uv.sources]
 os-chatbot-utils = { path = "../utils" }

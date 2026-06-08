@@ -19,16 +19,17 @@ ENV LANG=nb_NO.UTF-8
 ENV LANGUAGE=nb_NO.UTF-8
 ENV LC_ALL=nb_NO.UTF-8
 
-# Copy dependency manifests first
+# Install heavy dependencies (cached unless pyproject.toml/uv.lock changes)
 COPY server/pyproject.toml server/uv.lock server/
+RUN uv sync --project server --frozen --no-group local --no-install-project
 
-# Install all dependencies into a venv at /app/server/.venv
-RUN uv sync --project server --frozen --no-install-project
+# Install local path dependency (cached unless utils/ changes)
+COPY utils/ utils/
+RUN uv sync --project server --frozen --only-group local
 
 ENV PATH="/app/server/.venv/bin:$PATH"
 
 # Copy app code - this layer only invalidates on code changes
-COPY utils utils/
 COPY server server/
 COPY ingestion/knowledge ingestion/knowledge/
 

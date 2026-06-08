@@ -6,16 +6,17 @@ ENV PYTHONPATH=/app
 
 WORKDIR /app
 
-# Copy dependency manifests first
+# Install heavy dependencies (cached unless pyproject.toml/uv.lock changes)
 COPY frontend/pyproject.toml frontend/uv.lock frontend/
+RUN uv sync --project frontend --frozen --no-group local --no-install-project
 
-# Install all dependencies into a venv at /app/frontend/.venv
-RUN uv sync --project frontend --frozen --no-install-project
+# Install local path dependency (cached unless utils/ changes)
+COPY utils/ utils/
+RUN uv sync --project frontend --frozen --only-group local
 
 ENV PATH="/app/frontend/.venv/bin:$PATH"
 
 # Copy app code - this layer only invalidates on code changes
-COPY utils utils/
 COPY frontend frontend/
 
 WORKDIR /app/frontend
