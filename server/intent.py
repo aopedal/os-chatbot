@@ -1,4 +1,3 @@
-import json
 import logging
 from enum import StrEnum
 from typing import TypedDict
@@ -26,54 +25,39 @@ class IntentResult(TypedDict):
     raw_response: str
 
 
-_FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False, "fallback": True}
+_FALLBACK: IntentResult = {"category": "RECALL", "wants_direct_answer": False, "fallback": True, "raw_response": ""}
 
-_CLASSIFIER_SYSTEM = (
-    "You are a question classifier for a university operating systems course. "
-    "Classify the student message into exactly one category:\n\n"
-    "RECALL – asks for a definition or fact\n"
-    "CONCEPTUAL – asks why or how something works\n"
-    "COMPARISON – asks about differences or tradeoffs between things\n"
-    "SYNTHESIS – an exercise, task, or design challenge\n"
-    "DEBUGGING – diagnosing a specific broken thing\n"
-    "PROCEDURE – asks for step-by-step instructions\n"
-    "VERIFICATION – asks whether something they did is correct\n"
-    "NAVIGATIONAL – asks about the curriculum or where to find something\n\n"
-    "Also set wants_direct_answer=true if the student is explicitly asking for a direct answer "
-    'rather than hints or guidance (e.g. "just tell me", "stop hinting", "give me the answer", '
-    '"bare gi meg svaret", "fortell meg direkte").\n\n'
-    'Respond with ONLY valid JSON, no other text:\n'
-    '{"category": "LABEL", "wants_direct_answer": true}'
-)
+_CLASSIFIER_PROMPT = """\
+Classify the student question below into exactly one category.
+
+Categories:
+RECALL – asks for a definition or fact
+CONCEPTUAL – asks why or how something works
+COMPARISON – asks about differences or tradeoffs
+SYNTHESIS – an exercise, task, or design challenge
+DEBUGGING – diagnosing a specific broken thing
+PROCEDURE – asks for step-by-step instructions
+VERIFICATION – asks whether something they did is correct
+NAVIGATIONAL – asks about the curriculum or where to find something
+
+If the student explicitly asks for a direct answer rather than hints \
+(e.g. "just tell me", "bare gi meg svaret", "fortell meg direkte"), \
+append DIRECT after the category name.
+
+Examples:
+What is a semaphore? → Category: RECALL
+Why does deadlock happen? → Category: CONCEPTUAL
+Just tell me the answer → Category: RECALL DIRECT
+
+Student question: {question}
+Category:"""
 
 
 def _parse_response(raw: str) -> tuple[str, bool] | None:
-    """Try JSON first, then scan for a bare category label. Returns (category, wants_direct) or None."""
-    # Strip markdown code fences
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip()
-
-    # Strict JSON parse
-    try:
-        parsed = json.loads(raw)
-        category = str(parsed.get("category", "")).upper()
-        wants_direct = bool(parsed.get("wants_direct_answer", False))
-        if category in IntentCategory.__members__:
-            return category, wants_direct
-        logger.warning(f"JSON parsed but unknown category {category!r}")
-    except json.JSONDecodeError:
-        logger.warning(f"Intent classifier returned non-JSON: {raw!r}, scanning for label")
-
-    # Scan the raw text for any known label
-    upper = raw.upper()
+    upper = raw.strip().upper()
     for label in IntentCategory.__members__:
         if label in upper:
-            wants_direct = "TRUE" in upper
-            return label, wants_direct
-
+            return label, "DIRECT" in upper
     return None
 
 
@@ -86,10 +70,9 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                 json={
                     "model": model,
                     "messages": [
-                        {"role": "system", "content": _CLASSIFIER_SYSTEM},
-                        {"role": "user", "content": message},
+                        {"role": "user", "content": _CLASSIFIER_PROMPT.format(question=message)},
                     ],
-                    "max_tokens": 100,
+                    "max_tokens": 500,
                     "temperature": 0.1,
                 },
             )
