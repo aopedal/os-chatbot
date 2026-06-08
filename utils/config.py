@@ -4,9 +4,6 @@ import os
 LLM_HOST = os.getenv("LLM_HOST", "localhost")
 LLM_PORT = int(os.getenv("LLM_PORT", 8000))
 LLM_BASE = f"http://{LLM_HOST}:{LLM_PORT}/v1"
-MAX_TOKENS = 131072
-TEMPERATURE = 0.2
-REPETITION_PENALTY = 1.1
 
 # Vector db config
 QDRANT_HOST = os.getenv("QDRANT_HOST", "localhost")

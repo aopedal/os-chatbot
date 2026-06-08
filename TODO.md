@@ -8,11 +8,6 @@
 
 * Bedre logging/innsyn - f.eks eit enkelt Grafana-dashbord som viser trafikk (t.d. spørringar per time) og andre nøkkelmetrikkar. Antall tokens per spørring
 
-* Pedagogisk modus, kanskje kjøre det i starten av semesteret, hvor man ikke "bare" gir lange detaljerte og presise svar, men heller hint om hvordan man kan gå fram for å løse et problem eller forstå noe, eventuelt en slags dialog-metode "Er det ikke noe helt i starten av feilmeldingen du får som kan sette deg på rett spor?"
-  * "Socratic tutor"-modus
-  * Skal det være opp til brukeren å slå dette av/på, eller er det en innstilling som emneansvarlig skal styre? Begge deler?
-  * Legge inn eksempler på hvordan modellen skal svare. oneshot/fewshot
-
 * Inkludere eksamen, jeg har gjennomgang av en del eksamner som kan transkriberes og jeg har testet å fore Claude med PDFer med eksamner og den klarer å tyde det meste.
   * Bør kanskje ikke være del av default kontekst, men kan legges til hvis brukeren spør spesifikt om oppgaver/eksamener?
   * Vi har eksamener helt tilbake til 1998, men det er kanskje mest hensiktsmessig å kun inkludere eksamener fra 2017 og senere?

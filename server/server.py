@@ -12,6 +12,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
+import settings
 import utils.config as config
 from db import QdrantVectorDB, WeaviateVectorDB, VectorDB
 from embedder import load_embedder
@@ -61,8 +62,18 @@ DB_REGISTRY: dict[str, VectorDB] = {
 # ============================================================
 #  FASTAPI APP
 # ============================================================
+_REQUIRED_SETTINGS_KEYS = ["temperature", "repetition_penalty", "max_tokens", "direct_intro", "socratic_intro", "shared_instructions", "socratic_categories"]
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    cfg = settings.load()
+    missing = [k for k in _REQUIRED_SETTINGS_KEYS if k not in cfg]
+    if missing:
+        logger.error("settings.toml is missing required keys: %s", missing)
+    else:
+        logger.info("settings.toml loaded successfully.")
+
     logger.info("Preloading embedding models on startup...")
     for emb in AVAILABLE_EMBEDDERS:
         model_id = emb.get("id")
@@ -168,6 +179,8 @@ async def chat_stream(req: ChatRequest):
 
     # ---------------- STREAMING RESPONSE ----------------
     async def event_stream():
+        cfg = settings.load()
+        yield json.dumps({"type": "debug", "step": "config", "data": {"loaded_at": settings.mtime()}}) + "\n\n"
         yield json.dumps({"type": "debug", "step": "retrieval", "data": payloads}) + "\n\n"
         yield json.dumps({"type": "debug", "step": "memory", "data": memory_messages}) + "\n\n"
         if intent_result is not None:
@@ -186,9 +199,9 @@ async def chat_stream(req: ChatRequest):
                 json={
                     "model": req.inference_model,
                     "messages": messages,
-                    "max_tokens": config.MAX_TOKENS,
-                    "temperature": config.TEMPERATURE,
-                    "repetition_penalty": config.REPETITION_PENALTY,
+                    "max_tokens": cfg.get("max_tokens"),
+                    "temperature": cfg.get("temperature"),
+                    "repetition_penalty": cfg.get("repetition_penalty"),
                     "stream": True,
                 },
             ) as resp:
