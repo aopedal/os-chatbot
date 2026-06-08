@@ -21,6 +21,12 @@ from intent import classify_intent
 from prompt import build_context_docs, build_system_prompt, socratic_mode_active
 from retrieval import retrieve_context
 
+
+async def _sse(gen):
+    async for chunk in gen:
+        yield json.dumps(chunk) + "\n\n"
+
+
 # ============================================================
 #  LOCALE / LOGGING
 # ============================================================
@@ -196,38 +202,34 @@ async def chat_stream(req: ChatRequest):
     # ---------------- STREAMING RESPONSE ----------------
     async def event_stream():
         cfg = settings.load()
-        yield (
-            json.dumps({
-                "type": "debug",
-                "step": "config",
-                "data": {"loaded_at": settings.mtime()},
-            })
-            + "\n\n"
-        )
-        yield (
-            json.dumps({"type": "debug", "step": "retrieval", "data": payloads})
-            + "\n\n"
-        )
-        yield (
-            json.dumps({"type": "debug", "step": "memory", "data": memory_messages})
-            + "\n\n"
-        )
+        yield {
+            "type": "debug",
+            "step": "config",
+            "data": {"loaded_at": settings.mtime()},
+        }
+        yield {
+            "type": "debug",
+            "step": "retrieval",
+            "data": payloads,
+        }
+        yield {
+            "type": "debug",
+            "step": "memory",
+            "data": memory_messages,
+        }
         if intent_result is not None:
-            yield (
-                json.dumps({
-                    "type": "debug",
-                    "step": "intent",
-                    "data": {
-                        **intent_result,
-                        "socratic_mode_active": socratic_mode_active(
-                            intent_result, req.socratic_mode
-                        ),
-                    },
-                })
-                + "\n\n"
-            )
+            yield {
+                "type": "debug",
+                "step": "intent",
+                "data": {
+                    **intent_result,
+                    "socratic_mode_active": socratic_mode_active(
+                        intent_result, req.socratic_mode
+                    ),
+                },
+            }
 
-        yield json.dumps({"type": "sources", "sources": sources}) + "\n\n"
+        yield {"type": "sources", "sources": sources}
         full_response = ""
 
         async with httpx.AsyncClient(timeout=None) as client:
@@ -252,9 +254,7 @@ async def chat_stream(req: ChatRequest):
                         content = delta.get("content")
                         if content:
                             full_response += content
-                            yield (
-                                json.dumps({"type": "delta", "text": content}) + "\n\n"
-                            )
+                            yield {"type": "delta", "text": content}
 
         logger.info(f"LLM full response:\n{full_response}")
         logger.info(f"Time elapsed: {time.time() - start_time:.2f}s")
@@ -262,6 +262,6 @@ async def chat_stream(req: ChatRequest):
         await memory_store.append_message(user_id, "user", req.message)
         await memory_store.append_message(user_id, "assistant", full_response)
 
-        yield json.dumps({"type": "done"}) + "\n\n"
+        yield {"type": "done"}
 
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
+    return StreamingResponse(_sse(event_stream()), media_type="text/event-stream")
