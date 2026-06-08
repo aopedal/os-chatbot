@@ -25,7 +25,7 @@ RUN uv sync --project server --frozen --no-group local --no-install-project
 
 # Install local path dependency (cached unless utils/ changes)
 COPY utils/ utils/
-RUN uv sync --project server --frozen --only-group local
+RUN uv sync --project server --frozen --no-install-project
 
 ENV PATH="/app/server/.venv/bin:$PATH"
 
