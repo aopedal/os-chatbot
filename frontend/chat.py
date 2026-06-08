@@ -3,10 +3,9 @@ import re
 
 import httpx
 import streamlit as st
-
-import utils.config as app_config
 from debug import render_debug_panel
 
+import utils.config as app_config
 
 # ---- Text postprocessing ----
 
@@ -66,8 +65,12 @@ def render_chat(inference_model: str, embedding_model: str, vector_db: str):
     for msg in st.session_state.messages:
         if msg["role"] == "notice":
             st.markdown(
-                f"<div style='text-align:center;color:gray;font-size:0.8em;padding:0.4em 0'>"
-                f"─── {msg['content']} ───</div>",
+                "<div style='"
+                "text-align:center;"
+                "color:gray;"
+                "font-size:0.8em;"
+                "padding:0.4em 0"
+                f"'>─── {msg['content']} ───</div>",
                 unsafe_allow_html=True,
             )
         elif msg["role"] == "user":

@@ -1,10 +1,10 @@
 import httpx
 import streamlit as st
-
-import utils.config as app_config
 from chat import render_chat
 from sidebar import render_sidebar
 from state import init_state
+
+import utils.config as app_config
 
 st.set_page_config(
     page_title=app_config.CHATBOT_NAME, page_icon="💬", layout="centered"

@@ -1,5 +1,6 @@
-from typing import List, Dict
 from datetime import datetime
+from typing import Dict, List
+
 import tiktoken
 
 ENC = tiktoken.encoding_for_model("gpt-4o")

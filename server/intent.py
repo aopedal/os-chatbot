@@ -103,6 +103,7 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
 
     except Exception as e:
         logger.warning(
-            f"Intent classification failed ({type(e).__name__}: {e}), falling back to direct mode"
+            f"Intent classification failed ({type(e).__name__}: {e}), "
+            f"falling back to direct mode"
         )
         return {**_FALLBACK, "raw_response": raw}

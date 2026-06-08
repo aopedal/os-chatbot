@@ -1,10 +1,11 @@
 import asyncio
 from typing import Any
 
-import utils.config as config
 from collection_types import COLLECTION_TYPES
 from db.base import VectorDB
 from embedder import load_embedder
+
+import utils.config as config
 
 
 async def retrieve_context(

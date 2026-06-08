@@ -4,7 +4,8 @@ import settings
 from collection_types import COLLECTION_TYPE_MAP
 
 _SYSTEM_PROMPT_FOOTER = (
-    "Du har en pågående samtale med brukeren. Samtalehistorikk er vedlagt og skal brukes hvis relevant.\n"
+    "Du har en pågående samtale med brukeren. "
+    "Samtalehistorikk er vedlagt og skal brukes hvis relevant.\n"
     "Nåværende tidspunkt: {now}\n\n"
     "---\n\n"
     "RELEVANT PENSUMMATERIALE:\n\n"

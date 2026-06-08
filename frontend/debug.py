@@ -14,7 +14,8 @@ def render_debug_panel(debug_data: dict):
         else:
             st.caption(
                 "Server-side debug steps will appear here when debug mode is active. "
-                'Add new steps by yielding `{"type": "debug", "step": "<name>", "data": ...}` '
+                "Add new steps by yielding "
+                '`{"type": "debug", "step": "<name>", "data": ...}` '
                 "events in `server.py`'s `event_stream()` before the `done` event."
             )
 

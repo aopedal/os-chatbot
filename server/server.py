@@ -8,18 +8,18 @@ from datetime import datetime
 from typing import Optional
 
 import httpx
+import settings
+from db import QdrantVectorDB, VectorDB, WeaviateVectorDB
+from embedder import load_embedder
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-
-import settings
-import utils.config as config
-from db import QdrantVectorDB, WeaviateVectorDB, VectorDB
-from embedder import load_embedder
-from memory import ConversationMemoryStore, ConversationMemoryManager
 from intent import classify_intent
+from memory import ConversationMemoryManager, ConversationMemoryStore
 from prompt import build_context_docs, build_system_prompt, socratic_mode_active
+from pydantic import BaseModel
 from retrieval import retrieve_context
+
+import utils.config as config
 
 
 async def _sse(gen):
@@ -161,7 +161,10 @@ async def chat_stream(req: ChatRequest):
     start_time = time.time()
     logger.info(f"\n\n\n{'=' * 50}\nIncoming message: {req.message}")
     logger.info(
-        f"Using model={req.inference_model}, embedder={req.embedding_model}, db={req.vector_db}"
+        f"Using "
+        f"model={req.inference_model}, "
+        f"embedder={req.embedding_model}, "
+        f"db={req.vector_db}"
     )
 
     # ---------------- RAG RETRIEVAL + INTENT CLASSIFICATION ----------------

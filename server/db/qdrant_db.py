@@ -5,6 +5,7 @@ from qdrant_client import QdrantClient
 
 import utils.config as config
 from utils.naming import to_qdrant_name
+
 from .base import VectorDB
 
 logger = logging.getLogger("server")

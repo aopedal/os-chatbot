@@ -1,4 +1,5 @@
 import uuid
+
 import streamlit as st
 
 
@@ -48,7 +49,7 @@ def _render_collection_toggles(available_collections: list[dict]):
 
 
 def _sync_prefs_to_url():
-    """Mirror current preferences into URL query params so they survive a page refresh."""
+    """Mirror preferences into URL query params so they survive a page refresh."""
     if st.session_state.debug_mode:
         st.query_params["debug"] = "1"
     elif "debug" in st.query_params:

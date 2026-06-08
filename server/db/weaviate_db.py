@@ -6,6 +6,7 @@ from weaviate.classes.query import MetadataQuery
 
 import utils.config as config
 from utils.naming import to_weaviate_class
+
 from .base import VectorDB
 
 logger = logging.getLogger("server")
