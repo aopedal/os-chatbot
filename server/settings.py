@@ -2,6 +2,7 @@ import logging
 import os
 import time
 import tomllib
+from typing import Any
 from datetime import datetime
 from pathlib import Path
 
@@ -10,7 +11,7 @@ logger = logging.getLogger(__name__)
 _PATH = Path(os.getenv("SETTINGS_PATH", "./settings.toml"))
 _TTL = 10  # seconds between automatic re-reads
 
-_cache: dict = {}
+_cache: dict[str, Any] = {}
 _cache_time: float = 0.0
 _mtime: float | None = None
 
@@ -33,13 +34,13 @@ def _read() -> None:
     _cache_time = time.monotonic()
 
 
-def load() -> dict:
+def load() -> dict[str, Any]:
     if (time.monotonic() - _cache_time) > _TTL:
         _read()
     return _cache
 
 
-def get(key: str, default=None):
+def get(key: str, default: Any = None) -> Any:
     return load().get(key, default)
 
 

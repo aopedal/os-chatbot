@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List
 
 import tiktoken
@@ -12,7 +12,7 @@ def count_tokens(text: str) -> int:
 
 class ConversationMemoryStore:
     def __init__(self):
-        self.messages: Dict[str, List[Dict]] = {}
+        self.messages: Dict[str, List[Dict[str, str]]] = {}
         self.summaries: Dict[str, str] = {}
 
     async def append_message(self, user_id: str, role: str, content: str):
@@ -20,7 +20,7 @@ class ConversationMemoryStore:
         self.messages[user_id].append({
             "role": role,
             "content": content,
-            "time": datetime.utcnow().isoformat(),
+            "time": datetime.now(timezone.utc).isoformat(),
         })
 
     async def get_recent_messages(self, user_id: str, limit: int):

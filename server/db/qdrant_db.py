@@ -26,7 +26,7 @@ class QdrantVectorDB(VectorDB):
         res = self.client.query_points(
             collection_name=normalized, query=vector, limit=limit
         )
-        return [point.payload for point in res.points]
+        return [p for point in res.points if (p := point.payload) is not None]
 
     def close(self):
         pass

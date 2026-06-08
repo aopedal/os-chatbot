@@ -12,10 +12,10 @@ async def retrieve_context(
     db: VectorDB, embed_text: str, embedding_model_id: str
 ) -> list[dict[str, Any]]:
     embedder = load_embedder(embedding_model_id)
-    result = await asyncio.to_thread(
+    result: Any = await asyncio.to_thread(
         embedder.encode, embed_text, normalize_embeddings=True
     )
-    vector = result.tolist()
+    vector: list[float] = result.tolist()
     embedding_model_name = next(
         opt["name"]
         for opt in config.EMBEDDING_MODELS

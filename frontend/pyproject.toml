@@ -17,5 +17,6 @@ default-groups = ["local"]
 [tool.uv.sources]
 os-chatbot-utils = { path = "../utils" }
 
-[tool.ty.environment]
-python = ".venv"
+[tool.pyright]
+venvPath = "."
+venv = ".venv"

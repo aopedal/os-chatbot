@@ -2,6 +2,7 @@ from typing import Any
 
 import settings
 from collection_types import COLLECTION_TYPE_MAP
+from intent import IntentResult
 
 _SYSTEM_PROMPT_FOOTER = (
     "Du har en pågående samtale med brukeren. "
@@ -13,7 +14,7 @@ _SYSTEM_PROMPT_FOOTER = (
 )
 
 
-def socratic_mode_active(intent: dict | None, socratic_mode: bool) -> bool:
+def socratic_mode_active(intent: IntentResult | None, socratic_mode: bool) -> bool:
     categories = set(settings.get("socratic_categories", []))
     return (
         socratic_mode
@@ -24,7 +25,7 @@ def socratic_mode_active(intent: dict | None, socratic_mode: bool) -> bool:
 
 
 def build_system_prompt(
-    context: str, now: str, intent: dict | None, socratic_mode: bool
+    context: str, now: str, intent: IntentResult | None, socratic_mode: bool
 ) -> str:
     intro_key = (
         "socratic_intro"
