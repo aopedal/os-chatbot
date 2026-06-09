@@ -194,13 +194,6 @@ async def chat_stream(req: ChatRequest):
     ]
 
     logger.info(f"Memory:\n{memory_messages}")
-    sources_log = "\n".join(
-        f"{s['identifier']}: {s['url']}\n{s['text']}"
-        if s["type"] == "video_transcript"
-        else f"{s['identifier']}: {s['url']}"
-        for s in sources
-    )
-    logger.info(f"Sources:\n{sources_log}")
 
     # ---------------- STREAMING RESPONSE ----------------
     async def event_stream():
@@ -209,16 +202,6 @@ async def chat_stream(req: ChatRequest):
             "type": "debug",
             "step": "config",
             "data": {"loaded_at": settings.mtime()},
-        }
-        yield {
-            "type": "debug",
-            "step": "retrieval",
-            "data": payloads,
-        }
-        yield {
-            "type": "debug",
-            "step": "memory",
-            "data": memory_messages,
         }
         if intent_result is not None:
             yield {
@@ -231,6 +214,16 @@ async def chat_stream(req: ChatRequest):
                     ),
                 },
             }
+        yield {
+            "type": "debug",
+            "step": "retrieval",
+            "data": payloads,
+        }
+        yield {
+            "type": "debug",
+            "step": "memory",
+            "data": memory_messages,
+        }
 
         yield {"type": "sources", "sources": sources}
         full_response = ""
@@ -259,7 +252,7 @@ async def chat_stream(req: ChatRequest):
                             full_response += content
                             yield {"type": "delta", "text": content}
 
-        logger.info(f"LLM full response:\n{full_response}")
+        logger.info(f"LLM full response:\n{full_response[:200]}")
         logger.info(f"Time elapsed: {time.time() - start_time:.2f}s")
 
         await memory_store.append_message(user_id, "user", req.message)

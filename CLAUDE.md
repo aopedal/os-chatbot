@@ -125,9 +125,9 @@ The `/chat/stream` endpoint emits newline-delimited JSON events in this order:
 | Event | When emitted | Purpose |
 |---|---|---|
 | `{"type": "debug", "step": "config", "data": {"loaded_at": "..."}}` | Always, first event | Timestamp of the `settings.toml` currently loaded; frontend uses this to detect config changes in debug mode |
+| `{"type": "debug", "step": "intent", "data": {"category": "...", "wants_direct_answer": ..., "raw_response": "..."}}` | When `socratic_mode`, before retrieval | Intent classification result used for prompt routing, including the raw LLM response string |
 | `{"type": "debug", "step": "retrieval", "data": [...payloads...]}` | Always, before sources | Raw DB payloads grouped by collection type |
 | `{"type": "debug", "step": "memory", "data": [...messages...]}` | Always, before sources | Conversation memory turns injected into the prompt |
-| `{"type": "debug", "step": "intent", "data": {"category": "...", "wants_direct_answer": ..., "raw_response": "..."}}` | When `socratic_mode`, before sources | Intent classification result used for prompt routing, including the raw LLM response string |
 | `{"type": "sources", "sources": [...]}` | Always, before first delta | Processed sources for `{ref:ID}` citation link rendering |
 | `{"type": "delta", "text": "..."}` | Per LLM token | Streamed response content |
 | `{"type": "done"}` | After last delta | Signals end of stream |
