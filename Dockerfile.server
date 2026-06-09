@@ -19,7 +19,12 @@ ENV LANG=nb_NO.UTF-8
 ENV LANGUAGE=nb_NO.UTF-8
 ENV LC_ALL=nb_NO.UTF-8
 
-# Install heavy dependencies (cached unless pyproject.toml/uv.lock changes)
+# Pre-install torch before copying lockfiles so it gets its own cache layer.
+# Keep this version in sync with uv.lock when upgrading torch.
+RUN uv venv server/.venv
+RUN uv pip install --python server/.venv torch==2.12.0
+
+# Install remaining dependencies (torch layer above is reused unless its version changes)
 COPY server/pyproject.toml server/uv.lock server/
 RUN uv sync --project server --frozen --no-group local --no-install-project
 

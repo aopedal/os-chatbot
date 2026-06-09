@@ -9,7 +9,7 @@ dependencies = [
     "weaviate-client>=4.21.2,<5",
     "tiktoken",
     "sentence-transformers",
-    "torch",
+    "torch", # Remember to update version in Dockerfile.server
 ]
 
 [dependency-groups]
