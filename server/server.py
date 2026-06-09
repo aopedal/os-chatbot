@@ -5,7 +5,7 @@ import logging
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 
 import httpx
 import settings
@@ -125,7 +125,7 @@ class ChatRequest(BaseModel):
     inference_model: Optional[str] = None
     embedding_model: Optional[str] = None
     vector_db: Optional[str] = None
-    socratic_mode: bool = False
+    socratic_mode: Literal["off", "auto", "always"] = "off"
     active_collections: Optional[list[str]] = None
 
 
@@ -169,7 +169,7 @@ async def chat_stream(req: ChatRequest):
 
     # ---------------- RAG RETRIEVAL + INTENT CLASSIFICATION ----------------
     db = DB_REGISTRY[req.vector_db]
-    if req.socratic_mode:
+    if req.socratic_mode == "auto":
         payloads, intent_result = await asyncio.gather(
             retrieve_context(db, req.message, req.embedding_model),
             classify_intent(req.message, req.inference_model, config.LLM_BASE),

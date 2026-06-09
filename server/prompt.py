@@ -14,18 +14,21 @@ _SYSTEM_PROMPT_FOOTER = (
 )
 
 
-def socratic_mode_active(intent: IntentResult | None, socratic_mode: bool) -> bool:
-    categories = set(settings.get("socratic_categories", []))
-    return (
-        socratic_mode
-        and intent is not None
-        and not intent.get("wants_direct_answer", False)
-        and intent.get("category") in categories
-    )
+def socratic_mode_active(intent: IntentResult | None, socratic_mode: str) -> bool:
+    if socratic_mode == "always":
+        return True
+    if socratic_mode == "auto":
+        categories = set(settings.get("socratic_categories", []))
+        return (
+            intent is not None
+            and not intent.get("wants_direct_answer", False)
+            and intent.get("category") in categories
+        )
+    return False
 
 
 def build_system_prompt(
-    context: str, now: str, intent: IntentResult | None, socratic_mode: bool
+    context: str, now: str, intent: IntentResult | None, socratic_mode: str
 ) -> str:
     intro_key = (
         "socratic_intro"

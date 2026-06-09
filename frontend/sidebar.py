@@ -7,10 +7,19 @@ def render_sidebar(available_collections: list[dict]):
     with st.sidebar:
         st.header("Innstillinger")
 
-        st.toggle(
+        st.radio(
             "Pedagogisk modus",
+            options=["off", "auto", "always"],
+            format_func={"off": "Av", "auto": "Automatisk", "always": "Alltid"}.get,
             key="socratic_mode",
-            help="Gir hint og veiledning i stedet for direkte svar.",
+            horizontal=True,
+            help=(
+                "**Av** – Modellen svarer alltid direkte.\n\n"
+                "**Automatisk** – Modellen analyserer spørsmålet og velger om den "
+                "skal veilede med spørsmål eller svare direkte.\n\n"
+                "**Alltid** – Modellen veileder alltid med spørsmål i stedet for å "
+                "svare direkte."
+            ),
         )
         st.toggle(
             "Debug-modus",
@@ -55,8 +64,8 @@ def _sync_prefs_to_url():
     elif "debug" in st.query_params:
         del st.query_params["debug"]
 
-    if st.session_state.socratic_mode:
-        st.query_params["socratic"] = "1"
+    if st.session_state.socratic_mode in ("auto", "always"):
+        st.query_params["socratic"] = st.session_state.socratic_mode
     elif "socratic" in st.query_params:
         del st.query_params["socratic"]
 
