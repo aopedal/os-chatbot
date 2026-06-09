@@ -1,5 +1,5 @@
 import logging
-from functools import lru_cache
+from functools import cache
 
 import torch
 from sentence_transformers import SentenceTransformer
@@ -7,7 +7,7 @@ from sentence_transformers import SentenceTransformer
 logger = logging.getLogger("server")
 
 
-@lru_cache(maxsize=None)
+@cache
 def load_embedder(model_id: str) -> SentenceTransformer:
     logger.info(f"Loading embedder model: {model_id}")
     model = SentenceTransformer(model_id, trust_remote_code=True)

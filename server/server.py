@@ -5,7 +5,7 @@ import logging
 import time
 from contextlib import asynccontextmanager
 from datetime import datetime
-from typing import Literal, Optional
+from typing import Literal
 
 import httpx
 import settings
@@ -120,13 +120,13 @@ app = FastAPI(lifespan=lifespan)
 #  REQUEST SCHEMA
 # ============================================================
 class ChatRequest(BaseModel):
-    user_id: Optional[str] = None
+    user_id: str | None = None
     message: str
-    inference_model: Optional[str] = None
-    embedding_model: Optional[str] = None
-    vector_db: Optional[str] = None
+    inference_model: str | None = None
+    embedding_model: str | None = None
+    vector_db: str | None = None
     socratic_mode: Literal["off", "auto", "always"] = "off"
-    active_collections: Optional[list[str]] = None
+    active_collections: list[str] | None = None
 
 
 @app.get("/config")

@@ -1,5 +1,4 @@
-from datetime import datetime, timezone
-from typing import Dict, List
+from datetime import UTC, datetime
 
 import tiktoken
 
@@ -12,15 +11,15 @@ def count_tokens(text: str) -> int:
 
 class ConversationMemoryStore:
     def __init__(self):
-        self.messages: Dict[str, List[Dict[str, str]]] = {}
-        self.summaries: Dict[str, str] = {}
+        self.messages: dict[str, list[dict[str, str]]] = {}
+        self.summaries: dict[str, str] = {}
 
     async def append_message(self, user_id: str, role: str, content: str):
         self.messages.setdefault(user_id, [])
         self.messages[user_id].append({
             "role": role,
             "content": content,
-            "time": datetime.now(timezone.utc).isoformat(),
+            "time": datetime.now(UTC).isoformat(),
         })
 
     async def get_recent_messages(self, user_id: str, limit: int):
@@ -60,13 +59,13 @@ class ConversationMemoryManager:
 
         return block
 
-    async def build_messages(self, user_id: str) -> List[Dict[str, str]]:
+    async def build_messages(self, user_id: str) -> list[dict[str, str]]:
         """
         Build structured chat messages for the LLM:
         - summary as system
         - recent turns as real user/assistant roles
         """
-        messages: List[Dict[str, str]] = []
+        messages: list[dict[str, str]] = []
 
         summary = await self.store.get_summary(user_id)
         if summary:
