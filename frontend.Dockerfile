@@ -1,6 +1,6 @@
-FROM python:3.11-slim
+FROM python:3.11.15-slim
 
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /usr/local/bin/
+COPY --from=ghcr.io/astral-sh/uv:0.11.19 /uv /uvx /usr/local/bin/
 
 ENV PYTHONPATH=/app
 

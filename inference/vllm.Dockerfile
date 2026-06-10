@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install -y \
     cmake
 
 RUN pip install --upgrade pip
-RUN pip install vllm
-RUN pip install --upgrade huggingface_hub
+RUN pip install vllm==0.22.1
+RUN pip install huggingface_hub==1.18.0
 
 # Download LLM weights
-RUN hf download openai/gpt-oss-120b --local-dir /app/models/gpt-oss-120b
+RUN hf download openai/gpt-oss-20b --local-dir /app/models/gpt-oss-20b
 
 # Optional: Install FlashInfer for optimized inference
 # TODO: Doesn't work out of the box, need nvcc

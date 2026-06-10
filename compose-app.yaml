@@ -2,7 +2,7 @@ services:
   server:
     build:
       context: .
-      dockerfile: Dockerfile.server
+      dockerfile: server.Dockerfile
     container_name: server
     ports:
       - "127.0.0.1:8080:8080"
@@ -33,6 +33,23 @@ services:
       timeout: 10s
       retries: 12
       start_period: 120s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend.Dockerfile
+    container_name: frontend
+    ports:
+      - "127.0.0.1:8501:8501"
+    restart: unless-stopped
+
+    depends_on:
+      server:
+        condition: service_healthy
+
+    environment:
+      SERVER_HOST: server
+      SERVER_PORT: 8080
 
 volumes:
   hf_cache:
