@@ -6,38 +6,12 @@ from state import init_state
 
 import utils.config as app_config
 
-
-@st.fragment(run_every=10)
-def _poll_config_mtime():
-    if not st.session_state.debug_mode:
-        return
-    try:
-        res = httpx.get(
-            f"{app_config.SERVER_URL}/config/mtime", timeout=5
-        )
-        res.raise_for_status()
-        new_mtime = res.json().get("loaded_at")
-    except Exception:
-        return
-    last_mtime = st.session_state.last_config_mtime
-    if last_mtime is None:
-        st.session_state.last_config_mtime = new_mtime
-        return
-    if new_mtime and new_mtime != last_mtime:
-        st.session_state.messages.append({
-            "role": "notice",
-            "content": f"settings.toml er oppdatert · {new_mtime}",
-        })
-        st.session_state.last_config_mtime = new_mtime
-        st.rerun()
-
 st.set_page_config(
     page_title=app_config.CHATBOT_NAME, page_icon="💬", layout="centered"
 )
 st.title(f"💬 Spør {app_config.CHATBOT_NAME}")
 
 init_state()
-_poll_config_mtime()
 
 
 @st.cache_data

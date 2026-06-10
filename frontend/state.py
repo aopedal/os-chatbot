@@ -11,7 +11,6 @@ def init_state():
         "socratic_mode": "off",
         "active_collections": None,  # None means all enabled
         "debug_mode": False,
-        "last_config_mtime": None,
     }
     for key, value in defaults.items():
         if key not in st.session_state:

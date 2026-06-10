@@ -9,7 +9,7 @@ from typing import Any
 logger = logging.getLogger(__name__)
 
 _PATH = Path(os.getenv("SETTINGS_PATH", "./settings.toml"))
-_TTL = 10  # seconds between automatic re-reads
+_TTL = 1  # seconds between mtime checks
 
 _cache: dict[str, Any] = {}
 _cache_time: float = 0.0
@@ -36,8 +36,21 @@ def _read() -> None:
 
 def load() -> dict[str, Any]:
     if (time.monotonic() - _cache_time) > _TTL:
-        _read()
+        _check()
     return _cache
+
+
+def _check() -> None:
+    global _cache_time
+    try:
+        new_mtime = _PATH.stat().st_mtime
+    except FileNotFoundError:
+        _cache_time = time.monotonic()
+        return
+    if _mtime is None or new_mtime != _mtime:
+        _read()
+    else:
+        _cache_time = time.monotonic()
 
 
 def get(key: str, default: Any = None) -> Any:
