@@ -71,7 +71,7 @@ class ConversationMemoryManager:
         if summary:
             messages.append({
                 "role": "system",
-                "content": f"Conversation summary:\n{summary}",
+                "content": f"Sammendrag av samtalen:\n{summary}",
             })
 
         recent = await self.store.get_recent_messages(user_id, self.recent_turns)

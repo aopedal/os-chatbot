@@ -70,7 +70,9 @@ server/
 | `direct_intro` | string | Mode-specific opening for the direct-answer system prompt |
 | `socratic_intro` | string | Mode-specific opening for the Socratic system prompt |
 | `shared_instructions` | string | Closing instructions appended to both prompts (Markdown rules, off-topic handling, time context) |
+| `system_prompt_footer` | string | Footer appended after `shared_instructions`; `{now}` and `{context}` are substituted at request time |
 | `socratic_categories` | array | Intent categories that trigger Socratic mode |
+| `intent_classifier_prompt` | string | Prompt template for intent classification; `{question}` is substituted with the student's message |
 
 `prompt.py` assembles the full system prompt as `direct_intro + shared_instructions` or `socratic_intro + shared_instructions` depending on intent routing.
 

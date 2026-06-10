@@ -3,6 +3,7 @@ from enum import StrEnum
 from typing import TypedDict
 
 import httpx
+import settings
 
 logger = logging.getLogger("server.intent")
 
@@ -32,31 +33,6 @@ _FALLBACK: IntentResult = {
     "raw_response": "",
 }
 
-_CLASSIFIER_PROMPT = """\
-Classify the student question below into exactly one category.
-
-Categories:
-RECALL – asks for a definition or fact
-CONCEPTUAL – asks why or how something works
-COMPARISON – asks about differences or tradeoffs
-SYNTHESIS – an exercise, task, or design challenge
-DEBUGGING – diagnosing a specific broken thing
-PROCEDURE – asks for step-by-step instructions
-VERIFICATION – asks whether something they did is correct
-NAVIGATIONAL – asks about the curriculum or where to find something
-
-If the student explicitly asks for a direct answer rather than hints \
-(e.g. "just tell me", "bare gi meg svaret", "fortell meg direkte"), \
-append DIRECT after the category name.
-
-Examples:
-What is a semaphore? → Category: RECALL
-Why does deadlock happen? → Category: CONCEPTUAL
-Just tell me the answer → Category: RECALL DIRECT
-
-Student question: {question}
-Category:"""
-
 
 def _parse_response(raw: str) -> tuple[str, bool] | None:
     upper = raw.strip().upper()
@@ -77,7 +53,9 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                     "messages": [
                         {
                             "role": "user",
-                            "content": _CLASSIFIER_PROMPT.format(question=message),
+                            "content": settings.get(
+                                "intent_classifier_prompt", ""
+                            ).format(question=message),
                         }
                     ],
                     "max_tokens": 500,

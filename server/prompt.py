@@ -4,15 +4,6 @@ import settings
 from collection_types import COLLECTION_TYPE_MAP
 from intent import IntentResult
 
-_SYSTEM_PROMPT_FOOTER = (
-    "Du har en pågående samtale med brukeren. "
-    "Samtalehistorikk er vedlagt og skal brukes hvis relevant.\n"
-    "Nåværende tidspunkt: {now}\n\n"
-    "---\n\n"
-    "RELEVANT PENSUMMATERIALE:\n\n"
-    "{context}"
-)
-
 
 def socratic_mode_active(intent: IntentResult | None, socratic_mode: str) -> bool:
     if socratic_mode == "always":
@@ -40,7 +31,7 @@ def build_system_prompt(
         + "\n\n"
         + settings.get("shared_instructions", "")
         + "\n\n"
-        + _SYSTEM_PROMPT_FOOTER.format(now=now, context=context)
+        + settings.get("system_prompt_footer", "").format(now=now, context=context)
     )
 
 

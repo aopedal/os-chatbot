@@ -1,7 +1,41 @@
 temperature = 0.2
 repetition_penalty = 1.1
 max_tokens = 131072
+
+intent_classifier_prompt = '''
+Classify the student question below into exactly one category.
+
+Categories:
+RECALL – asks for a definition or fact
+CONCEPTUAL – asks why or how something works
+COMPARISON – asks about differences or tradeoffs
+SYNTHESIS – an exercise, task, or design challenge
+DEBUGGING – diagnosing a specific broken thing
+PROCEDURE – asks for step-by-step instructions
+VERIFICATION – asks whether something they did is correct
+NAVIGATIONAL – asks about the curriculum or where to find something
+
+If the student explicitly asks for a direct answer rather than hints (e.g. "just tell me", "bare gi meg svaret", "fortell meg direkte"), append DIRECT after the category name.
+
+Examples:
+What is a semaphore? → Category: RECALL
+Why does deadlock happen? → Category: CONCEPTUAL
+Just tell me the answer → Category: RECALL DIRECT
+
+Student question: {question}
+Category:'''
+
 socratic_categories = ["COMPARISON", "CONCEPTUAL", "DEBUGGING", "SYNTHESIS"]
+
+system_prompt_footer = '''
+Du har en pågående samtale med brukeren. Samtalehistorikk er vedlagt og skal brukes hvis relevant.
+Nåværende tidspunkt: {now}
+
+---
+
+RELEVANT PENSUMMATERIALE:
+
+{context}'''
 
 direct_intro = '''
 Du er OS-bot, en hjelpsom og jovial læringsassistent for faget DATA2500 Operativsystemer ved OsloMet.
