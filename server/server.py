@@ -9,6 +9,7 @@ from typing import Literal
 
 import httpx
 import settings
+from admin import router as admin_router
 from db import QdrantVectorDB, VectorDB, WeaviateVectorDB
 from embedder import load_embedder
 from fastapi import FastAPI, HTTPException
@@ -116,6 +117,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+app.include_router(admin_router)
 
 
 # ============================================================

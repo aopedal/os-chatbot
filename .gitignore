@@ -8,3 +8,4 @@ build/
 node_modules/
 inference/models/
 .idea/
+server/admin_password

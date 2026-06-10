@@ -25,6 +25,7 @@ services:
     volumes:
       - hf_cache:/root/.cache/huggingface
       - ./server/settings.toml:/app/server/settings.toml
+      - ./server/admin_password:/app/server/admin_password
 
     healthcheck:
       test: ["CMD", "python3", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8080/config', timeout=5)"]

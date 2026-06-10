@@ -44,6 +44,19 @@ def get(key: str, default: Any = None) -> Any:
     return load().get(key, default)
 
 
+def path() -> Path:
+    return _PATH
+
+
+def save(content: str) -> None:
+    """Validate content as TOML, write to file, and reset the read cache."""
+    global _cache, _cache_time
+    tomllib.loads(content)  # raises TOMLDecodeError if invalid
+    _PATH.write_text(content, encoding="utf-8")
+    _cache = {}
+    _cache_time = 0.0
+
+
 def mtime() -> str | None:
     if _mtime is None:
         return None
