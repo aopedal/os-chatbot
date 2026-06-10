@@ -21,6 +21,7 @@ class WeaviateVectorDB(VectorDB):
             grpc_host=config.WEAVIATE_HOST,
             grpc_port=config.WEAVIATE_PORT_GRPC,
             grpc_secure=False,
+            skip_init_checks=True,
         )
         logger.info(
             f"Weaviate client (version {version('weaviate-client')}) initialized "
