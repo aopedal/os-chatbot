@@ -138,6 +138,11 @@ async def get_config():
     return AVAILABLE_OPTIONS
 
 
+@app.get("/config/mtime")
+async def get_config_mtime():
+    return {"loaded_at": settings.mtime()}
+
+
 # ============================================================
 #  MAIN CHAT STREAM ENDPOINT
 # ============================================================

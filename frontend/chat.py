@@ -156,19 +156,20 @@ def _handle_input(
     final_message = postprocess_text(raw_buffer, sources)
     message_area.markdown(final_message)
 
+    new_mtime = debug_data.get("config_mtime")
+    last_mtime = st.session_state.last_config_mtime
+
     if st.session_state.debug_mode:
         with debug_placeholder.container():
             render_debug_panel(debug_data)
-
-        new_mtime = debug_data.get("config_mtime")
-        last_mtime = st.session_state.last_config_mtime
         if new_mtime and last_mtime is not None and new_mtime != last_mtime:
             st.session_state.messages.append({
                 "role": "notice",
                 "content": f"settings.toml er oppdatert · {new_mtime}",
             })
-        if new_mtime:
-            st.session_state.last_config_mtime = new_mtime
+
+    if new_mtime:
+        st.session_state.last_config_mtime = new_mtime
 
     st.session_state.messages.append({
         "role": "assistant",
