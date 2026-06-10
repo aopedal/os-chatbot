@@ -82,7 +82,6 @@ _REQUIRED_SETTINGS_KEYS = [
     "shared_instructions",
     "socratic_categories",
     "intent_classifier_prompt",
-    "system_prompt_footer",
 ]
 
 

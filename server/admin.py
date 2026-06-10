@@ -311,12 +311,6 @@ def _settings_page(
             cfg.get("intent_classifier_prompt", ""),
         )
         + "\n"
-        "    <h2>System-prompt-bunntekst</h2>\n"
-        + _textarea(
-            "system_prompt_footer", "sm",
-            cfg.get("system_prompt_footer", ""),
-        )
-        + "\n"
         "    <h2>Direkte modus – intro</h2>\n"
         + _textarea("direct_intro", "lg", cfg.get("direct_intro", ""))
         + "\n"
@@ -345,7 +339,6 @@ def _to_toml(
     max_tokens: int,
     intent_classifier_prompt: str,
     socratic_categories: list[str],
-    system_prompt_footer: str,
     direct_intro: str,
     socratic_intro: str,
     shared_instructions: str,
@@ -366,8 +359,6 @@ def _to_toml(
         f"intent_classifier_prompt = {ml(intent_classifier_prompt)}",
         "",
         f"socratic_categories = [{cats}]",
-        "",
-        f"system_prompt_footer = {ml(system_prompt_footer)}",
         "",
         f"direct_intro = {ml(direct_intro)}",
         "",
@@ -430,7 +421,6 @@ async def settings_post(
     max_tokens: int = Form(...),
     intent_classifier_prompt: str = Form(...),
     socratic_categories: list[str] = Form(default=[]),
-    system_prompt_footer: str = Form(...),
     direct_intro: str = Form(...),
     socratic_intro: str = Form(...),
     shared_instructions: str = Form(...),
@@ -447,7 +437,6 @@ async def settings_post(
         "max_tokens": max_tokens,
         "intent_classifier_prompt": intent_classifier_prompt,
         "socratic_categories": socratic_categories,
-        "system_prompt_footer": system_prompt_footer,
         "direct_intro": direct_intro,
         "socratic_intro": socratic_intro,
         "shared_instructions": shared_instructions,

@@ -29,9 +29,7 @@ def build_system_prompt(
     return (
         settings.get(intro_key, "")
         + "\n\n"
-        + settings.get("shared_instructions", "")
-        + "\n\n"
-        + settings.get("system_prompt_footer", "").format(now=now, context=context)
+        + settings.get("shared_instructions", "").format(now=now, context=context)
     )
 
 

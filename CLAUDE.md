@@ -69,12 +69,11 @@ server/
 | `max_tokens` | int | Maximum tokens per response |
 | `direct_intro` | string | Mode-specific opening for the direct-answer system prompt |
 | `socratic_intro` | string | Mode-specific opening for the Socratic system prompt |
-| `shared_instructions` | string | Closing instructions appended to both prompts (Markdown rules, off-topic handling, time context) |
-| `system_prompt_footer` | string | Footer appended after `shared_instructions`; `{now}` and `{context}` are substituted at request time |
+| `shared_instructions` | string | Closing instructions appended to both prompts (Markdown rules, off-topic handling, time context, memory notice, RAG context); `{now}` and `{context}` are substituted at request time |
 | `socratic_categories` | array | Intent categories that trigger Socratic mode |
 | `intent_classifier_prompt` | string | Prompt template for intent classification; `{question}` is substituted with the student's message |
 
-`prompt.py` assembles the full system prompt as `direct_intro + shared_instructions` or `socratic_intro + shared_instructions` depending on intent routing.
+`prompt.py` assembles the full system prompt as `direct_intro + shared_instructions` or `socratic_intro + shared_instructions` depending on intent routing. `{now}` and `{context}` in `shared_instructions` are substituted at request time.
 
 `settings.py` caches the parsed TOML for 10 seconds, then re-reads on the next request. In debug mode the frontend automatically inserts a chat notice when it detects a changed `loaded_at` timestamp, so it is always clear which messages used which config version. The server logs an error at startup if any required key is missing.
 

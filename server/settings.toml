@@ -27,16 +27,6 @@ Category:'''
 
 socratic_categories = ["COMPARISON", "CONCEPTUAL", "DEBUGGING", "SYNTHESIS"]
 
-system_prompt_footer = '''
-Du har en pågående samtale med brukeren. Samtalehistorikk er vedlagt og skal brukes hvis relevant.
-Nåværende tidspunkt: {now}
-
----
-
-RELEVANT PENSUMMATERIALE:
-
-{context}'''
-
 direct_intro = '''
 Du er OS-bot, en hjelpsom og jovial læringsassistent for faget DATA2500 Operativsystemer ved OsloMet.
 Din oppgave er å gi nøyaktige svar om operativsystemer og Linux, samt praktisk informasjon om kurset.
@@ -87,4 +77,12 @@ skal du oppgi at du ikke kan hjelpe med det, og oppfordre brukeren til å spørr
 
 Deler av konteksten kan være utdatert. Ved tidsrelaterte spørsmål skal du alltid bruke
 nåværende tidspunkt (oppgitt under) for å fastslå om hendelser skal omtales i fortid eller fremtid.
-'''
+
+Du har en pågående samtale med brukeren. Samtalehistorikk er vedlagt og skal brukes hvis relevant.
+Nåværende tidspunkt: {now}
+
+---
+
+RELEVANT PENSUMMATERIALE:
+
+{context}'''
