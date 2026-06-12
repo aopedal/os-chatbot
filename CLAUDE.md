@@ -70,8 +70,8 @@ server/
 | `direct_intro` | string | Mode-specific opening for the direct-answer system prompt |
 | `socratic_intro` | string | Mode-specific opening for the Socratic system prompt |
 | `shared_instructions` | string | Closing instructions appended to both prompts (Markdown rules, off-topic handling, time context, memory notice, RAG context); `{now}` and `{context}` are substituted at request time |
-| `socratic_categories` | array | Intent categories that trigger Socratic mode |
-| `intent_classifier_prompt` | string | Prompt template for intent classification; `{question}` is substituted with the student's message |
+| `categories` | array of tables | Each entry has `name` (string), `description` (string), and `socratic` (bool). Categories where `socratic = true` trigger Socratic mode. The list is also used to generate the `{categories}` section of `intent_classifier_prompt` at request time. |
+| `intent_classifier_prompt` | string | Prompt template for intent classification; `{categories}` is substituted with the generated category list and `{question}` with the student's message |
 
 `prompt.py` assembles the full system prompt as `direct_intro + shared_instructions` or `socratic_intro + shared_instructions` depending on intent routing. `{now}` and `{context}` in `shared_instructions` are substituted at request time.
 
@@ -150,7 +150,7 @@ Two additional overrides take precedence over the category:
 
 **`server/intent.py`** owns the classifier. It returns `IntentResult` (`category`, `wants_direct_answer`, `fallback`, `raw_response`). `raw_response` is the raw string returned by the LLM before parsing — useful for debugging classification failures. On any failure it returns the RECALL fallback with `fallback: true` so the request always completes.
 
-**`server/prompt.py`** owns the routing. `build_system_prompt(context, now, intent, socratic_mode)` reads `socratic_categories` from `settings.toml` to decide which intro to use, then assembles the full system message from `direct_intro`/`socratic_intro` + `shared_instructions` + the footer. There are no prompt constants in this file — all editable text lives in `settings.toml`.
+**`server/prompt.py`** owns the routing. `build_system_prompt(context, now, intent, socratic_mode)` reads `categories` from `settings.toml` (filtering for `socratic = true`) to decide which intro to use, then assembles the full system message from `direct_intro`/`socratic_intro` + `shared_instructions`. There are no prompt constants in this file — all editable text lives in `settings.toml`.
 
 The intent classification result is always emitted as a `{"type": "debug", "step": "intent", ...}` event when `socratic_mode` is on, so it appears in the debug panel.
 

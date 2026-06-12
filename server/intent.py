@@ -1,22 +1,10 @@
 import logging
-from enum import StrEnum
 from typing import TypedDict
 
 import httpx
 import settings
 
 logger = logging.getLogger("server.intent")
-
-
-class IntentCategory(StrEnum):
-    RECALL = "RECALL"
-    CONCEPTUAL = "CONCEPTUAL"
-    COMPARISON = "COMPARISON"
-    SYNTHESIS = "SYNTHESIS"
-    DEBUGGING = "DEBUGGING"
-    PROCEDURE = "PROCEDURE"
-    VERIFICATION = "VERIFICATION"
-    NAVIGATIONAL = "NAVIGATIONAL"
 
 
 class IntentResult(TypedDict):
@@ -26,24 +14,25 @@ class IntentResult(TypedDict):
     raw_response: str
 
 
-_FALLBACK: IntentResult = {
-    "category": "RECALL",
-    "wants_direct_answer": False,
-    "fallback": True,
-    "raw_response": "",
-}
-
-
-def _parse_response(raw: str) -> tuple[str, bool] | None:
+def _parse_response(raw: str, valid_names: list[str]) -> tuple[str, bool] | None:
     upper = raw.strip().upper()
-    for label in IntentCategory.__members__:
-        if label in upper:
+    for label in valid_names:
+        if label.upper() in upper:
             return label, "DIRECT" in upper
     return None
 
 
 async def classify_intent(message: str, model: str, llm_base: str) -> IntentResult:
     raw = ""
+    categories = settings.get("categories", [])
+    valid_names = [cat["name"] for cat in categories]
+    fallback_name = next(
+        (cat["name"] for cat in categories if not cat.get("socratic", False)),
+        valid_names[0] if valid_names else "RECALL",
+    )
+    categories_str = "\n".join(
+        f"{cat['name']} – {cat['description']}" for cat in categories
+    )
     try:
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
@@ -55,7 +44,9 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
                             "role": "user",
                             "content": settings.get(
                                 "intent_classifier_prompt", ""
-                            ).format(question=message),
+                            ).format(
+                                categories=categories_str, question=message
+                            ),
                         }
                     ],
                     "max_tokens": 500,
@@ -65,12 +56,17 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
             response.raise_for_status()
             raw = (response.json()["choices"][0]["message"]["content"] or "").strip()
 
-        result = _parse_response(raw)
+        result = _parse_response(raw, valid_names)
         if result is None:
             logger.warning(
                 f"Could not extract intent from response: {raw!r}, falling back"
             )
-            return {**_FALLBACK, "raw_response": raw}
+            return {
+                "category": fallback_name,
+                "wants_direct_answer": False,
+                "fallback": True,
+                "raw_response": raw,
+            }
         category, wants_direct = result
         return {
             "category": category,
@@ -84,4 +80,9 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
             f"Intent classification failed ({type(e).__name__}: {e}), "
             f"falling back to direct mode"
         )
-        return {**_FALLBACK, "raw_response": raw}
+        return {
+            "category": fallback_name,
+            "wants_direct_answer": False,
+            "fallback": True,
+            "raw_response": raw,
+        }

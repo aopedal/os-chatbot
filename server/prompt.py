@@ -9,11 +9,15 @@ def socratic_mode_active(intent: IntentResult | None, socratic_mode: str) -> boo
     if socratic_mode == "always":
         return True
     if socratic_mode == "auto":
-        categories = set(settings.get("socratic_categories", []))
+        socratic_names = {
+            cat["name"]
+            for cat in settings.get("categories", [])
+            if cat.get("socratic", False)
+        }
         return (
             intent is not None
             and not intent.get("wants_direct_answer", False)
-            and intent.get("category") in categories
+            and intent.get("category") in socratic_names
         )
     return False
 

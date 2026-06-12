@@ -6,14 +6,7 @@ intent_classifier_prompt = '''
 Classify the student question below into exactly one category.
 
 Categories:
-RECALL – asks for a definition or fact
-CONCEPTUAL – asks why or how something works
-COMPARISON – asks about differences or tradeoffs
-SYNTHESIS – an exercise, task, or design challenge
-DEBUGGING – diagnosing a specific broken thing
-PROCEDURE – asks for step-by-step instructions
-VERIFICATION – asks whether something they did is correct
-NAVIGATIONAL – asks about the curriculum or where to find something
+{categories}
 
 If the student explicitly asks for a direct answer rather than hints (e.g. "just tell me", "bare gi meg svaret", "fortell meg direkte"), append DIRECT after the category name.
 
@@ -24,8 +17,6 @@ Just tell me the answer → Category: RECALL DIRECT
 
 Student question: {question}
 Category:'''
-
-socratic_categories = ["COMPARISON", "CONCEPTUAL", "DEBUGGING", "SYNTHESIS"]
 
 direct_intro = '''
 Du er OS-bot, en hjelpsom og jovial læringsassistent for faget DATA2500 Operativsystemer ved OsloMet.
@@ -86,3 +77,43 @@ Nåværende tidspunkt: {now}
 RELEVANT PENSUMMATERIALE:
 
 {context}'''
+
+[[categories]]
+name = "RECALL"
+description = "asks for a definition or fact"
+socratic = false
+
+[[categories]]
+name = "CONCEPTUAL"
+description = "asks why or how something works"
+socratic = true
+
+[[categories]]
+name = "COMPARISON"
+description = "asks about differences or tradeoffs"
+socratic = true
+
+[[categories]]
+name = "SYNTHESIS"
+description = "an exercise, task, or design challenge"
+socratic = true
+
+[[categories]]
+name = "DEBUGGING"
+description = "diagnosing a specific broken thing"
+socratic = true
+
+[[categories]]
+name = "PROCEDURE"
+description = "asks for step-by-step instructions"
+socratic = false
+
+[[categories]]
+name = "VERIFICATION"
+description = "asks whether something they did is correct"
+socratic = false
+
+[[categories]]
+name = "NAVIGATIONAL"
+description = "asks about the curriculum or where to find something"
+socratic = false

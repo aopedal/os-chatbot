@@ -6,6 +6,7 @@ import time
 import tomllib
 from collections import defaultdict
 from pathlib import Path
+from typing import TypedDict, cast
 
 import settings as _settings
 from fastapi import APIRouter, Cookie, Form, Request
@@ -13,6 +14,23 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 
 logger = logging.getLogger("server.admin")
 router = APIRouter()
+
+
+class Category(TypedDict):
+    name: str
+    description: str
+    socratic: bool
+
+
+class SettingsCfg(TypedDict):
+    temperature: float
+    repetition_penalty: float
+    max_tokens: int
+    intent_classifier_prompt: str
+    categories: list[Category]
+    direct_intro: str
+    socratic_intro: str
+    shared_instructions: str
 
 _PASSWORD_FILE = Path(os.getenv("ADMIN_PASSWORD_FILE", "./admin_password"))
 _PASSWORD: str | None = None
@@ -37,17 +55,6 @@ _sessions: set[str] = set()
 _MAX_FAILURES = 5
 _WINDOW = 300  # rolling window in seconds; IP is unblocked once all failures age out
 _failure_log: dict[str, list[float]] = defaultdict(list)
-
-_ALL_CATEGORIES = [
-    "RECALL",
-    "CONCEPTUAL",
-    "COMPARISON",
-    "SYNTHESIS",
-    "DEBUGGING",
-    "PROCEDURE",
-    "VERIFICATION",
-    "NAVIGATIONAL",
-]
 
 # Plain string (not f-string) — CSS curly braces are literal here.
 _STYLE = """\
@@ -110,22 +117,11 @@ _STYLE = """\
     font-size: 1rem;
   }
   input[type="number"] { font-size: 0.95rem; }
-  .categories {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem 1.5rem;
-  }
-  .categories label {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-    font-weight: 400;
-    cursor: pointer;
-  }
   input[type="checkbox"] {
     width: 1rem;
     height: 1rem;
     cursor: pointer;
+    flex-shrink: 0;
   }
   textarea {
     width: 100%;
@@ -165,6 +161,39 @@ _STYLE = """\
   a:hover { text-decoration: underline; }
   .err { color: #dc2626; font-size: 0.9rem; }
   .ok  { color: #16a34a; font-size: 0.9rem; }
+  .cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 0.6rem;
+  }
+  .cat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .cat-row input[type="text"] {
+    padding: 0.4rem 0.6rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.88rem;
+    font-family: monospace;
+  }
+  .cat-name { width: 13rem; }
+  .cat-desc { flex: 1; }
+  .btn-remove {
+    padding: 0.3rem 0.55rem;
+    background: #dc2626;
+    font-size: 0.82rem;
+    line-height: 1;
+  }
+  .btn-remove:hover { background: #b91c1c; }
+  .btn-add {
+    padding: 0.4rem 0.9rem;
+    background: #16a34a;
+    font-size: 0.88rem;
+  }
+  .btn-add:hover { background: #15803d; }
 </style>"""
 
 
@@ -187,162 +216,204 @@ def _is_authenticated(session: str | None) -> bool:
 
 
 def _page(title: str, body: str) -> str:
-    return (
-        "<!DOCTYPE html>\n"
-        "<html lang='no'>\n"
-        "<head>\n"
-        "  <meta charset='utf-8'>\n"
-        f"  <title>{title}</title>\n"
-        + _STYLE + "\n"
-        "</head>\n"
-        "<body>\n"
-        + body
-        + "</body>\n"
-        "</html>"
-    )
+    return f"""\
+<!DOCTYPE html>
+<html lang='no'>
+<head>
+  <meta charset='utf-8'>
+  <title>{title}</title>
+{_STYLE}
+</head>
+<body>
+{body}
+</body>
+</html>"""
 
 
 def _disabled_page() -> HTMLResponse:
-    body = (
-        "<div class='card'>\n"
-        "  <h1>OS-bot Admin</h1>\n"
-        "  <p class='err'>\n"
-        "    Admin-grensesnittet er deaktivert. "
-        "Passordfil mangler eller er tom.\n"
-        "    Se serverloggene.\n"
-        "  </p>\n"
-        "</div>\n"
-    )
+    body = """\
+<div class='card'>
+  <h1>OS-bot Admin</h1>
+  <p class='err'>
+    Admin-grensesnittet er deaktivert. Passordfil mangler eller er tom.
+    Se serverloggene.
+  </p>
+</div>"""
     return HTMLResponse(_page("OS-bot Admin", body), status_code=503)
 
 
 def _login_page(error: str = "") -> HTMLResponse:
     err = f"    <p class='err'>{html.escape(error)}</p>\n" if error else ""
-    body = (
-        "<div class='card'>\n"
-        "  <h1>OS-bot Admin</h1>\n"
-        "  <form method='post' action='/admin/login'>\n"
-        "    <input type='password' name='password' placeholder='Passord'\n"
-        "           autofocus autocomplete='current-password'>\n"
-        "    <button type='submit'>Logg inn</button>\n"
-        + err
-        + "  </form>\n"
-        "</div>\n"
-    )
+    body = f"""\
+<div class='card'>
+  <h1>OS-bot Admin</h1>
+  <form method='post' action='/admin/login'>
+    <input type='password' name='password' placeholder='Passord'
+           autofocus autocomplete='current-password'>
+    <button type='submit'>Logg inn</button>
+{err}  </form>
+</div>"""
     return HTMLResponse(_page("OS-bot Admin", body))
 
 
-def _category_checkboxes(selected: list[str]) -> str:
-    parts = []
-    for cat in _ALL_CATEGORIES:
-        checked = " checked" if cat in selected else ""
-        parts.append(
-            f"        <label>\n"
-            f"          <input type='checkbox' name='socratic_categories'"
-            f" value='{cat}'{checked}> {cat}\n"
-            f"        </label>"
-        )
-    return "\n".join(parts)
+def _category_rows(categories: list[Category]) -> str:
+    rows: list[str] = []
+    for i, cat in enumerate(categories):
+        name = html.escape(cat.get("name", ""))
+        desc = html.escape(cat.get("description", ""))
+        checked = " checked" if cat.get("socratic", False) else ""
+        rows.append(f"""\
+            <div class='cat-row' data-index='{i}'>
+                <input type='checkbox' name='category_socratic'
+                       value='{i}'{checked}>
+                <input type='text' name='category_name'
+                       class='cat-name' value='{name}'
+                       placeholder='CATEGORY_NAME'>
+                <input type='text' name='category_description'
+                       class='cat-desc' value='{desc}'
+                       placeholder='Kort beskrivelse'>
+                <button type='button' class='btn-remove'
+                        onclick='removeCategory(this)'>×</button>
+            </div>\
+        """)
+    return "\n".join(rows)
 
 
 def _textarea(name: str, size: str, value: str) -> str:
     safe = html.escape(value)
-    return (
-        f"    <div class='field'>\n"
-        f"      <textarea id='{name}' name='{name}'\n"
-        f"                class='textarea-{size}'\n"
-        f"                spellcheck='false'>{safe}</textarea>\n"
-        f"    </div>\n"
-    )
+    return f"""\
+    <div class='field'>
+      <textarea id='{name}' name='{name}'
+                class='textarea-{size}'
+                spellcheck='false'>{safe}</textarea>
+    </div>"""
 
 
 def _settings_page(
-    cfg: dict, message: str = "", is_error: bool = False
+    cfg: SettingsCfg,
+    message: str = "",
+    is_error: bool = False,
 ) -> HTMLResponse:
     msg = ""
     if message:
         cls = "err" if is_error else "ok"
         msg = f"      <span class='{cls}'>{html.escape(message)}</span>\n"
 
-    checkboxes = _category_checkboxes(cfg.get("socratic_categories", []))
+    cat_rows = _category_rows(cfg.get("categories", []))
     temp = cfg.get("temperature", 0.2)
     rep = cfg.get("repetition_penalty", 1.1)
     maxt = cfg.get("max_tokens", 131072)
-
-    body = (
-        "<div class='wrap'>\n"
-        "  <form method='post' action='/admin/settings'>\n"
-        "    <div class='row'>\n"
-        "      <h1>Innstillinger</h1>\n"
-        "      <a href='/admin/logout'>Logg ut</a>\n"
-        "    </div>\n"
-        "\n"
-        "    <h2>LLM-parametere</h2>\n"
-        "    <div class='number-row'>\n"
-        "      <div class='field'>\n"
-        "        <label for='temperature'>Temperatur</label>\n"
-        f"        <input type='number' id='temperature' name='temperature'\n"
-        f"               step='0.01' min='0' max='2' value='{temp}'>\n"
-        "      </div>\n"
-        "      <div class='field'>\n"
-        "        <label for='repetition_penalty'>Repetition penalty</label>\n"
-        f"        <input type='number' id='repetition_penalty'\n"
-        f"               name='repetition_penalty'\n"
-        f"               step='0.01' min='1' max='3' value='{rep}'>\n"
-        "      </div>\n"
-        "      <div class='field'>\n"
-        "        <label for='max_tokens'>Maks. tokens</label>\n"
-        f"        <input type='number' id='max_tokens' name='max_tokens'\n"
-        f"               step='1' min='1' value='{maxt}'>\n"
-        "      </div>\n"
-        "    </div>\n"
-        "\n"
-        "    <h2>Sokratisk modus</h2>\n"
-        "    <div class='field'>\n"
-        "      <label>Kategorier som utløser sokratisk modus</label>\n"
-        "      <div class='categories'>\n"
-        + checkboxes + "\n"
-        "      </div>\n"
-        "    </div>\n"
-        "\n"
-        "    <h2>Intent classifier-prompt</h2>\n"
-        + _textarea(
-            "intent_classifier_prompt", "md",
-            cfg.get("intent_classifier_prompt", ""),
-        )
-        + "\n"
-        "    <h2>Direkte modus – intro</h2>\n"
-        + _textarea("direct_intro", "lg", cfg.get("direct_intro", ""))
-        + "\n"
-        "    <h2>Sokratisk modus – intro</h2>\n"
-        + _textarea("socratic_intro", "lg", cfg.get("socratic_intro", ""))
-        + "\n"
-        "    <h2>Felles instruksjoner</h2>\n"
-        + _textarea(
-            "shared_instructions", "md",
-            cfg.get("shared_instructions", ""),
-        )
-        + "\n"
-        "    <div class='actions'>\n"
-        "      <button type='submit'>Lagre</button>\n"
-        + msg
-        + "    </div>\n"
-        "  </form>\n"
-        "</div>\n"
+    ta_intent = _textarea(
+        "intent_classifier_prompt",
+        "md",
+        cfg.get("intent_classifier_prompt", ""),
     )
+    ta_direct = _textarea("direct_intro", "lg", cfg.get("direct_intro", ""))
+    ta_socratic = _textarea("socratic_intro", "lg", cfg.get("socratic_intro", ""))
+    ta_shared = _textarea(
+        "shared_instructions",
+        "md",
+        cfg.get("shared_instructions", ""),
+    )
+
+    body = f"""\
+<div class='wrap'>
+  <form method='post' action='/admin/settings'>
+    <div class='row'>
+      <h1>Innstillinger</h1>
+      <a href='/admin/logout'>Logg ut</a>
+    </div>
+
+    <h2>LLM-parametere</h2>
+    <div class='number-row'>
+      <div class='field'>
+        <label for='temperature'>Temperatur</label>
+        <input type='number' id='temperature' name='temperature'
+               step='0.01' min='0' max='2' value='{temp}'>
+      </div>
+      <div class='field'>
+        <label for='repetition_penalty'>Repetition penalty</label>
+        <input type='number' id='repetition_penalty' name='repetition_penalty'
+               step='0.01' min='1' max='3' value='{rep}'>
+      </div>
+      <div class='field'>
+        <label for='max_tokens'>Maks. tokens</label>
+        <input type='number' id='max_tokens' name='max_tokens'
+               step='1' min='1' value='{maxt}'>
+      </div>
+    </div>
+
+    <h2>Kategorier</h2>
+    <div class='field'>
+      <label>
+        Hak av kategorier som utløser pedagogisk modus.
+        Navn og beskrivelse brukes til å generere intent-prompten.
+      </label>
+      <div id='cat-list' class='cat-list'>
+{cat_rows}
+      </div>
+      <button type='button' class='btn-add' onclick='addCategory()'>
+        + Legg til kategori
+      </button>
+    </div>
+
+    <h2>Intent classifier-prompt</h2>
+    <div class='field'>
+      <label>
+        Bruk <code>{{categories}}</code> der kategorilistingen skal stå,
+        og <code>{{question}}</code> for studentens spørsmål.
+      </label>
+    </div>
+{ta_intent}
+
+    <h2>Direkte modus – intro</h2>
+{ta_direct}
+
+    <h2>Pedagogisk modus – intro</h2>
+{ta_socratic}
+
+    <h2>Felles instruksjoner</h2>
+{ta_shared}
+
+    <div class='actions'>
+      <button type='submit'>Lagre</button>
+{msg}    </div>
+  </form>
+</div>
+<script>
+  function removeCategory(btn) {{
+    btn.closest('.cat-row').remove();
+    renumberCategories();
+  }}
+
+  function renumberCategories() {{
+    document.querySelectorAll('.cat-row').forEach(function(row, i) {{
+      row.dataset.index = i;
+      row.querySelector('[name="category_socratic"]').value = i;
+    }});
+  }}
+
+  function addCategory() {{
+    var rows = document.querySelectorAll('.cat-row');
+    var i = rows.length;
+    var div = document.createElement('div');
+    div.className = 'cat-row';
+    div.dataset.index = i;
+    div.innerHTML =
+      '<input type="checkbox" name="category_socratic" value="' + i + '">'
+      + '<input type="text" name="category_name" class="cat-name"'
+      + ' placeholder="CATEGORY_NAME">'
+      + '<input type="text" name="category_description" class="cat-desc"'
+      + ' placeholder="Kort beskrivelse">'
+      + '<button type="button" class="btn-remove"'
+      + ' onclick="removeCategory(this)">&#xd7;</button>';
+    document.getElementById('cat-list').appendChild(div);
+  }}
+</script>"""
     return HTMLResponse(_page("OS-bot Admin – Innstillinger", body))
 
 
-def _to_toml(
-    temperature: float,
-    repetition_penalty: float,
-    max_tokens: int,
-    intent_classifier_prompt: str,
-    socratic_categories: list[str],
-    direct_intro: str,
-    socratic_intro: str,
-    shared_instructions: str,
-) -> str:
+def _to_toml(cfg: SettingsCfg) -> str:
     def ml(s: str) -> str:
         s = s.replace("\r\n", "\n").replace("\r", "\n").rstrip("\n")
         if "'''" not in s:
@@ -350,23 +421,38 @@ def _to_toml(
         s = s.replace("\\", "\\\\").replace('"', '\\"')
         return f'"""\n{s}\n"""'
 
-    cats = ", ".join(f'"{c}"' for c in socratic_categories)
-    return "\n".join([
-        f"temperature = {temperature}",
-        f"repetition_penalty = {repetition_penalty}",
-        f"max_tokens = {max_tokens}",
+    def cat_block(cat: Category) -> str:
+        name = cat["name"].replace("\\", "\\\\").replace('"', '\\"')
+        desc = cat["description"].replace("\\", "\\\\").replace('"', '\\"')
+        socratic = "true" if cat["socratic"] else "false"
+        return (
+            "[[categories]]\n"
+            f'name = "{name}"\n'
+            f'description = "{desc}"\n'
+            f"socratic = {socratic}"
+        )
+
+    parts = [
+        f"temperature = {cfg['temperature']}",
+        f"repetition_penalty = {cfg['repetition_penalty']}",
+        f"max_tokens = {cfg['max_tokens']}",
         "",
-        f"intent_classifier_prompt = {ml(intent_classifier_prompt)}",
+        f"intent_classifier_prompt = {ml(cfg['intent_classifier_prompt'])}",
         "",
-        f"socratic_categories = [{cats}]",
+        f"direct_intro = {ml(cfg['direct_intro'])}",
         "",
-        f"direct_intro = {ml(direct_intro)}",
+        f"socratic_intro = {ml(cfg['socratic_intro'])}",
         "",
-        f"socratic_intro = {ml(socratic_intro)}",
-        "",
-        f"shared_instructions = {ml(shared_instructions)}",
-        "",
-    ])
+        f"shared_instructions = {ml(cfg['shared_instructions'])}",
+    ]
+    if cfg["categories"]:
+        parts.append("")
+        for cat in cfg["categories"]:
+            parts.append(cat_block(cat))
+            parts.append("")
+    else:
+        parts.append("")
+    return "\n".join(parts)
 
 
 @router.get("/admin", response_class=HTMLResponse)
@@ -375,7 +461,7 @@ async def admin_get(session: str | None = Cookie(default=None)):
         return _disabled_page()
     if not _is_authenticated(session):
         return RedirectResponse("/admin/login", status_code=302)
-    return _settings_page(_settings.load())
+    return _settings_page(cast(SettingsCfg, cast(object, _settings.load())))
 
 
 @router.get("/admin/login", response_class=HTMLResponse)
@@ -420,7 +506,9 @@ async def settings_post(
     repetition_penalty: float = Form(...),
     max_tokens: int = Form(...),
     intent_classifier_prompt: str = Form(...),
-    socratic_categories: list[str] = Form(default=[]),
+    category_name: list[str] = Form(default=[]),
+    category_description: list[str] = Form(default=[]),
+    category_socratic: list[str] = Form(default=[]),
     direct_intro: str = Form(...),
     socratic_intro: str = Form(...),
     shared_instructions: str = Form(...),
@@ -431,17 +519,28 @@ async def settings_post(
     if not _is_authenticated(session):
         return RedirectResponse("/admin/login", status_code=302)
 
-    cfg = {
+    checked = set(category_socratic)
+    categories: list[Category] = [
+        Category(
+            name=name.strip(),
+            description=desc.strip(),
+            socratic=str(i) in checked,
+        )
+        for i, (name, desc) in enumerate(zip(category_name, category_description))
+        if name.strip()
+    ]
+
+    cfg: SettingsCfg = {
         "temperature": temperature,
         "repetition_penalty": repetition_penalty,
         "max_tokens": max_tokens,
         "intent_classifier_prompt": intent_classifier_prompt,
-        "socratic_categories": socratic_categories,
+        "categories": categories,
         "direct_intro": direct_intro,
         "socratic_intro": socratic_intro,
         "shared_instructions": shared_instructions,
     }
-    content = _to_toml(**cfg)
+    content = _to_toml(cfg)
 
     try:
         _settings.save(content)

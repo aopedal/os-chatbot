@@ -80,7 +80,7 @@ _REQUIRED_SETTINGS_KEYS = [
     "direct_intro",
     "socratic_intro",
     "shared_instructions",
-    "socratic_categories",
+    "categories",
     "intent_classifier_prompt",
 ]
 
