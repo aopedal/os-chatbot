@@ -27,11 +27,13 @@ def render_sidebar(available_collections: list[dict]):
             help="Vis forespørsel, hentede kilder og andre mellomtrinn.",
         )
 
+        """
         st.divider()
         _render_collection_toggles(available_collections)
 
         st.divider()
         _render_conversation_history()
+        """
 
     _sync_prefs_to_url()
 

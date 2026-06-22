@@ -36,7 +36,7 @@ ENV PATH="/app/server/.venv/bin:$PATH"
 
 # Copy app code - this layer only invalidates on code changes
 COPY server server/
-COPY ingestion/knowledge ingestion/knowledge/
+# COPY ingestion/knowledge ingestion/knowledge/ - TODO: delete this line if nothing breaks
 
 WORKDIR /app/server
 EXPOSE 8080
