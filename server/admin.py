@@ -329,22 +329,22 @@ def _settings_page(
                step='0.01' min='0' max='2' value='{temp}'>
       </div>
       <div class='field'>
-        <label for='repetition_penalty'>Repetition penalty</label>
+        <label for='repetition_penalty'>Straff for gjentakelse</label>
         <input type='number' id='repetition_penalty' name='repetition_penalty'
                step='0.01' min='1' max='3' value='{rep}'>
       </div>
       <div class='field'>
-        <label for='max_tokens'>Maks. tokens</label>
+        <label for='max_tokens'>Kontekstvindu (tokens) per bruker</label>
         <input type='number' id='max_tokens' name='max_tokens'
                step='1' min='1' value='{maxt}'>
       </div>
     </div>
 
-    <h2>Kategorier</h2>
+    <h2>Pedagogisk modus &ndash; intensjonskategorier</h2>
     <div class='field'>
       <label>
-        Hak av kategorier som utløser pedagogisk modus.
-        Navn og beskrivelse brukes til å generere intent-prompten.
+        Huk av kategorier som skal utløse pedagogisk modus.
+        Navn og beskrivelse brukes til å generere prompten for intensjonsklassifisering.
       </label>
       <div id='cat-list' class='cat-list'>
 {cat_rows}
@@ -438,8 +438,8 @@ def _to_toml(cfg: SettingsCfg) -> str:
         )
 
     parts = [
-        f"temperature = {cfg['temperature']}",
-        f"repetition_penalty = {cfg['repetition_penalty']}",
+        f"temperature = {cfg['temperature']:.2f}",
+        f"repetition_penalty = {cfg['repetition_penalty']:.2f}",
         f"max_tokens = {cfg['max_tokens']}",
         "",
         f"intent_classifier_prompt = {ml(cfg['intent_classifier_prompt'])}",
