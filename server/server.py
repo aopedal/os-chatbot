@@ -258,8 +258,15 @@ async def chat_stream(req: ChatRequest):
         logger.info(f"LLM full response:\n{full_response[:200]}")
         logger.info(f"Time elapsed: {time.time() - start_time:.2f}s")
 
-        await memory_store.append_message(user_id, "user", req.message)
-        await memory_store.append_message(user_id, "assistant", full_response)
+        asyncio.create_task(
+            memory_manager.update(
+                user_id,
+                req.message,
+                full_response,
+                config.LLM_BASE,
+                req.inference_model,
+            )
+        )
 
         yield {"type": "done"}
 
