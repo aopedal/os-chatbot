@@ -38,12 +38,12 @@ def main():
     )
     parser.add_argument(
         "--transcript-folder",
-        default="./local_output",
+        default="../knowledge/video",
         help="Folder for saved transcript text files",
     )
     parser.add_argument(
         "--output-file",
-        default="./chunks_video_transcripts.jsonl",
+        default="../chunks_video_transcripts.jsonl",
         help="Path where processed transcript chunks will be written",
     )
     parser.add_argument(
@@ -90,6 +90,13 @@ def main():
 
     print(f"\n📊 Step 3: Processing transcripts into chunks...")
     process_folder(args.transcript_folder, args.output_file)
+
+    print(f"\n🧹 Cleaning up temporary audio files...")
+    if os.path.exists(audio_folder):
+        for file in os.listdir(audio_folder):
+            os.remove(os.path.join(audio_folder, file))
+        os.rmdir(audio_folder)
+    
     print(f"\n✅ Pipeline complete. Chunks written to {args.output_file}")
 
 

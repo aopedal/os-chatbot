@@ -18,7 +18,7 @@ MIN_TOKENS = 150
 MAX_TOKENS = 300
 OVERLAP_TOKENS = 50
 EMBEDDING_MODEL = "text-embedding-3-small"
-input_folder = "./knowledge/video"
+input_folder = "../knowledge/video"
 output_path = "../chunks_video_transcripts.jsonl"
 
 # --- TOKENIZER ---
