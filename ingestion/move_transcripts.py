@@ -70,7 +70,10 @@ def move_txt_files(video_paths):
 def main():
     video_urls = find_video_urls()
     video_paths = extract_video_paths(video_urls)
-    move_txt_files(video_paths)
+    #move_txt_files(video_paths)
+    urls = list(video_paths)
+    urls.sort()
+    print("\n".join(urls))
 
 
 if __name__ == "__main__":

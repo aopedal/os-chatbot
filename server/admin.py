@@ -297,11 +297,11 @@ def _settings_page(
     msg = ""
     if message:
         cls = "err" if is_error else "ok"
-        msg = f"      <span class='{cls}'>{html.escape(message)}</span>\n"
+        msg = f"      <span id='save-msg' class='{cls}'>{html.escape(message)}</span>\n"
 
     cat_rows = _category_rows(cfg.get("categories", []))
-    temp = cfg.get("temperature", 0.2)
-    rep = cfg.get("repetition_penalty", 1.1)
+    temp = f"{cfg.get('temperature', 0.2):.2f}"
+    rep = f"{cfg.get('repetition_penalty', 1.1):.2f}"
     maxt = cfg.get("max_tokens", 131072)
     ta_intent = _textarea(
         "intent_classifier_prompt",
@@ -357,7 +357,7 @@ def _settings_page(
       </button>
     </div>
 
-    <h2>Intent classifier-prompt</h2>
+    <h2>Prompt for intensjonsklassifisering</h2>
     <div class='field'>
       <label>
         Bruk <code>{{categories}}</code> der kategorilistingen skal stå,
@@ -381,6 +381,14 @@ def _settings_page(
   </form>
 </div>
 <script>
+  if (window.location.search.includes("saved=1")) {{
+    var s = document.createElement("span");
+    s.className = "ok";
+    s.textContent = "Innstillinger lagret.";
+    document.querySelector(".actions").appendChild(s);
+    setTimeout(() => s.remove(), 3000);
+  }}
+
   function removeCategory(btn) {{
     btn.closest('.cat-row').remove();
     renumberCategories();
@@ -548,4 +556,4 @@ async def settings_post(
         return _settings_page(cfg, f"Ugyldig TOML: {e}", is_error=True)
     except OSError as e:
         return _settings_page(cfg, f"Kunne ikke lagre: {e}", is_error=True)
-    return _settings_page(cfg, "Innstillinger lagret.")
+    return RedirectResponse("/admin?saved=1", status_code=303)
