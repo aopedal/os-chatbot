@@ -1,3 +1,12 @@
+"""End-to-end pipeline for video transcription and processing.
+
+This module orchestrates a complete pipeline that:
+1. Loads a video folder
+2. Transcribes all video files using the Norwegian Whisper ASR model
+3. Processes transcripts into tokenized chunks
+4. Outputs a JSONL file ready for embedding and retrieval
+"""
+
 import argparse
 import os
 
@@ -7,6 +16,7 @@ from .transcribe_nb_whisper import transcribe_videos
 
 
 def main():
+    """Execute the end-to-end video transcription and processing pipeline."""
     parser = argparse.ArgumentParser(
         description="Transcribe videos and process transcripts into a JSONL chunk file."
     )
