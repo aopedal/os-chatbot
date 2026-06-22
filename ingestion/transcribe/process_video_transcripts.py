@@ -1,3 +1,11 @@
+"""Process raw video transcripts into tokenized chunks for embedding and retrieval.
+
+This module reads transcript files (in JSON or Python literal format) and merges
+them into semantically meaningful chunks based on token counts. Chunks are sized
+to fit within embedding model token budgets while maintaining overlap for context
+preservation.
+"""
+
 import argparse
 import os
 import json
@@ -17,6 +25,14 @@ output_path = "./chunks_video_transcripts.jsonl"
 enc = tiktoken.encoding_for_model(EMBEDDING_MODEL)
 
 def count_tokens(text: str) -> int:
+    """Count tokens in text using the embedding model's tokenizer.
+    
+    Args:
+        text: Text to tokenize.
+        
+    Returns:
+        int: Number of tokens.
+    """
     return len(enc.encode(text))
 
 def merge_transcript_chunks(
@@ -25,6 +41,20 @@ def merge_transcript_chunks(
     max_tokens=MAX_TOKENS,
     overlap_tokens=OVERLAP_TOKENS,
 ):
+    """Merge transcript segments into semantically meaningful chunks.
+    
+    Builds chunks up to max_tokens budget while ensuring minimum chunk size.
+    Applies sliding window overlap between chunks for context preservation.
+    
+    Args:
+        chunks: List of transcript segments with 'text' and 'timestamp' fields.
+        min_tokens: Minimum tokens per chunk (default: 150).
+        max_tokens: Maximum tokens per chunk (default: 300).
+        overlap_tokens: Token overlap between adjacent chunks (default: 50).
+        
+    Returns:
+        list: List of merged chunks with 'start', 'end', 'text', 'token_count'.
+    """
     merged = []
     i = 0
     n = len(chunks)
@@ -74,6 +104,16 @@ def merge_transcript_chunks(
 
 
 def process_folder(input_folder: str, output_path: str):
+    """Process all transcript files in a folder into chunked JSONL output.
+    
+    Reads all .txt transcript files, chunks them by token count, and writes
+    records to a JSONL file. Each record contains:
+    - lecture_id, chunk_id, start, end, token_count, text, source
+    
+    Args:
+        input_folder: Path to folder containing transcript .txt files.
+        output_path: Path to write output JSONL file.
+    """
     output_dir = os.path.dirname(output_path)
     if output_dir:
         os.makedirs(output_dir, exist_ok=True)

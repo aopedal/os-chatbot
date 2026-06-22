@@ -1,3 +1,10 @@
+"""Video transcription module using Hugging Face Transformers ASR model.
+
+This module provides functionality to transcribe video files directly using the
+Norwegian Whisper model (NbAiLab/nb-whisper-large). It supports multiple video
+formats and saves transcripts as JSON files with timestamp information.
+"""
+
 import argparse
 import glob
 import json
@@ -8,11 +15,26 @@ SUPPORTED_VIDEO_EXTS = [".mp4", ".mov", ".mkv", ".avi", ".webm"]
 
 
 def ensure_dir(path: str):
+    """Create directory if it doesn't exist.
+    
+    Args:
+        path: Directory path to create. If empty, does nothing.
+    """
     if path:
         os.makedirs(path, exist_ok=True)
 
 
 def transcribe_video(video_path: str, asr, language: str = "no"):
+    """Transcribe a single video file.
+    
+    Args:
+        video_path: Path to video file to transcribe.
+        asr: Hugging Face ASR pipeline object.
+        language: ISO 639-1 language code (default: "no" for Norwegian).
+        
+    Returns:
+        dict: Transcription result with chunks and metadata.
+    """
     return asr(
         video_path,
         return_timestamps=True,
@@ -25,12 +47,28 @@ def transcribe_video(video_path: str, asr, language: str = "no"):
 
 
 def save_transcription(transcription, output_path: str):
+    """Save transcription to JSON file.
+    
+    Args:
+        transcription: Transcription dict from ASR model.
+        output_path: Path where JSON file will be written.
+    """
     ensure_dir(os.path.dirname(output_path))
     with open(output_path, "w", encoding="utf-8") as f:
         json.dump(transcription, f, ensure_ascii=False)
 
 
 def get_video_files(input_folder: str):
+    """Get sorted list of all supported video files in a folder.
+    
+    Supported formats: .mp4, .mov, .mkv, .avi, .webm
+    
+    Args:
+        input_folder: Path to folder containing video files.
+        
+    Returns:
+        list: Sorted absolute paths to video files.
+    """
     return [
         path
         for path in sorted(glob.glob(os.path.join(input_folder, "*")))
@@ -45,6 +83,18 @@ def transcribe_videos(
     overwrite: bool = False,
     language: str = "no",
 ):
+    """Batch transcribe all videos in a folder.
+    
+    Skips videos that already have transcripts unless overwrite=True.
+    Saves each transcript as {video_name}.txt in transcript_folder.
+    
+    Args:
+        input_folder: Path to folder containing video files.
+        transcript_folder: Where to save transcript .txt files.
+        asr: Hugging Face ASR pipeline object.
+        overwrite: If True, re-transcribe even if output exists (default: False).
+        language: Language code for transcription (default: "no" for Norwegian).
+    """
     ensure_dir(transcript_folder)
 
     video_files = get_video_files(input_folder)
