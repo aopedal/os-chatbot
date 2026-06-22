@@ -9,9 +9,10 @@ import argparse
 import glob
 import json
 import os
+import shutil
 from transformers import pipeline
 
-SUPPORTED_VIDEO_EXTS = [".mp4", ".mov", ".mkv", ".avi", ".webm"]
+SUPPORTED_AUDIO_EXTS = [".mp3", ".wav", ".flac"]
 
 
 def ensure_dir(path: str):
@@ -58,21 +59,21 @@ def save_transcription(transcription, output_path: str):
         json.dump(transcription, f, ensure_ascii=False)
 
 
-def get_video_files(input_folder: str):
-    """Get sorted list of all supported video files in a folder.
+def get_audio_files(input_folder: str):
+    """Get sorted list of all supported audio files in a folder.
     
-    Supported formats: .mp4, .mov, .mkv, .avi, .webm
+    Supported formats: .mp3, .wav, .flac
     
     Args:
-        input_folder: Path to folder containing video files.
+        input_folder: Path to folder containing audio files.
         
     Returns:
-        list: Sorted absolute paths to video files.
+        list: Sorted absolute paths to audio files.
     """
     return [
         path
         for path in sorted(glob.glob(os.path.join(input_folder, "*")))
-        if os.path.splitext(path)[1].lower() in SUPPORTED_VIDEO_EXTS
+        if os.path.splitext(path)[1].lower() in SUPPORTED_AUDIO_EXTS
     ]
 
 
@@ -83,7 +84,7 @@ def transcribe_videos(
     overwrite: bool = False,
     language: str = "no",
 ):
-    """Batch transcribe all videos in a folder.
+    """Batch transcribe all audio files in a folder.
     
     Skips videos that already have transcripts unless overwrite=True.
     Saves each transcript as {video_name}.txt in transcript_folder.
@@ -95,30 +96,31 @@ def transcribe_videos(
         overwrite: If True, re-transcribe even if output exists (default: False).
         language: Language code for transcription (default: "no" for Norwegian).
     """
+
     ensure_dir(transcript_folder)
 
-    video_files = get_video_files(input_folder)
-    if not video_files:
-        print(f"No supported video files found in {input_folder}.")
+    audio_files = get_audio_files(input_folder)
+    if not audio_files:
+        print(f"No supported audio files found in {input_folder}.")
         return
 
-    for video_file in video_files:
-        base_filename = os.path.splitext(os.path.basename(video_file))[0]
+    for audio_file in audio_files:
+        base_filename = os.path.splitext(os.path.basename(audio_file))[0]
         transcript_file = os.path.join(transcript_folder, f"{base_filename}.txt")
 
         if os.path.exists(transcript_file) and not overwrite:
-            print(f"Skipping {video_file}, transcription already exists at {transcript_file}.")
+            print(f"Skipping {audio_file}, transcription already exists at {transcript_file}.")
             continue
 
-        print(f"Transcribing {video_file}")
-        transcription = transcribe_video(video_file, asr, language=language)
+        print(f"Transcribing {audio_file}")
+        transcription = transcribe_video(audio_file, asr, language=language)
         save_transcription(transcription, transcript_file)
         print(f"Transcription saved to: {transcript_file}")
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Transcribe video files using ASR model.")
-    parser.add_argument("input_folder", help="Path to the input directory containing video files")
+    parser = argparse.ArgumentParser(description="Transcribe audio/video files using ASR model.")
+    parser.add_argument("input_folder", help="Path to the input directory containing audio/video files")
     parser.add_argument(
         "--output-folder",
         default="./local_output",
