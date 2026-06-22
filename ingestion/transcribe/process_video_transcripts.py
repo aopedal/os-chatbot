@@ -19,7 +19,7 @@ MAX_TOKENS = 300
 OVERLAP_TOKENS = 50
 EMBEDDING_MODEL = "text-embedding-3-small"
 input_folder = "./knowledge/video"
-output_path = "./chunks_video_transcripts.jsonl"
+output_path = "../chunks_video_transcripts.jsonl"
 
 # --- TOKENIZER ---
 enc = tiktoken.encoding_for_model(EMBEDDING_MODEL)
