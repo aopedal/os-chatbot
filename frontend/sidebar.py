@@ -64,7 +64,7 @@ def _sync_prefs_to_url():
     elif "debug" in st.query_params:
         del st.query_params["debug"]
 
-    if st.session_state.socratic_mode in ("auto", "always"):
+    if st.session_state.socratic_mode != "auto":
         st.query_params["socratic"] = st.session_state.socratic_mode
     elif "socratic" in st.query_params:
         del st.query_params["socratic"]

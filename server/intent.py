@@ -34,20 +34,17 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
         f"{cat['name']} – {cat['description']}" for cat in categories
     )
     try:
+        classifier_prompt = settings.get("intent_classifier_prompt", "")
+        system_content = classifier_prompt.format(categories=categories_str)
+
         async with httpx.AsyncClient(timeout=10.0) as client:
             response = await client.post(
                 f"{llm_base}/chat/completions",
                 json={
                     "model": model,
                     "messages": [
-                        {
-                            "role": "user",
-                            "content": settings.get(
-                                "intent_classifier_prompt", ""
-                            ).format(
-                                categories=categories_str, question=message
-                            ),
-                        }
+                        {"role": "system", "content": system_content},
+                        {"role": "user", "content": message},
                     ],
                     "max_tokens": 500,
                     "temperature": 0.1,
@@ -58,15 +55,10 @@ async def classify_intent(message: str, model: str, llm_base: str) -> IntentResu
 
         result = _parse_response(raw, valid_names)
         if result is None:
-            logger.warning(
+            raise ValueError(
                 f"Could not extract intent from response: {raw!r}, falling back"
             )
-            return {
-                "category": fallback_name,
-                "wants_direct_answer": False,
-                "fallback": True,
-                "raw_response": raw,
-            }
+
         category, wants_direct = result
         return {
             "category": category,

@@ -128,7 +128,7 @@ class ChatRequest(BaseModel):
     inference_model: str | None = None
     embedding_model: str | None = None
     vector_db: str | None = None
-    socratic_mode: Literal["off", "auto", "always"] = "off"
+    socratic_mode: Literal["off", "auto", "always"] = "auto"
     active_collections: list[str] | None = None
 
 

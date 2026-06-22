@@ -8,7 +8,7 @@ def init_state():
         "user_id": str(uuid.uuid4()),
         "messages": [],
         "conversations": [],  # list of {id, title, messages, user_id}
-        "socratic_mode": "off",
+        "socratic_mode": "auto",
         "active_collections": None,  # None means all enabled
         "debug_mode": False,
     }
@@ -24,7 +24,7 @@ def init_state():
             st.session_state.debug_mode = True
         if "socratic" in st.query_params:
             raw = st.query_params["socratic"]
-            if raw in ("auto", "always"):
+            if raw in ("off", "auto", "always"):
                 st.session_state.socratic_mode = raw
         if "collections" in st.query_params:
             raw = st.query_params["collections"]

@@ -32,6 +32,7 @@ class SettingsCfg(TypedDict):
     socratic_intro: str
     shared_instructions: str
 
+
 _PASSWORD_FILE = Path(os.getenv("ADMIN_PASSWORD_FILE", "./admin_password"))
 _PASSWORD: str | None = None
 
@@ -304,16 +305,12 @@ def _settings_page(
     rep = f"{cfg.get('repetition_penalty', 1.1):.2f}"
     maxt = cfg.get("max_tokens", 131072)
     ta_intent = _textarea(
-        "intent_classifier_prompt",
-        "md",
-        cfg.get("intent_classifier_prompt", ""),
+        "intent_classifier_prompt", "md", cfg.get("intent_classifier_prompt", "")
     )
     ta_direct = _textarea("direct_intro", "lg", cfg.get("direct_intro", ""))
     ta_socratic = _textarea("socratic_intro", "lg", cfg.get("socratic_intro", ""))
     ta_shared = _textarea(
-        "shared_instructions",
-        "md",
-        cfg.get("shared_instructions", ""),
+        "shared_instructions", "lg", cfg.get("shared_instructions", "")
     )
 
     body = f"""\

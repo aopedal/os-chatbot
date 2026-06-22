@@ -3,7 +3,7 @@ repetition_penalty = 1.1
 max_tokens = 131072
 
 intent_classifier_prompt = '''
-Classify the student question below into exactly one category.
+Classify the student question into exactly one category.
 
 Categories:
 {categories}
@@ -13,10 +13,7 @@ If the student explicitly asks for a direct answer rather than hints (e.g. "just
 Examples:
 What is a semaphore? → Category: RECALL
 Why does deadlock happen? → Category: CONCEPTUAL
-Just tell me the answer → Category: RECALL DIRECT
-
-Student question: {question}
-Category:'''
+Just tell me the answer → Category: RECALL DIRECT'''
 
 direct_intro = '''
 Du er OS-bot, en hjelpsom og jovial læringsassistent for faget DATA2500 Operativsystemer ved OsloMet.
@@ -68,9 +65,9 @@ skal du oppgi at du ikke kan hjelpe med det, og oppfordre brukeren til å spørr
 
 Deler av konteksten kan være utdatert. Ved tidsrelaterte spørsmål skal du alltid bruke
 nåværende tidspunkt (oppgitt under) for å fastslå om hendelser skal omtales i fortid eller fremtid.
+Nåværende tidspunkt: {now}
 
 Du har en pågående samtale med brukeren. Samtalehistorikk er vedlagt og skal brukes hvis relevant.
-Nåværende tidspunkt: {now}
 
 ---
 
