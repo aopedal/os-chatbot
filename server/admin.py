@@ -26,6 +26,8 @@ class SettingsCfg(TypedDict):
     temperature: float
     repetition_penalty: float
     max_tokens: int
+    socratic_user_controllable: bool
+    socratic_default: str
     intent_classifier_prompt: str
     categories: list[Category]
     direct_intro: str
@@ -195,6 +197,21 @@ _STYLE = """\
     font-size: 0.88rem;
   }
   .btn-add:hover { background: #15803d; }
+  select {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 0.95rem;
+    background: #fff;
+  }
+  .inline-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 400;
+    cursor: pointer;
+  }
 </style>"""
 
 
@@ -313,6 +330,13 @@ def _settings_page(
         "shared_instructions", "lg", cfg.get("shared_instructions", "")
     )
 
+    soc_uc = cfg.get("socratic_user_controllable", True)
+    soc_uc_checked = " checked" if soc_uc else ""
+    soc_default = cfg.get("socratic_default", "auto")
+    sel_off = " selected" if soc_default == "off" else ""
+    sel_auto = " selected" if soc_default == "auto" else ""
+    sel_always = " selected" if soc_default == "always" else ""
+
     body = f"""\
 <div class='wrap'>
   <form method='post' action='/admin/settings'>
@@ -338,6 +362,22 @@ def _settings_page(
         <input type='number' id='max_tokens' name='max_tokens'
                step='1' min='1' value='{maxt}'>
       </div>
+    </div>
+
+    <h2>Pedagogisk modus</h2>
+    <div class='field'>
+      <label class='inline-check'>
+        <input type='checkbox' name='socratic_user_controllable'{soc_uc_checked}>
+        La brukerne velge pedagogisk modus
+      </label>
+    </div>
+    <div class='field'>
+      <label for='socratic_default'>Standard modus</label>
+      <select id='socratic_default' name='socratic_default'>
+        <option value='off'{sel_off}>Av</option>
+        <option value='auto'{sel_auto}>Automatisk</option>
+        <option value='always'{sel_always}>Alltid</option>
+      </select>
     </div>
 
     <h2>Pedagogisk modus &ndash; intensjonskategorier</h2>
@@ -441,6 +481,8 @@ def _to_toml(cfg: SettingsCfg) -> str:
         f"temperature = {cfg['temperature']:.2f}",
         f"repetition_penalty = {cfg['repetition_penalty']:.2f}",
         f"max_tokens = {cfg['max_tokens']}",
+        f"socratic_user_controllable = {'true' if cfg['socratic_user_controllable'] else 'false'}",
+        f'socratic_default = "{cfg["socratic_default"]}"',
         "",
         f"intent_classifier_prompt = {ml(cfg['intent_classifier_prompt'])}",
         "",
@@ -510,6 +552,8 @@ async def settings_post(
     temperature: float = Form(...),
     repetition_penalty: float = Form(...),
     max_tokens: int = Form(...),
+    socratic_user_controllable: str | None = Form(default=None),
+    socratic_default: str = Form(default="auto"),
     intent_classifier_prompt: str = Form(...),
     category_name: list[str] = Form(default=[]),
     category_description: list[str] = Form(default=[]),
@@ -535,10 +579,13 @@ async def settings_post(
         if name.strip()
     ]
 
+    valid_modes = ("off", "auto", "always")
     cfg: SettingsCfg = {
         "temperature": temperature,
         "repetition_penalty": repetition_penalty,
         "max_tokens": max_tokens,
+        "socratic_user_controllable": socratic_user_controllable is not None,
+        "socratic_default": socratic_default if socratic_default in valid_modes else "auto",
         "intent_classifier_prompt": intent_classifier_prompt,
         "categories": categories,
         "direct_intro": direct_intro,

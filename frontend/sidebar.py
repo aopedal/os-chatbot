@@ -3,24 +3,28 @@ import uuid
 import streamlit as st
 
 
-def render_sidebar(available_collections: list[dict]):
+def render_sidebar(
+    available_collections: list[dict],
+    socratic_user_controllable: bool = True,
+):
     with st.sidebar:
         st.header("Innstillinger")
 
-        st.radio(
-            "Pedagogisk modus",
-            options=["off", "auto", "always"],
-            format_func={"off": "Av", "auto": "Automatisk", "always": "Alltid"}.get,
-            key="socratic_mode",
-            horizontal=True,
-            help=(
-                "**Av** – Modellen svarer alltid direkte.\n\n"
-                "**Automatisk** – Modellen analyserer spørsmålet og velger om den "
-                "skal veilede med spørsmål eller svare direkte.\n\n"
-                "**Alltid** – Modellen veileder alltid med spørsmål i stedet for å "
-                "svare direkte."
-            ),
-        )
+        if socratic_user_controllable:
+            st.radio(
+                "Pedagogisk modus",
+                options=["off", "auto", "always"],
+                format_func={"off": "Av", "auto": "Automatisk", "always": "Alltid"}.get,
+                key="socratic_mode",
+                horizontal=True,
+                help=(
+                    "**Av** – Modellen svarer alltid direkte.\n\n"
+                    "**Automatisk** – Modellen analyserer spørsmålet og velger om den "
+                    "skal veilede med spørsmål eller svare direkte.\n\n"
+                    "**Alltid** – Modellen veileder alltid med spørsmål i stedet for å "
+                    "svare direkte."
+                ),
+            )
         st.toggle(
             "Debug-modus",
             key="debug_mode",

@@ -1,6 +1,8 @@
 temperature = 0.2
 repetition_penalty = 1.1
 max_tokens = 131072
+socratic_user_controllable = true
+socratic_default = "auto"
 
 intent_classifier_prompt = '''
 Classify the student question into exactly one category.

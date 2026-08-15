@@ -134,7 +134,12 @@ class ChatRequest(BaseModel):
 
 @app.get("/config")
 async def get_config():
-    return AVAILABLE_OPTIONS
+    cfg = settings.load()
+    return {
+        **AVAILABLE_OPTIONS,
+        "socratic_default": cfg.get("socratic_default", "auto"),
+        "socratic_user_controllable": cfg.get("socratic_user_controllable", True),
+    }
 
 
 # ============================================================

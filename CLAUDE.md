@@ -67,6 +67,8 @@ server/
 | `temperature` | float | LLM sampling temperature |
 | `repetition_penalty` | float | LLM repetition penalty |
 | `max_tokens` | int | Maximum tokens per response |
+| `socratic_user_controllable` | bool | Whether users can toggle Socratic mode in the frontend sidebar |
+| `socratic_default` | string | Default Socratic mode selection: `"off"`, `"auto"`, or `"always"`. When `socratic_user_controllable` is false this is always enforced |
 | `direct_intro` | string | Mode-specific opening for the direct-answer system prompt |
 | `socratic_intro` | string | Mode-specific opening for the Socratic system prompt |
 | `shared_instructions` | string | Closing instructions appended to both prompts (Markdown rules, off-topic handling, time context, memory notice, RAG context); `{now}` and `{context}` are substituted at request time |

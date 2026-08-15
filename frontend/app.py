@@ -14,7 +14,7 @@ st.title(f"💬 Spør {app_config.CHATBOT_NAME}")
 init_state()
 
 
-@st.cache_data
+@st.cache_data(ttl=30)
 def fetch_backend_config():
     res = httpx.get(f"{app_config.SERVER_URL}/config", timeout=10)
     res.raise_for_status()
@@ -43,5 +43,15 @@ available_collections = [
     {"id": "video_transcript", "name": "Videotranskripsjoner"},
 ]
 
-render_sidebar(available_collections)
+socratic_user_controllable = backend_config.get("socratic_user_controllable", True)
+socratic_default = backend_config.get("socratic_default", "auto")
+
+if not socratic_user_controllable:
+    st.session_state.socratic_mode = socratic_default
+elif "backend_defaults_applied" not in st.session_state:
+    if "socratic" not in st.query_params:
+        st.session_state.socratic_mode = socratic_default
+    st.session_state.backend_defaults_applied = True
+
+render_sidebar(available_collections, socratic_user_controllable)
 render_chat(inference_model, embedding_model, vector_db)
